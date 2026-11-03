@@ -1,0 +1,63 @@
+name: hareup
+description: Photo-based companion animal observation app.
+publish_to: none
+version: 1.0.0+1
+environment:
+  sdk: ^3.11.4
+workspace:
+  - packages/core
+  - packages/presentation_core
+  - packages/design_system
+  - packages/network
+  - packages/serialization
+  - packages/firebase_core
+  - packages/media
+  - packages/analytics
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  firebase_auth: ^5.7.0
+  package_info_plus: ^8.3.1
+  url_launcher: ^6.3.2
+  share_plus: ^11.1.0
+  json_annotation: ^4.12.0
+  hareup_core: any
+  hareup_presentation_core: any
+  hareup_design_system: any
+  hareup_network: any
+  hareup_serialization: any
+  hareup_firebase_core: any
+  hareup_media: any
+  hareup_analytics: any
+  firebase_core: ^3.15.2
+  cloud_functions: ^5.6.2
+  cloud_firestore: ^5.6.12
+  firebase_storage: ^12.4.10
+  google_sign_in: ^7.2.0
+  sign_in_with_apple: ^8.1.0
+  crypto: ^3.0.6
+  kakao_flutter_sdk_user: ^2.1.0
+dev_dependencies:
+  image_picker: ^1.2.1
+  dio: ^5.9.2
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  build_runner: ^2.13.1
+  json_serializable: ^6.13.1
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Pretendard
+      fonts:
+        - asset: assets/fonts/pretendard/Pretendard-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/pretendard/Pretendard-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/pretendard/Pretendard-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/pretendard/Pretendard-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/pretendard/Pretendard-ExtraBold.ttf
+          weight: 800

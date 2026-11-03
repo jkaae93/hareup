@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "549883187175",
+    "project_id": "hareup-mobile",
+    "storage_bucket": "hareup-mobile.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:549883187175:android:2d81272afe95f8da033742",
+        "android_client_info": {
+          "package_name": "com.overcomplex.hareup.mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "549883187175-7pld7raqqb8ksdk2bc7gqn0mf22i8fkh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.overcomplex.hareup.mobile",
+            "certificate_hash": "0006280305459986da848be1dbde001a2fd50397"
+          }
+        },
+        {
+          "client_id": "549883187175-6i816b3ri6sam2can8b10od5ol4p18na.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA32TsV60ewhLCDFaPspzAIhpzwXjBVSik"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "549883187175-6i816b3ri6sam2can8b10od5ol4p18na.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "549883187175-ksg6ndavpco6rqjjndso4f2hv759jojt.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.overcomplex.hareup.mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

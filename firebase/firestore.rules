@@ -1,0 +1,69 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isFamilyMember(groupId) {
+      return signedIn() && exists(
+        /databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)
+      );
+    }
+
+    function isFamilyAdmin(groupId) {
+      return isFamilyMember(groupId)
+        && get(/databases/$(database)/documents/groups/$(groupId)/members/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Group identity, membership, invitations, requests, and audit history are
+    // writable only by trusted Functions using the Admin SDK.
+    match /groups/{groupId} {
+      allow read, write: if false;
+
+      match /members/{uid} {
+        allow read: if isFamilyMember(groupId);
+        allow write: if false;
+      }
+
+      match /joinRequests/{uid} {
+        allow read, write: if false;
+      }
+
+      match /auditEvents/{eventId} {
+        allow read, write: if false;
+      }
+
+      // Approved members may create or update shared observations. Destructive
+      // operations remain Functions-only and require administrator checks.
+      match /pets/{documentId} {
+        allow read: if isFamilyMember(groupId);
+        allow create, update: if isFamilyMember(groupId);
+        allow delete: if isFamilyAdmin(groupId);
+      }
+      match /waterBowls/{documentId} {
+        allow read: if isFamilyMember(groupId);
+        allow create, update: if isFamilyMember(groupId);
+        allow delete: if isFamilyAdmin(groupId);
+      }
+      match /litterBoxes/{documentId} {
+        allow read: if isFamilyMember(groupId);
+        allow create, update: if isFamilyMember(groupId);
+        allow delete: if isFamilyAdmin(groupId);
+      }
+      match /records/{documentId} {
+        allow read: if isFamilyMember(groupId);
+        allow create, update: if isFamilyMember(groupId);
+        allow delete: if isFamilyAdmin(groupId);
+      }
+    }
+
+    match /familyInviteCodes/{codeHash} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

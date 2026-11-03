@@ -1,0 +1,24 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isFamilyMember(groupId) {
+      return request.auth != null
+        && firestore.exists(/databases/(default)/documents/groups/$(groupId)/members/$(request.auth.uid));
+    }
+
+    function isFamilyAdmin(groupId) {
+      return isFamilyMember(groupId)
+        && firestore.get(/databases/(default)/documents/groups/$(groupId)/members/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    match /groups/{groupId}/{allPaths=**} {
+      allow read: if isFamilyMember(groupId);
+      allow create, update: if isFamilyMember(groupId);
+      allow delete: if isFamilyAdmin(groupId);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

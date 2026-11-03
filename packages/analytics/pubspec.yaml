@@ -1,0 +1,9 @@
+name: hareup_analytics
+publish_to: none
+version: 0.1.0
+environment:
+  sdk: ^3.11.4
+resolution: workspace
+dependencies:
+  firebase_analytics: ^11.6.0
+  firebase_crashlytics: ^4.3.10

@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <title>하릅 앱 아이콘</title>
+  <desc>세이지 그린 배경 위에 물방울을 품은 고양이 얼굴</desc>
+  <rect width="1024" height="1024" fill="#718e86"/>
+  <!-- The artwork stays within the maskable icon safe area. -->
+  <path d="M250 457 268 274Q271 247 294 260L387 318Q446 296 512 296T637 318L730 260Q753 247 756 274L774 457Q791 500 791 550C791 693 674 770 512 770S233 693 233 550Q233 500 250 457Z" fill="#faf8ef"/>
+  <path d="M294 309 304 405Q327 370 356 348Z M730 309 720 405Q697 370 668 348Z" fill="#d8a99d"/>
+  <ellipse cx="399" cy="513" rx="23" ry="31" fill="#344e49"/>
+  <ellipse cx="625" cy="513" rx="23" ry="31" fill="#344e49"/>
+  <path d="M486 559Q512 544 538 559Q539 574 512 589Q485 574 486 559Z" fill="#344e49"/>
+  <path d="M512 589V600Q512 620 490 622Q476 622 468 613M512 600Q512 620 534 622Q548 622 556 613" fill="none" stroke="#344e49" stroke-width="13" stroke-linecap="round"/>
+  <path d="M313 566 367 577M307 597 365 598M711 566 657 577M717 597 659 598" fill="none" stroke="#b4c4b7" stroke-width="10" stroke-linecap="round"/>
+  <path d="M512 667C512 667 486 695 486 710A26 26 0 0 0 538 710C538 695 512 667 512 667Z" fill="#87b8b1"/>
+</svg>
