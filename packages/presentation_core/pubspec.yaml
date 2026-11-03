@@ -1,0 +1,12 @@
+name: hareup_presentation_core
+publish_to: none
+version: 0.1.0
+environment:
+  sdk: ^3.11.4
+resolution: workspace
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_bloc: ^9.1.1
+  hareup_core: any
+  hareup_design_system: any

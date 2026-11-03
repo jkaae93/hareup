@@ -1,0 +1,9 @@
+name: hareup_network
+publish_to: none
+version: 0.1.0
+environment:
+  sdk: ^3.11.4
+resolution: workspace
+dependencies:
+  dio: ^5.9.2
+  hareup_core: any

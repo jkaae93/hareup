@@ -1,0 +1,13 @@
+name: hareup_firebase_core
+publish_to: none
+version: 0.1.0
+environment:
+  sdk: ^3.11.4
+resolution: workspace
+dependencies:
+  hareup_core: any
+  firebase_core: ^3.15.2
+  firebase_auth: ^5.7.0
+  cloud_firestore: ^5.6.12
+  cloud_functions: ^5.6.2
+  firebase_storage: ^12.4.10
