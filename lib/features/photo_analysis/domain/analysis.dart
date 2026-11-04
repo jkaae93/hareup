@@ -73,8 +73,11 @@ sealed class AnalysisOutcome {
 }
 
 class AnalysisUnavailable extends AnalysisOutcome {
-  const AnalysisUnavailable(this.reason, {super.modelResponse});
+  const AnalysisUnavailable(this.reason, {this.reasonKey, super.modelResponse});
   final String reason;
+
+  /// Stable localization key for [reason]. When null, [reason] is shown raw.
+  final String? reasonKey;
 }
 
 class WaterOutcome extends AnalysisOutcome {
@@ -133,7 +136,10 @@ AnalysisOutcome gateAnalysis(
         !result.percent.isFinite ||
         result.percent < 0 ||
         result.percent > 100) {
-      return const AnalysisUnavailable('물 감소율을 신뢰할 수 없어 분석할 수 없습니다.');
+      return const AnalysisUnavailable(
+        '물 감소율을 신뢰할 수 없어 분석할 수 없습니다.',
+        reasonKey: FailureMessageKeys.analysisUnreliableWater,
+      );
     }
     final confidence = result.confidencePercent;
     if (request.registrationPhoto &&
@@ -141,7 +147,10 @@ AnalysisOutcome gateAnalysis(
             !confidence.isFinite ||
             confidence < 0 ||
             confidence > 100)) {
-      return const AnalysisUnavailable('분석 신뢰도를 확인할 수 없습니다.');
+      return const AnalysisUnavailable(
+        '분석 신뢰도를 확인할 수 없습니다.',
+        reasonKey: FailureMessageKeys.analysisConfidenceUnknown,
+      );
     }
     final volume = result.volumeMl;
     final hasMeasurements =
@@ -169,7 +178,10 @@ AnalysisOutcome gateAnalysis(
     if (!validation.litterCounts ||
         result.urineCount < 0 ||
         result.stoolCount < 0) {
-      return const AnalysisUnavailable('배설 흔적을 신뢰할 수 없어 분석할 수 없습니다.');
+      return const AnalysisUnavailable(
+        '배설 흔적을 신뢰할 수 없어 분석할 수 없습니다.',
+        reasonKey: FailureMessageKeys.analysisUnreliableLitter,
+      );
     }
     final quantity = result.observedQuantity;
     final dimensions = [
@@ -193,5 +205,8 @@ AnalysisOutcome gateAnalysis(
       quantityUnit: allowQuantity ? result.quantityUnit : null,
     );
   }
-  return const AnalysisUnavailable('분석 결과 유형을 확인할 수 없습니다.');
+  return const AnalysisUnavailable(
+    '분석 결과 유형을 확인할 수 없습니다.',
+    reasonKey: FailureMessageKeys.analysisUnknownOutcome,
+  );
 }

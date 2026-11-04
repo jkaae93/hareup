@@ -66,6 +66,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: testTheme,
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
           home: Scaffold(
             body: RecentRecordSummary(
               repository: repo,
@@ -87,6 +90,9 @@ void main() {
   ) async {
     Widget view(RecordsRepository repo) => MaterialApp(
       theme: testTheme,
+      localizationsDelegates: testLocalizationsDelegates,
+      locale: const Locale('ko'),
+      supportedLocales: appSupportedLocales,
       home: Scaffold(
         body: RecentRecordSummary(
           repository: repo,

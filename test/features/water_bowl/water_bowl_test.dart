@@ -121,6 +121,9 @@ void main() {
           value: cubit,
           child: MaterialApp(
             theme: testTheme,
+            localizationsDelegates: testLocalizationsDelegates,
+            locale: const Locale('ko'),
+            supportedLocales: appSupportedLocales,
             home: WaterBowlPage(
               pets: const [BowlPetOption(id: 'a', name: '나비')],
               photoSource: SamplePhoto(),
@@ -151,7 +154,9 @@ void main() {
       await tester.tap(find.text('등록'));
       await tester.pumpAndSettle();
       expect(find.text('하루 물그릇'), findsOneWidget);
-      expect(find.textContaining('정수기 사진 1번째'), findsOneWidget);
+      await tester.tap(find.text('하루 물그릇'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('정수기 사진 1번째'), findsWidgets);
       await tester.pumpWidget(const SizedBox());
       await tester.runAsync(cubit.close);
     },
@@ -167,6 +172,9 @@ void main() {
           value: cubit,
           child: MaterialApp(
             theme: testTheme,
+            localizationsDelegates: testLocalizationsDelegates,
+            locale: const Locale('ko'),
+            supportedLocales: appSupportedLocales,
             home: WaterBowlPage(
               pets: const [BowlPetOption(id: 'a', name: '나비')],
               photoSource: SamplePhoto(),
@@ -225,6 +233,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: testTheme,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: BlocProvider.value(
           value: cubit,
           child: WaterBowlPage(
@@ -280,6 +291,9 @@ void main() {
         value: cubit,
         child: MaterialApp(
           theme: testTheme,
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
           home: WaterBowlPage(
             pets: const [BowlPetOption(id: 'a', name: '나비')],
             photoSource: SamplePhoto(),
@@ -343,6 +357,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: testTheme,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: BlocProvider.value(
           value: cubit,
           child: WaterBowlPage(

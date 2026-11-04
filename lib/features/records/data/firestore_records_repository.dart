@@ -72,7 +72,12 @@ class FirestoreRecordsRepository implements RecordsRepository {
             notes: updated.notes,
           ),
         )) {
-      return const Failure(RequestFailure('수정한 내용을 확인해 주세요.'));
+      return const Failure(
+        RequestFailure(
+          '수정한 내용을 확인해 주세요.',
+          FailureMessageKeys.recordsInvalidAnnotations,
+        ),
+      );
     }
     try {
       final document = _records(
@@ -87,7 +92,10 @@ class FirestoreRecordsRepository implements RecordsRepository {
             data['selectedCatId'] != original.selectedCatId ||
             (data['notes'] ?? '') != original.notes) {
           return const Failure<void>(
-            RequestFailure('기록이 변경되었습니다. 다시 불러온 후 수정해 주세요.'),
+            RequestFailure(
+              '기록이 변경되었습니다. 다시 불러온 후 수정해 주세요.',
+              FailureMessageKeys.recordsChanged,
+            ),
           );
         }
         transaction.update(document, {
@@ -135,7 +143,12 @@ class FirestoreRecordsRepository implements RecordsRepository {
           if (_canonical(existing.data()) == _canonical(payload)) {
             return const Success(null);
           }
-          return const Failure(RequestFailure('이미 저장된 분석입니다.'));
+          return const Failure(
+            RequestFailure(
+              '이미 저장된 분석입니다.',
+              FailureMessageKeys.recordsAlreadySaved,
+            ),
+          );
         }
         transaction.set(document, payload);
         return const Success(null);

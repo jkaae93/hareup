@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_design_system/design_system.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../domain/auth_repository.dart';
 import 'auth_cubit.dart';
 
@@ -88,8 +90,8 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                     const SizedBox(height: HareupSpacing.small),
                     Text(
                       _creatingAccount
-                          ? '함께 돌보는 가족을 위한 계정을 만들어 주세요.'
-                          : '매일 사진으로 기록하고 함께 살피는 반려동물 건강 케어',
+                          ? context.l10n.authSignUpSubtitle
+                          : context.l10n.authSignInSubtitle,
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
@@ -103,7 +105,7 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                                   .read<AuthCubit>()
                                   .signInWithProvider(provider.id),
                         icon: Icon(_providerIcon(provider.id)),
-                        label: Text(provider.label),
+                        label: Text(_providerLabel(context, provider)),
                       ),
                       const SizedBox(height: HareupSpacing.small),
                     ],
@@ -112,17 +114,19 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                         .repository
                         .providers
                         .isNotEmpty)
-                      const Padding(
-                        padding: EdgeInsets.symmetric(
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
                           vertical: HareupSpacing.small,
                         ),
-                        child: Center(child: Text('또는 이메일로 계속')),
+                        child: Center(child: Text(context.l10n.authOrEmail)),
                       ),
                     if (_creatingAccount) ...[
                       TextFormField(
                         controller: _name,
                         textInputAction: TextInputAction.next,
-                        decoration: const InputDecoration(labelText: '이름 (선택)'),
+                        decoration: InputDecoration(
+                          labelText: context.l10n.authNameLabel,
+                        ),
                         maxLength: 60,
                       ),
                       const SizedBox(height: HareupSpacing.small),
@@ -132,12 +136,14 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                       keyboardType: TextInputType.emailAddress,
                       autofillHints: const [AutofillHints.email],
                       textInputAction: TextInputAction.next,
-                      decoration: const InputDecoration(labelText: '이메일'),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.authEmailLabel,
+                      ),
                       validator: (value) {
                         final email = value?.trim() ?? '';
                         return email.contains('@') && email.contains('.')
                             ? null
-                            : '이메일 주소를 확인해 주세요.';
+                            : context.l10n.authEmailInvalid;
                       },
                     ),
                     const SizedBox(height: HareupSpacing.small),
@@ -151,15 +157,17 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                       ],
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _submit(context),
-                      decoration: const InputDecoration(labelText: '비밀번호'),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.authPasswordLabel,
+                      ),
                       validator: (value) => (value?.length ?? 0) >= 6
                           ? null
-                          : '비밀번호를 6자 이상 입력해 주세요.',
+                          : context.l10n.authWeakPassword,
                     ),
                     if (state.failure case final failure?) ...[
                       const SizedBox(height: HareupSpacing.medium),
                       Text(
-                        failure.message,
+                        failureDisplayMessage(context, failure),
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                           color: Theme.of(context).colorScheme.error,
                         ),
@@ -170,7 +178,11 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                       onPressed: state.working ? null : () => _submit(context),
                       child: state.working
                           ? const HareupLoading()
-                          : Text(_creatingAccount ? '가입하기' : '로그인'),
+                          : Text(
+                              _creatingAccount
+                                  ? context.l10n.authSignUpAction
+                                  : context.l10n.authSignInAction,
+                            ),
                     ),
                     TextButton(
                       onPressed: state.working
@@ -179,7 +191,9 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                               () => _creatingAccount = !_creatingAccount,
                             ),
                       child: Text(
-                        _creatingAccount ? '이미 계정이 있나요? 로그인' : '계정이 없나요? 가입하기',
+                        _creatingAccount
+                            ? context.l10n.authHaveAccount
+                            : context.l10n.authNeedAccount,
                       ),
                     ),
                     if (!state.initialized && state.failure != null)
@@ -187,7 +201,7 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
                         onPressed: state.working
                             ? null
                             : () => context.read<AuthCubit>().start(),
-                        child: const Text('세션 다시 확인'),
+                        child: Text(context.l10n.authRecheckSession),
                       ),
                   ],
                 ),
@@ -245,4 +259,12 @@ class _EmailAuthPageState extends State<_EmailAuthPage> {
     'kakao' => Icons.chat_bubble_outline,
     _ => Icons.login,
   };
+
+  String _providerLabel(BuildContext context, AuthProviderOption provider) =>
+      switch (provider.id) {
+        'google' => context.l10n.authContinueWithGoogle,
+        'apple' => context.l10n.authContinueWithApple,
+        'kakao' => context.l10n.authContinueWithKakao,
+        _ => provider.label,
+      };
 }

@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_design_system/design_system.dart';
 import 'package:hareup_presentation_core/load_view.dart';
 import 'package:hareup_presentation_core/presentation_core.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../domain/family.dart';
 import 'family_cubit.dart';
 
@@ -20,12 +22,12 @@ class FamilyPage extends StatelessWidget {
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => FamilyCubit(repository, groupId)..load(),
     child: Scaffold(
-      appBar: AppBar(title: const Text('가족 관리')),
+      appBar: AppBar(title: Text(context.l10n.homeManageFamily)),
       body: HareupContent(
         child: BlocBuilder<FamilyCubit, LoadState<FamilyOverview>>(
           builder: (context, state) => LoadView<FamilyOverview>(
             state: state,
-            emptyMessage: '가족 정보를 찾을 수 없습니다.',
+            emptyMessage: context.l10n.familyOverviewEmpty,
             onRetry: () => context.read<FamilyCubit>().load(),
             builder: (context, family) => ListView(
               padding: const EdgeInsets.symmetric(
@@ -33,22 +35,22 @@ class FamilyPage extends StatelessWidget {
                 vertical: HareupSpacing.medium,
               ),
               children: [
-                const HareupGuidance(
-                  title: '함께 돌보는 가족',
-                  message: '가족 구성원과 반려동물의 사진 및 기록을 함께 확인할 수 있습니다.',
+                HareupGuidance(
+                  title: context.l10n.familyTogetherTitle,
+                  message: context.l10n.familyManageMessage,
                   icon: Icons.people_outline,
                 ),
                 const SizedBox(height: HareupSpacing.medium),
                 HareupFormSection(
                   title: family.groupName,
-                  description: '현재 선택한 가족',
+                  description: context.l10n.familyCurrentSelected,
                   children: [
                     Row(
                       children: [
                         const CircleAvatar(child: Icon(Icons.home_outlined)),
                         const SizedBox(width: HareupSpacing.small),
                         Text(
-                          '가족 구성원 ${family.members.length}명',
+                          context.l10n.familyMemberCount(family.members.length),
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ],
@@ -56,8 +58,12 @@ class FamilyPage extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: HareupSpacing.large),
-                HareupSectionHeader(title: '가족 구성원 ${family.members.length}'),
-                if (family.members.isEmpty) const Text('구성원이 없습니다.'),
+                HareupSectionHeader(
+                  title: context.l10n.familyMembersHeader(
+                    family.members.length,
+                  ),
+                ),
+                if (family.members.isEmpty) Text(context.l10n.familyNoMembers),
                 for (final member in family.members)
                   Card(
                     child: ListTile(
@@ -70,7 +76,9 @@ class FamilyPage extends StatelessWidget {
                           : Text(member.roleLabel!),
                       trailing: family.removableMemberIds.contains(member.id)
                           ? IconButton(
-                              tooltip: '${member.displayName} 제거',
+                              tooltip: context.l10n.familyRemoveMemberTooltip(
+                                member.displayName,
+                              ),
                               icon: const Icon(Icons.person_remove_outlined),
                               onPressed: () => _remove(context, member),
                             )
@@ -80,10 +88,14 @@ class FamilyPage extends StatelessWidget {
                 if (family.canApproveJoinRequests) ...[
                   const SizedBox(height: HareupSpacing.large),
                   HareupSectionHeader(
-                    title: '가입 승인 대기 ${family.joinRequests.length}',
+                    title: context.l10n.familyPendingHeader(
+                      family.joinRequests.length,
+                    ),
                   ),
                   if (family.joinRequests.isEmpty)
-                    const HareupPanel(child: Text('승인 대기 중인 가입 요청이 없습니다.')),
+                    HareupPanel(
+                      child: Text(context.l10n.familyNoPendingRequests),
+                    ),
                   for (final request in family.joinRequests)
                     Card(
                       child: ListTile(
@@ -91,28 +103,30 @@ class FamilyPage extends StatelessWidget {
                           child: Icon(Icons.hourglass_top),
                         ),
                         title: Text(request.displayName),
-                        subtitle: const Text('초대 코드 입력 후 승인 대기 중'),
+                        subtitle: Text(
+                          context.l10n.familyInvitePendingSubtitle,
+                        ),
                         trailing: TextButton(
                           onPressed: () => _approve(context, request),
-                          child: const Text('승인'),
+                          child: Text(context.l10n.familyApproveAction),
                         ),
                       ),
                     ),
                 ],
                 const SizedBox(height: HareupSpacing.large),
-                const HareupSectionHeader(title: '가족 초대'),
+                HareupSectionHeader(title: context.l10n.familyInviteTitle),
                 if (family.canCreateInviteCode)
                   HareupCard(
-                    title: '초대 코드 만들기',
-                    subtitle: '가족에게 전달할 코드를 발급합니다.',
+                    title: context.l10n.familyCreateCodeAction,
+                    subtitle: context.l10n.familyCreateCodeMessage,
                     leading: const CircleAvatar(
                       child: Icon(Icons.key_outlined),
                     ),
                     onTap: () => _createCode(context),
                   ),
                 HareupCard(
-                  title: '초대 코드 입력',
-                  subtitle: '다른 가족에게 받은 코드로 가입을 요청합니다.',
+                  title: context.l10n.familyEnterCodeAction,
+                  subtitle: context.l10n.familyEnterCodeMessage,
                   leading: const CircleAvatar(
                     child: Icon(Icons.group_add_outlined),
                   ),
@@ -131,9 +145,9 @@ class FamilyPage extends StatelessWidget {
     if (!await cubit.createInviteCode() || !context.mounted) {
       final command = cubit.createCodeCommand.state;
       if (command case CommandFailure<String>(:final failure)) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(failure.message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(failureDisplayMessage(context, failure))),
+        );
       }
       return;
     }
@@ -142,14 +156,14 @@ class FamilyPage extends StatelessWidget {
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (dialogContext) => HareupFormPage(
-          title: const Text('가족 초대 코드'),
+          title: Text(dialogContext.l10n.familyInviteCodeTitle),
           content: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 HareupFormSection(
-                  title: '초대 전용 가족 코드',
-                  description: '함께 돌볼 가족에게 이 코드를 전달해 주세요.',
+                  title: dialogContext.l10n.familyDedicatedCodeTitle,
+                  description: dialogContext.l10n.familyShareCodeMessage,
                   children: [
                     Container(
                       padding: const EdgeInsets.all(HareupSpacing.large),
@@ -170,20 +184,23 @@ class FamilyPage extends StatelessWidget {
                         await Clipboard.setData(ClipboardData(text: code));
                         if (dialogContext.mounted) {
                           ScaffoldMessenger.of(dialogContext).showSnackBar(
-                            const SnackBar(content: Text('초대 코드를 복사했습니다.')),
+                            SnackBar(
+                              content: Text(
+                                dialogContext.l10n.familyCodeCopied,
+                              ),
+                            ),
                           );
                         }
                       },
                       icon: const Icon(Icons.content_copy),
-                      label: const Text('초대 코드 복사하기'),
+                      label: Text(dialogContext.l10n.familyCopyCodeAction),
                     ),
                   ],
                 ),
                 const SizedBox(height: HareupSpacing.medium),
-                const HareupGuidance(
-                  title: '가족 합류 방법 안내',
-                  message:
-                      '가족이 로그인한 뒤 초대 코드를 입력하면 가입을 요청할 수 있습니다. 관리자가 승인하면 함께 이용할 수 있습니다.',
+                HareupGuidance(
+                  title: dialogContext.l10n.familyJoinGuideTitle,
+                  message: dialogContext.l10n.familyJoinGuideMessage,
                   icon: Icons.info_outline,
                 ),
               ],
@@ -192,7 +209,7 @@ class FamilyPage extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(dialogContext),
-              child: const Text('닫기'),
+              child: Text(dialogContext.l10n.commonClose),
             ),
           ],
         ),
@@ -205,15 +222,15 @@ class FamilyPage extends StatelessWidget {
     final code = await Navigator.of(context).push<String>(
       MaterialPageRoute<String>(
         builder: (_) => HareupTextEntryPage(
-          title: '초대 코드 입력',
-          label: '초대 코드',
-          submitLabel: '가입 요청',
+          title: context.l10n.familyEnterCodeAction,
+          label: context.l10n.familyInviteCodeLabel,
+          submitLabel: context.l10n.familyJoinRequestAction,
           maxLength: 12,
           capitalization: TextCapitalization.characters,
           normalize: (value) => value.toUpperCase(),
           validate: (value) => FamilyCubit.isValidInviteCode(value)
               ? null
-              : '6~12자의 영문 또는 숫자를 입력해 주세요.',
+              : context.l10n.familyInviteCodeInvalid,
         ),
       ),
     );
@@ -221,8 +238,8 @@ class FamilyPage extends StatelessWidget {
     final requestedGroupId = await cubit.requestToJoin(code);
     if (!context.mounted) return;
     final message = requestedGroupId != null
-        ? '가입 요청을 보냈습니다. 관리자의 승인을 기다려 주세요.'
-        : _stringCommandFailure(cubit.joinCommand.state);
+        ? context.l10n.familyJoinRequested
+        : _stringCommandFailure(context, cubit.joinCommand.state);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
@@ -233,8 +250,8 @@ class FamilyPage extends StatelessWidget {
     final approved = await cubit.approve(request.id);
     if (!context.mounted) return;
     final message = approved
-        ? '가입을 승인했습니다.'
-        : _commandFailure(cubit.approveCommand.state);
+        ? context.l10n.familyApproved
+        : _commandFailure(context, cubit.approveCommand.state);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
@@ -245,16 +262,16 @@ class FamilyPage extends StatelessWidget {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('${member.displayName} 제거'),
-        content: const Text('이 구성원의 가족 정보 접근이 중단됩니다.'),
+        title: Text(context.l10n.familyRemoveMemberTooltip(member.displayName)),
+        content: Text(context.l10n.familyRemoveConfirm),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('취소'),
+            child: Text(context.dsL10n.cancelAction),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('제거'),
+            child: Text(context.l10n.familyRemoveAction),
           ),
         ],
       ),
@@ -263,18 +280,24 @@ class FamilyPage extends StatelessWidget {
     final removed = await cubit.remove(member.id);
     if (!context.mounted) return;
     final message = removed
-        ? '구성원을 제거했습니다.'
-        : _commandFailure(cubit.removeCommand.state);
+        ? context.l10n.familyMemberRemoved
+        : _commandFailure(context, cubit.removeCommand.state);
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  static String _commandFailure(CommandState<void> state) =>
-      state is CommandFailure<void> ? state.failure.message : '요청을 처리하지 못했습니다.';
+  static String _commandFailure(
+    BuildContext context,
+    CommandState<void> state,
+  ) => state is CommandFailure<void>
+      ? failureDisplayMessage(context, state.failure)
+      : context.l10n.failureUnexpected;
 
-  static String _stringCommandFailure(CommandState<String> state) =>
-      state is CommandFailure<String>
-      ? state.failure.message
-      : '요청을 처리하지 못했습니다.';
+  static String _stringCommandFailure(
+    BuildContext context,
+    CommandState<String> state,
+  ) => state is CommandFailure<String>
+      ? failureDisplayMessage(context, state.failure)
+      : context.l10n.failureUnexpected;
 }

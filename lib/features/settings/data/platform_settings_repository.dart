@@ -33,7 +33,12 @@ class PlatformSettingsRepository implements SettingsRepository {
         ),
       );
     } catch (_) {
-      return const Failure(UnexpectedFailure('앱 정보를 불러오지 못했습니다.'));
+      return const Failure(
+        UnexpectedFailure(
+          '앱 정보를 불러오지 못했습니다.',
+          FailureMessageKeys.settingsLoadFailed,
+        ),
+      );
     }
   }
 
@@ -44,11 +49,21 @@ class PlatformSettingsRepository implements SettingsRepository {
     }
     try {
       if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-        return const Failure(UnexpectedFailure('링크를 열지 못했습니다.'));
+        return const Failure(
+          UnexpectedFailure(
+            '링크를 열지 못했습니다.',
+            FailureMessageKeys.settingsOpenLinkFailed,
+          ),
+        );
       }
       return const Success(null);
     } catch (_) {
-      return const Failure(UnexpectedFailure('링크를 열지 못했습니다.'));
+      return const Failure(
+        UnexpectedFailure(
+          '링크를 열지 못했습니다.',
+          FailureMessageKeys.settingsOpenLinkFailed,
+        ),
+      );
     }
   }
 }

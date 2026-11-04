@@ -4,7 +4,7 @@ const { HttpsError, onCall } = require("firebase-functions/v2/https");
 
 const metaModelApi = defineSecret("META_MODEL_API");
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024;
-const MODEL = "muse-spark-1.3";
+const MODEL = "spark-1.3";
 
 function decodeImage(value, name) {
   if (typeof value !== "string" || value.length === 0) {

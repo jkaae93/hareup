@@ -6,6 +6,7 @@ import 'package:hareup_media/media.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hareup/features/photo_analysis/domain/analysis.dart';
 import 'package:hareup/features/water_bowl/domain/water_bowl.dart';
+import '../../test_support.dart';
 import 'package:hareup/features/water_bowl/domain/water_level.dart';
 import 'package:hareup/features/water_bowl/presentation/water_level_page.dart';
 
@@ -71,6 +72,9 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: WaterLevelPage(
           bowl: bowl,
           photoSource: FakeSource(),

@@ -57,7 +57,7 @@ void main() {
       expect(cubit.state.families, hasLength(1));
       expect(cubit.state.families.single.id, 'new-family');
       expect(cubit.state.families.single.name, '우리 가족');
-      expect(cubit.state.failureMessage, isNull);
+      expect(cubit.state.failure, isNull);
 
       await cubit.close();
     },

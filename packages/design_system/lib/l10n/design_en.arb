@@ -1,0 +1,45 @@
+{
+  "@@locale": "en",
+  "cancelAction": "Cancel",
+  "retryAction": "Try again",
+  "loadingLabel": "Loading",
+  "photoEmpty": "No photo selected.",
+  "photoError": "Cannot display the photo.",
+  "photoBeforeDefault": "Latest photo",
+  "photoAfterDefault": "Comparison photo",
+  "photoCompareTitle": "Compare photos",
+  "photoDefaultWord": "photo",
+  "takePhoto": "Take {prefix}",
+  "@takePhoto": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "choosePhoto": "Choose {prefix}",
+  "@choosePhoto": {
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "removePhoto": "Remove photo",
+  "decreaseCount": "Decrease {label}",
+  "@decreaseCount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "increaseCount": "Increase {label}",
+  "@increaseCount": {
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  }
+}

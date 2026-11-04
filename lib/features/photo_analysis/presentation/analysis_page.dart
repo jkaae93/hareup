@@ -4,6 +4,8 @@ import 'package:hareup_design_system/design_system.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_core/core.dart';
 import 'package:hareup_media/media.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../../records/domain/record.dart';
 import '../domain/analysis.dart';
 import 'analysis_cubit.dart';
@@ -81,12 +83,12 @@ class _AnalysisViewState extends State<_AnalysisView> {
           : await widget.page.photoSource.pickFromGallery();
       if (!mounted) return;
       if (selection is PhotoSelectionFailed) {
-        _message('사진 접근을 확인하고 다시 시도해 주세요.');
+        _message(context.l10n.analysisPhotoAccessRetry);
         return;
       }
       if (selection is! PhotoSelected) return;
       if (await selection.file.length() > 10 * 1024 * 1024) {
-        if (mounted) _message('사진은 10MB 이하여야 합니다.');
+        if (mounted) _message(context.l10n.analysisPhotoTooBig10);
         return;
       }
       final bytes = await selection.file.readAsBytes();
@@ -98,7 +100,7 @@ class _AnalysisViewState extends State<_AnalysisView> {
         });
       }
     } catch (_) {
-      if (mounted) _message('사진을 읽지 못했습니다.');
+      if (mounted) _message(context.l10n.photoReadFailed);
     } finally {
       if (mounted) setState(() => _picking = false);
     }
@@ -106,9 +108,14 @@ class _AnalysisViewState extends State<_AnalysisView> {
 
   void _message(String text) =>
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(text)));
+
+  String _baselinePhotoWord(BuildContext context) =>
+      widget.page.kind == AnalysisKind.water
+      ? context.l10n.waterPurifierPhoto
+      : context.dsL10n.photoBeforeDefault;
   void _analyze() {
     if (_photo == null || _photo!.isEmpty) {
-      _message('비교할 사진을 선택해 주세요.');
+      _message(context.l10n.analysisPhotoCompareRequired);
       return;
     }
     final page = widget.page;
@@ -134,7 +141,9 @@ class _AnalysisViewState extends State<_AnalysisView> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text('${widget.page.targetName} 사진 비교')),
+    appBar: AppBar(
+      title: Text(context.l10n.analysisCompareTitle(widget.page.targetName)),
+    ),
     body: HareupContent(
       child: BlocConsumer<AnalysisCubit, AnalysisState>(
         listener: (context, state) {
@@ -162,11 +171,11 @@ class _AnalysisViewState extends State<_AnalysisView> {
               HareupFormSection(
                 title: widget.page.targetName,
                 description: widget.page.kind == AnalysisKind.water
-                    ? '물그릇 사진 관찰'
-                    : '화장실 사진 관찰',
+                    ? context.l10n.analysisWaterObserve
+                    : context.l10n.analysisLitterObserve,
                 children: [
                   Text(
-                    '${widget.page.kind == AnalysisKind.water ? '정수기 사진' : '기준 사진'} ${widget.page.baseline.version}번째 · ${widget.page.baseline.createdAt.toLocal().toString().substring(0, 16)}',
+                    '${context.l10n.analysisBaselineVersion(_baselinePhotoWord(context), widget.page.baseline.version)} · ${widget.page.baseline.createdAt.toLocal().toString().substring(0, 16)}',
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
@@ -175,8 +184,10 @@ class _AnalysisViewState extends State<_AnalysisView> {
               HareupPhotoComparison(
                 before: widget.page.baseline.photo,
                 after: _photo,
-                beforeLabel:
-                    '${widget.page.kind == AnalysisKind.water ? '정수기 사진' : '기준 사진'} ${widget.page.baseline.version}번째',
+                beforeLabel: context.l10n.analysisBaselineVersion(
+                  _baselinePhotoWord(context),
+                  widget.page.baseline.version,
+                ),
               ),
               HareupPhotoActions(
                 onCamera: busy || !mayPick ? null : () => _pick(true),
@@ -184,10 +195,10 @@ class _AnalysisViewState extends State<_AnalysisView> {
               ),
               const SizedBox(height: HareupSpacing.medium),
               HareupGuidance(
-                title: '사진 촬영 가이드',
+                title: context.l10n.analysisPhotoGuideTitle,
                 message: widget.page.kind == AnalysisKind.water
-                    ? '등록한 정수기 사진과 같은 위치·거리·각도와 충분한 조명에서 정수기 전체가 보이도록 촬영하세요.'
-                    : '기준 사진과 같은 위치·거리·각도와 충분한 조명에서 대상 전체가 보이도록 촬영하세요.',
+                    ? context.l10n.analysisWaterGuide
+                    : context.l10n.analysisLitterGuide,
                 icon: Icons.center_focus_strong,
               ),
               const SizedBox(height: HareupSpacing.medium),
@@ -196,7 +207,7 @@ class _AnalysisViewState extends State<_AnalysisView> {
                   state.stage == AnalysisStage.unavailable)
                 FilledButton(
                   onPressed: busy ? null : _analyze,
-                  child: const Text('사진 분석'),
+                  child: Text(context.l10n.analysisRunAction),
                 ),
               if (state.stage == AnalysisStage.analyzing ||
                   state.stage == AnalysisStage.saving)
@@ -206,13 +217,13 @@ class _AnalysisViewState extends State<_AnalysisView> {
                 ),
               if (state.failure case final failure?)
                 HareupStatusBadge(
-                  label: failure.message,
+                  label: failureDisplayMessage(context, failure),
                   status: HareupStatus.error,
                 ),
-              if (state.outcome case AnalysisUnavailable(:final reason))
+              if (state.outcome case final AnalysisUnavailable unavailable)
                 HareupGuidance(
-                  title: '분석할 수 없습니다',
-                  message: reason,
+                  title: context.l10n.analysisCannotTitle,
+                  message: analysisReasonDisplayMessage(context, unavailable),
                   icon: Icons.info_outline,
                 ),
               if (state.modelResponse case final response?
@@ -220,12 +231,14 @@ class _AnalysisViewState extends State<_AnalysisView> {
                 TextButton.icon(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(
-                      builder: (_) =>
-                          HareupTextDisplayPage(title: '모델 응답', text: response),
+                      builder: (_) => HareupTextDisplayPage(
+                        title: context.l10n.analysisModelResponseTitle,
+                        text: response,
+                      ),
                     ),
                   ),
                   icon: const Icon(Icons.description_outlined),
-                  label: const Text('모델 응답 보기'),
+                  label: Text(context.l10n.analysisViewModelResponse),
                 ),
               if (state.stage == AnalysisStage.review ||
                   state.stage == AnalysisStage.saving ||
@@ -235,15 +248,13 @@ class _AnalysisViewState extends State<_AnalysisView> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Text(
-                        '분석 결과',
+                        context.l10n.analysisResultTitle,
                         style: Theme.of(context).textTheme.headlineMedium,
                       ),
                       const SizedBox(height: HareupSpacing.small),
-                      const HareupPanel(
+                      HareupPanel(
                         color: HareupColors.surfaceContainer,
-                        child: Text(
-                          '사진 분석 결과는 추정 정보이며 진단이 아닙니다. 필요한 경우 수의사와 상담하세요.',
-                        ),
+                        child: Text(context.l10n.analysisDisclaimerVet),
                       ),
                       if (state.outcome case WaterOutcome(
                         :final percent,
@@ -251,18 +262,18 @@ class _AnalysisViewState extends State<_AnalysisView> {
                       )) ...[
                         const SizedBox(height: HareupSpacing.medium),
                         HareupMetric(
-                          label: '기준 대비 감소율 (추정)',
+                          label: context.l10n.analysisDecreaseRate,
                           value: '$percent%',
                         ),
                         if (volumeMl != null) ...[
                           const SizedBox(height: HareupSpacing.small),
                           HareupMetric(
-                            label: '감소량 (추정)',
+                            label: context.l10n.analysisDecreaseVolume,
                             value: '$volumeMl mL',
                           ),
                         ],
                         const SizedBox(height: HareupSpacing.small),
-                        const Text('보충, 증발, 쏟음 또는 공동 사용의 영향을 받을 수 있습니다.'),
+                        Text(context.l10n.analysisWaterCaveat),
                       ],
                       if (state.outcome case LitterOutcome(
                         :final urineCount,
@@ -273,28 +284,36 @@ class _AnalysisViewState extends State<_AnalysisView> {
                       )) ...[
                         const SizedBox(height: HareupSpacing.medium),
                         HareupMetric(
-                          label: '원래 추정',
-                          value: '소변 $urineCount회 · 대변 $stoolCount회',
+                          label: context.l10n.analysisOriginalEstimate,
+                          value: context.l10n.analysisLitterCounts(
+                            urineCount,
+                            stoolCount,
+                          ),
                         ),
                         const SizedBox(height: HareupSpacing.medium),
                         if (uncertain)
-                          const Text('흔적이 겹치거나 가려져 정확하지 않을 수 있습니다.'),
+                          Text(context.l10n.analysisUncertainTraces),
                         if (observedQuantity != null)
-                          Text('관찰량: $observedQuantity $quantityUnit (추정)'),
+                          Text(
+                            context.l10n.analysisObservedQuantity(
+                              observedQuantity,
+                              quantityUnit ?? '',
+                            ),
+                          ),
                         HareupCountField(
                           controller: _urine,
                           enabled: state.stage == AnalysisStage.review,
-                          label: '확인한 소변 흔적 수',
+                          label: context.l10n.analysisConfirmedUrine,
                         ),
                         const SizedBox(height: HareupSpacing.small),
                         HareupCountField(
                           controller: _stool,
                           enabled: state.stage == AnalysisStage.review,
-                          label: '확인한 대변 흔적 수',
+                          label: context.l10n.analysisConfirmedStool,
                         ),
                         const SizedBox(height: HareupSpacing.medium),
                         Text(
-                          '이용 고양이 선택',
+                          context.l10n.analysisSelectCat,
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         const SizedBox(height: HareupSpacing.small),
@@ -303,7 +322,7 @@ class _AnalysisViewState extends State<_AnalysisView> {
                           runSpacing: HareupSpacing.small,
                           children: [
                             ChoiceChip(
-                              label: const Text('미확인'),
+                              label: Text(context.l10n.analysisCatUnknown),
                               avatar: const Icon(Icons.help_outline),
                               selected: _selectedCatId == null,
                               onSelected: state.stage == AnalysisStage.review
@@ -326,7 +345,7 @@ class _AnalysisViewState extends State<_AnalysisView> {
                       ],
                       const SizedBox(height: HareupSpacing.medium),
                       Text(
-                        '특이사항 메모',
+                        context.l10n.recordsMemoTitle,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: HareupSpacing.small),
@@ -336,9 +355,9 @@ class _AnalysisViewState extends State<_AnalysisView> {
                         minLines: 2,
                         maxLines: 4,
                         maxLength: 500,
-                        decoration: const InputDecoration(
-                          labelText: '특이사항 (선택)',
-                          hintText: '관찰한 내용을 기록해 주세요.',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.recordsMemoField,
+                          hintText: context.l10n.recordsMemoHint,
                         ),
                       ),
                       const SizedBox(height: HareupSpacing.medium),
@@ -357,7 +376,7 @@ class _AnalysisViewState extends State<_AnalysisView> {
                                     stool == null ||
                                     urine < 0 ||
                                     stool < 0)) {
-                              _message('0 이상의 횟수를 입력해 주세요.');
+                              _message(context.l10n.recordsCountInvalid);
                               return;
                             }
                             context.read<AnalysisCubit>().save(
@@ -367,11 +386,11 @@ class _AnalysisViewState extends State<_AnalysisView> {
                               notes: _notes.text,
                             );
                           },
-                          child: const Text('기록 저장'),
+                          child: Text(context.l10n.recordsSaveAction),
                         ),
                       if (state.stage == AnalysisStage.saved)
-                        const HareupStatusBadge(
-                          label: '기록을 저장했습니다.',
+                        HareupStatusBadge(
+                          label: context.l10n.recordsSavedBadge,
                           status: HareupStatus.success,
                         ),
                     ],

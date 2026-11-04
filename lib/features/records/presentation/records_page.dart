@@ -1,12 +1,17 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hareup_core/core.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:hareup_design_system/design_system.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_presentation_core/load_view.dart';
 import 'package:hareup_presentation_core/presentation_core.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../../photo_analysis/domain/analysis.dart';
 import '../domain/record.dart';
+import 'widgets/observation_chart.dart';
 
 class RecordsCubit extends LoadCubit<List<ObservationRecord>> {
   RecordsCubit(this.repository, this.groupId, this.targetId);
@@ -35,16 +40,21 @@ class RecordsPage extends StatelessWidget {
         RecordsCubit(context.read<RecordsRepository>(), groupId, targetId)
           ..load(),
     child: Scaffold(
-      appBar: AppBar(title: Text('$targetName 기록')),
+      appBar: AppBar(title: Text(context.l10n.recordsTargetTitle(targetName))),
       body: HareupContent(
         child: BlocBuilder<RecordsCubit, LoadState<List<ObservationRecord>>>(
           builder: (context, state) => LoadView<List<ObservationRecord>>(
             state: state,
-            emptyMessage: '저장된 분석 기록이 없습니다.',
+            emptyMessage: context.l10n.recordsEmptyMessage,
             onRetry: () => context.read<RecordsCubit>().load(),
             builder: (context, records) {
               final ordered = [...records]
                 ..sort((a, b) => b.analyzedAt.compareTo(a.analyzedAt));
+              final litterRecords = ordered
+                  .where((record) => record.outcome is LitterOutcome)
+                  .toList()
+                  .reversed
+                  .toList();
               return ListView.builder(
                 padding: const EdgeInsets.fromLTRB(
                   HareupSpacing.pageMargin,
@@ -52,9 +62,36 @@ class RecordsPage extends StatelessWidget {
                   HareupSpacing.pageMargin,
                   HareupSpacing.large,
                 ),
-                itemCount: ordered.length,
+                itemCount: ordered.length + (litterRecords.isEmpty ? 0 : 1),
                 itemBuilder: (context, index) {
-                  final record = ordered[index];
+                  if (litterRecords.isNotEmpty && index == 0) {
+                    return ObservationChart(
+                      title: context.l10n.recordsLitterTrendTitle,
+                      labels: [
+                        context.l10n.recordsUrineLabel,
+                        context.l10n.recordsStoolLabel,
+                      ],
+                      unit: context.l10n.recordsCountUnit,
+                      points: [
+                        for (final record in litterRecords)
+                          ObservationChartPoint(
+                            time: record.analyzedAt.toLocal(),
+                            values: [
+                              (record.correctedUrineCount ??
+                                      (record.outcome as LitterOutcome)
+                                          .urineCount)
+                                  .toDouble(),
+                              (record.correctedStoolCount ??
+                                      (record.outcome as LitterOutcome)
+                                          .stoolCount)
+                                  .toDouble(),
+                            ],
+                          ),
+                      ],
+                    );
+                  }
+                  final record =
+                      ordered[index - (litterRecords.isEmpty ? 0 : 1)];
                   return _RecordCard(
                     record: record,
                     repository: context.read<RecordsRepository>(),
@@ -90,13 +127,13 @@ class _GroupRecordsPageState extends State<GroupRecordsPage> {
     create: (_) =>
         _GroupRecordsCubit(widget.repository, widget.groupId)..load(),
     child: Scaffold(
-      appBar: AppBar(title: const Text('기록 목록')),
+      appBar: AppBar(title: Text(context.l10n.navRecords)),
       body: HareupContent(
         child:
             BlocBuilder<_GroupRecordsCubit, LoadState<List<ObservationRecord>>>(
               builder: (context, state) => LoadView<List<ObservationRecord>>(
                 state: state,
-                emptyMessage: '저장된 분석 기록이 없습니다.',
+                emptyMessage: context.l10n.recordsEmptyMessage,
                 onRetry: () => context.read<_GroupRecordsCubit>().load(),
                 builder: (context, records) {
                   final ordered =
@@ -115,31 +152,31 @@ class _GroupRecordsPageState extends State<GroupRecordsPage> {
                     ),
                     children: [
                       Text(
-                        '건강 체크 타임라인',
+                        context.l10n.recordsTimelineTitle,
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: HareupSpacing.small),
-                      const HareupGuidance(
-                        title: '사진 분석 기록',
-                        message: '사진 분석 결과는 추정 정보이며 진단이 아닙니다.',
+                      HareupGuidance(
+                        title: context.l10n.recordsHistoryTitle,
+                        message: context.l10n.recordsEstimateDisclaimer,
                       ),
                       const SizedBox(height: HareupSpacing.medium),
                       Wrap(
                         spacing: HareupSpacing.small,
                         children: [
                           FilterChip(
-                            label: const Text('전체'),
+                            label: Text(context.l10n.recordsFilterAll),
                             selected: _filter == null,
                             onSelected: (_) => setState(() => _filter = null),
                           ),
                           FilterChip(
-                            label: const Text('물그릇'),
+                            label: Text(context.l10n.navWater),
                             selected: _filter == AnalysisKind.water,
                             onSelected: (_) =>
                                 setState(() => _filter = AnalysisKind.water),
                           ),
                           FilterChip(
-                            label: const Text('화장실'),
+                            label: Text(context.l10n.navLitter),
                             selected: _filter == AnalysisKind.litter,
                             onSelected: (_) =>
                                 setState(() => _filter = AnalysisKind.litter),
@@ -150,8 +187,8 @@ class _GroupRecordsPageState extends State<GroupRecordsPage> {
                       if (ordered.isEmpty)
                         EmptyNotice(
                           message: records.isEmpty
-                              ? '저장된 분석 기록이 없습니다.'
-                              : '선택한 종류의 기록이 없습니다.',
+                              ? context.l10n.recordsEmptyMessage
+                              : context.l10n.recordsEmptyFiltered,
                         ),
                       for (var i = 0; i < ordered.length; i++) ...[
                         if (i == 0 ||
@@ -161,7 +198,7 @@ class _GroupRecordsPageState extends State<GroupRecordsPage> {
                             )) ...[
                           const SizedBox(height: HareupSpacing.medium),
                           Text(
-                            _dateLabel(ordered[i].analyzedAt),
+                            _dateLabel(context, ordered[i].analyzedAt),
                             style: Theme.of(context).textTheme.titleMedium,
                           ),
                           const SizedBox(height: HareupSpacing.small),
@@ -188,9 +225,9 @@ class _GroupRecordsPageState extends State<GroupRecordsPage> {
     return x.year == y.year && x.month == y.month && x.day == y.day;
   }
 
-  String _dateLabel(DateTime date) {
+  String _dateLabel(BuildContext context, DateTime date) {
     final local = date.toLocal();
-    return '${local.year}년 ${local.month}월 ${local.day}일';
+    return context.l10n.recordsDateLabel(local.year, local.month, local.day);
   }
 }
 
@@ -236,7 +273,7 @@ class _RecordCard extends StatelessWidget {
                 width: 88,
                 child: HareupPhotoPreview(
                   bytes: record.request.photo,
-                  label: '기록 사진',
+                  label: context.l10n.recordsPhotoLabel,
                   height: 88,
                   fit: BoxFit.cover,
                 ),
@@ -257,10 +294,15 @@ class _RecordCard extends StatelessWidget {
                     ),
                     const SizedBox(height: HareupSpacing.small),
                     Text(switch (record.outcome) {
-                      WaterOutcome(:final percent) => '물 감소율 $percent% (추정)',
+                      WaterOutcome(:final percent) =>
+                        context.l10n.recordsWaterSummary(percent),
                       LitterOutcome(:final urineCount, :final stoolCount) =>
-                        '소변 ${record.correctedUrineCount ?? urineCount}회 · 대변 ${record.correctedStoolCount ?? stoolCount}회',
-                      AnalysisUnavailable() => '분석 불가',
+                        context.l10n.analysisLitterCounts(
+                          record.correctedUrineCount ?? urineCount,
+                          record.correctedStoolCount ?? stoolCount,
+                        ),
+                      AnalysisUnavailable() =>
+                        context.l10n.recordsUnavailableShort,
                     }, style: Theme.of(context).textTheme.bodyMedium),
                   ],
                 ),
@@ -299,6 +341,61 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
     if (updated != null && mounted) setState(() => record = updated);
   }
 
+  String _shareText(BuildContext context) {
+    final l10n = context.l10n;
+    return recordShareText(
+      record,
+      RecordShareStrings(
+        header: l10n.shareHeader,
+        analyzedAt: l10n.recordsAnalyzedAt,
+        waterPercent: l10n.shareWaterPercent,
+        waterVolume: l10n.shareWaterVolume,
+        confirmedUrine: l10n.shareConfirmedUrine,
+        confirmedStool: l10n.shareConfirmedStool,
+        unavailable: (unavailable) => l10n.recordsUnavailableWith(
+          analysisReasonDisplayMessage(context, unavailable),
+        ),
+        memo: l10n.shareMemo,
+        disclaimer: l10n.recordsEstimateDisclaimer,
+      ),
+    );
+  }
+
+  Future<void> _share(BuildContext buttonContext) async {
+    final box = buttonContext.findRenderObject() as RenderBox?;
+    final text = _shareText(context);
+    try {
+      await SharePlus.instance.share(
+        ShareParams(
+          text: text,
+          sharePositionOrigin: box == null
+              ? null
+              : box.localToGlobal(Offset.zero) & box.size,
+        ),
+      );
+    } catch (_) {
+      // Browsers without the Web Share API fall back to the clipboard.
+      if (kIsWeb) {
+        try {
+          await Clipboard.setData(ClipboardData(text: text));
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(context.l10n.recordsShareCopied)),
+            );
+          }
+          return;
+        } catch (_) {
+          // Fall through to the generic failure notice below.
+        }
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.recordsShareFailed)),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: Text(record.request.targetName)),
@@ -314,12 +411,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             children: [
               HareupStatusBadge(
                 label: record.request.kind == AnalysisKind.water
-                    ? '물그릇 사진 관찰'
-                    : '화장실 사진 관찰',
+                    ? context.l10n.analysisWaterObserve
+                    : context.l10n.analysisLitterObserve,
               ),
               const SizedBox(height: HareupSpacing.small),
               Text(
-                '기준 사진 ${record.request.baseline.version}번째 · ${record.request.baseline.createdAt.toLocal().toString().substring(0, 16)}',
+                '${context.l10n.litterBaselineVersion(record.request.baseline.version)} · ${record.request.baseline.createdAt.toLocal().toString().substring(0, 16)}',
                 style: Theme.of(context).textTheme.bodyMedium,
               ),
             ],
@@ -329,18 +426,23 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
             HareupPhotoComparison(
               before: record.request.baseline.photo,
               after: record.request.photo,
-              beforeLabel: '기준 사진 ${record.request.baseline.version}번째',
+              beforeLabel: context.l10n.litterBaselineVersion(
+                record.request.baseline.version,
+              ),
             )
           else
             HareupPanel(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('등록 사진', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    context.l10n.recordsRegistrationPhoto,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: HareupSpacing.small),
                   HareupPhotoPreview(
                     bytes: record.request.photo,
-                    label: '등록 사진',
+                    label: context.l10n.recordsRegistrationPhoto,
                   ),
                 ],
               ),
@@ -348,7 +450,12 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: HareupSpacing.small),
             child: Text(
-              '사진 선택: ${record.request.photoSelectedAt.toLocal().toString().substring(0, 16)}',
+              context.l10n.recordsPhotoSelectedAt(
+                record.request.photoSelectedAt.toLocal().toString().substring(
+                  0,
+                  16,
+                ),
+              ),
               style: Theme.of(context).textTheme.bodySmall,
             ),
           ),
@@ -357,33 +464,47 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '분석 결과',
+                  context.l10n.analysisResultTitle,
                   style: Theme.of(context).textTheme.headlineMedium,
                 ),
                 const SizedBox(height: HareupSpacing.small),
                 Text(
-                  '분석 시각: ${record.analyzedAt.toLocal().toString().substring(0, 16)}',
+                  context.l10n.recordsAnalyzedAt(
+                    record.analyzedAt.toLocal().toString().substring(0, 16),
+                  ),
                 ),
-                const HareupPanel(
+                HareupPanel(
                   color: HareupColors.surfaceContainer,
-                  child: Text('관찰 결과는 추정 정보이며 진단이 아닙니다.'),
+                  child: Text(context.l10n.recordsOutcomeDisclaimer),
                 ),
-                if (record.outcome case AnalysisUnavailable(:final reason))
-                  Text('분석 불가: $reason'),
+                if (record.outcome case final AnalysisUnavailable unavailable)
+                  Text(
+                    context.l10n.recordsUnavailableWith(
+                      analysisReasonDisplayMessage(context, unavailable),
+                    ),
+                  ),
                 if (record.outcome case WaterOutcome(
                   :final percent,
                   :final volumeMl,
                   :final confidencePercent,
                 )) ...[
-                  HareupMetric(label: '물 감소율 (추정)', value: '$percent%'),
+                  HareupMetric(
+                    label: context.l10n.recordsWaterPercentLabel,
+                    value: '$percent%',
+                  ),
                   const SizedBox(height: HareupSpacing.small),
                   if (confidencePercent != null)
-                    Text('모델 자체 평가 신뢰도 $confidencePercent% (실제 정확도 아님)'),
+                    Text(
+                      context.l10n.recordsModelConfidence(confidencePercent),
+                    ),
                   if (volumeMl != null) ...[
-                    HareupMetric(label: '물 감소량 (추정)', value: '$volumeMl mL'),
+                    HareupMetric(
+                      label: context.l10n.recordsWaterVolumeLabel,
+                      value: '$volumeMl mL',
+                    ),
                     const SizedBox(height: HareupSpacing.small),
                   ],
-                  const Text('물그릇 기준의 변화이며 개별 반려동물의 음수량은 아닙니다.'),
+                  Text(context.l10n.recordsWaterCaveat),
                 ],
                 if (record.outcome case LitterOutcome(
                   :final urineCount,
@@ -393,23 +514,41 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
                   :final quantityUnit,
                 )) ...[
                   HareupMetric(
-                    label: '원래 추정',
-                    value: '소변 $urineCount회 · 대변 $stoolCount회',
+                    label: context.l10n.analysisOriginalEstimate,
+                    value: context.l10n.analysisLitterCounts(
+                      urineCount,
+                      stoolCount,
+                    ),
                   ),
                   const SizedBox(height: HareupSpacing.small),
                   HareupMetric(
-                    label: '사용자 확인',
-                    value:
-                        '소변 ${record.correctedUrineCount ?? urineCount}회 · 대변 ${record.correctedStoolCount ?? stoolCount}회',
+                    label: context.l10n.recordsUserConfirmed,
+                    value: context.l10n.analysisLitterCounts(
+                      record.correctedUrineCount ?? urineCount,
+                      record.correctedStoolCount ?? stoolCount,
+                    ),
                   ),
                   const SizedBox(height: HareupSpacing.small),
-                  if (uncertain) const Text('흔적이 겹치거나 가려져 정확하지 않을 수 있습니다.'),
+                  if (uncertain) Text(context.l10n.analysisUncertainTraces),
                   if (observedQuantity != null)
-                    Text('관찰량 $observedQuantity $quantityUnit (추정)'),
+                    Text(
+                      context.l10n.recordsObservedQuantity(
+                        observedQuantity,
+                        quantityUnit ?? '',
+                      ),
+                    ),
                   Text(
-                    record.selectedCatId == null
-                        ? '고양이: 미확인'
-                        : '고양이: ${record.request.eligibleCats.where((cat) => cat.id == record.selectedCatId).map((cat) => cat.name).firstOrNull ?? '확인 불가'}',
+                    context.l10n.recordsCatWith(
+                      record.selectedCatId == null
+                          ? context.l10n.analysisCatUnknown
+                          : record.request.eligibleCats
+                                    .where(
+                                      (cat) => cat.id == record.selectedCatId,
+                                    )
+                                    .map((cat) => cat.name)
+                                    .firstOrNull ??
+                                context.l10n.recordsCatUnverified,
+                    ),
                   ),
                 ],
               ],
@@ -417,41 +556,25 @@ class _RecordDetailPageState extends State<RecordDetailPage> {
           ),
           if (record.notes.isNotEmpty) ...[
             const SizedBox(height: HareupSpacing.medium),
-            HareupFormSection(title: '특이사항 메모', children: [Text(record.notes)]),
+            HareupFormSection(
+              title: context.l10n.recordsMemoTitle,
+              children: [Text(record.notes)],
+            ),
           ],
           const SizedBox(height: HareupSpacing.large),
           LayoutBuilder(
             builder: (context, constraints) {
               final share = Builder(
                 builder: (buttonContext) => OutlinedButton.icon(
-                  onPressed: () async {
-                    try {
-                      final box =
-                          buttonContext.findRenderObject() as RenderBox?;
-                      await SharePlus.instance.share(
-                        ShareParams(
-                          text: recordShareText(record),
-                          sharePositionOrigin: box == null
-                              ? null
-                              : box.localToGlobal(Offset.zero) & box.size,
-                        ),
-                      );
-                    } catch (_) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('공유 화면을 열지 못했습니다.')),
-                        );
-                      }
-                    }
-                  },
+                  onPressed: () => _share(buttonContext),
                   icon: const Icon(Icons.ios_share),
-                  label: const Text('기록 공유하기'),
+                  label: Text(context.l10n.recordsShareAction),
                 ),
               );
               final edit = FilledButton.icon(
                 onPressed: _edit,
                 icon: const Icon(Icons.edit_outlined),
-                label: const Text('기록 수정'),
+                label: Text(context.l10n.recordsEditAction),
               );
               if (constraints.maxWidth < 300 ||
                   MediaQuery.textScalerOf(context).scale(1) > 1.2) {
@@ -530,7 +653,7 @@ class _RecordEditPageState extends State<_RecordEditPage> {
         (urine == null || stool == null || urine < 0 || stool < 0)) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('0 이상의 횟수를 입력해 주세요.')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.recordsCountInvalid)));
       return;
     }
     final updated = widget.record.withAnnotations(
@@ -540,9 +663,9 @@ class _RecordEditPageState extends State<_RecordEditPage> {
       notes: _notes.text,
     );
     if (!validRecordAnnotations(updated)) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('수정한 내용을 확인해 주세요.')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.recordsInvalidAnnotations)),
+      );
       return;
     }
     setState(() => _busy = true);
@@ -561,9 +684,9 @@ class _RecordEditPageState extends State<_RecordEditPage> {
       case Success<void>():
         Navigator.pop(context, updated);
       case Failure<void>(:final failure):
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(failure.message)));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(failureDisplayMessage(context, failure))),
+        );
     }
   }
 
@@ -571,41 +694,41 @@ class _RecordEditPageState extends State<_RecordEditPage> {
   Widget build(BuildContext context) => PopScope(
     canPop: !_busy,
     child: HareupFormPage(
-      title: const Text('기록 수정'),
+      title: Text(context.l10n.recordsEditAction),
       content: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const HareupGuidance(
-              title: '보호자 관찰 확인',
-              message: '원래 분석 결과는 유지되며 확인한 값과 메모만 수정됩니다.',
+            HareupGuidance(
+              title: context.l10n.recordsGuardianCheckTitle,
+              message: context.l10n.recordsGuardianCheckMessage,
             ),
             const SizedBox(height: HareupSpacing.medium),
             HareupFormSection(
-              title: '확인한 관찰',
+              title: context.l10n.recordsConfirmedSection,
               children: [
                 if (widget.record.outcome is LitterOutcome) ...[
                   HareupCountField(
                     controller: _urine,
-                    label: '확인한 소변 흔적 수',
+                    label: context.l10n.analysisConfirmedUrine,
                     enabled: !_busy,
                   ),
                   const SizedBox(height: HareupSpacing.small),
                   HareupCountField(
                     controller: _stool,
-                    label: '확인한 대변 흔적 수',
+                    label: context.l10n.analysisConfirmedStool,
                     enabled: !_busy,
                   ),
                   const SizedBox(height: HareupSpacing.medium),
                   Text(
-                    '이용 고양이 선택',
+                    context.l10n.analysisSelectCat,
                     style: Theme.of(context).textTheme.titleMedium,
                   ),
                   Wrap(
                     spacing: HareupSpacing.small,
                     children: [
                       ChoiceChip(
-                        label: const Text('미확인'),
+                        label: Text(context.l10n.analysisCatUnknown),
                         selected: _catId == null,
                         onSelected: _busy
                             ? null
@@ -629,7 +752,9 @@ class _RecordEditPageState extends State<_RecordEditPage> {
                   minLines: 2,
                   maxLines: 4,
                   maxLength: 500,
-                  decoration: const InputDecoration(labelText: '특이사항 (선택)'),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.recordsMemoField,
+                  ),
                 ),
               ],
             ),
@@ -639,9 +764,12 @@ class _RecordEditPageState extends State<_RecordEditPage> {
       actions: [
         TextButton(
           onPressed: _busy ? null : () => Navigator.pop(context),
-          child: const Text('취소'),
+          child: Text(context.dsL10n.cancelAction),
         ),
-        FilledButton(onPressed: _busy ? null : _save, child: const Text('저장')),
+        FilledButton(
+          onPressed: _busy ? null : _save,
+          child: Text(context.l10n.commonSave),
+        ),
       ],
     ),
   );

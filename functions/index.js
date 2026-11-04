@@ -67,3 +67,5 @@ Object.assign(exports, require("./family"));
 Object.assign(exports, require("./meta_analysis"));
 
 Object.assign(exports, require("./water_levels"));
+
+Object.assign(exports, require("./health_chat"));

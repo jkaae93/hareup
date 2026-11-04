@@ -7,6 +7,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_core/core.dart';
 import 'package:hareup_design_system/design_system.dart';
 
+import '../../l10n/l10n.dart';
+import 'locale_cubit.dart';
+import 'locale_store.dart';
 import '../features/auth/domain/auth_repository.dart';
 import '../features/auth/presentation/auth_cubit.dart';
 import '../features/auth/presentation/auth_gate.dart';
@@ -14,6 +17,8 @@ import '../features/family/data/unavailable_family_repository.dart';
 import '../features/family/domain/family.dart';
 import '../features/family/presentation/family_access_page.dart';
 import '../features/home/presentation/home_page.dart';
+import '../features/health_chat/data/firebase_health_chat_repository.dart';
+import '../features/health_chat/domain/health_chat.dart';
 import '../features/litter_box/data/firestore_litter_box_repository.dart';
 import '../features/litter_box/data/memory_litter_box_repository.dart';
 import '../features/litter_box/presentation/litter_box_cubit.dart';
@@ -41,6 +46,8 @@ class HareupApp extends StatelessWidget {
     this.storage,
     this.functions,
     this.analysisRuntime,
+    this.localeStore,
+    this.initialLocale,
   });
 
   /// Optional repository overrides keep previews and isolated UI harnesses simple.
@@ -52,34 +59,56 @@ class HareupApp extends StatelessWidget {
   final FirebaseFunctions? functions;
   final AnalysisRuntime? analysisRuntime;
 
+  /// Persists the user's language override. Tests and previews may omit it.
+  final LocaleStore? localeStore;
+
+  /// Stored override loaded before the app starts. Null follows the device.
+  final Locale? initialLocale;
+
   @override
-  Widget build(BuildContext context) => BlocProvider(
-    create: (_) =>
-        AuthCubit(authRepository ?? const _UnavailableAuth())..start(),
-    child: MaterialApp(
-      title: '하릅',
-      theme: HareupTheme.light,
-      home: AuthGate(
-        signedInBuilder: (context, _) => familyRepository == null
-            ? _GroupHome(
-                groupId: analysisRuntime?.groupId ?? 'local-development',
-                repository: repository,
-                familyRepository: const UnavailableFamilyRepository(),
-                firestore: firestore,
-                storage: storage,
-                functions: functions,
-                analysisRuntime: analysisRuntime,
-              )
-            : _FamilySelection(
-                familyRepository: familyRepository!,
-                repository: repository,
-                firestore: firestore,
-                storage: storage,
-                functions: functions,
-              ),
+  Widget build(BuildContext context) {
+    final store = localeStore ?? MemoryLocaleStore(initialLocale);
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => LocaleCubit(store, initialLocale)),
+        BlocProvider(
+          create: (_) =>
+              AuthCubit(authRepository ?? const _UnavailableAuth())..start(),
+        ),
+      ],
+      child: BlocBuilder<LocaleCubit, Locale?>(
+        builder: (context, locale) => MaterialApp(
+          onGenerateTitle: (context) => context.l10n.appTitle,
+          theme: HareupTheme.light,
+          locale: locale,
+          supportedLocales: appSupportedLocales,
+          localizationsDelegates: [
+            ...AppLocalizations.localizationsDelegates,
+            DesignLocalizations.delegate,
+          ],
+          home: AuthGate(
+            signedInBuilder: (context, _) => familyRepository == null
+                ? _GroupHome(
+                    groupId: analysisRuntime?.groupId ?? 'local-development',
+                    repository: repository,
+                    familyRepository: const UnavailableFamilyRepository(),
+                    firestore: firestore,
+                    storage: storage,
+                    functions: functions,
+                    analysisRuntime: analysisRuntime,
+                  )
+                : _FamilySelection(
+                    familyRepository: familyRepository!,
+                    repository: repository,
+                    firestore: firestore,
+                    storage: storage,
+                    functions: functions,
+                  ),
+          ),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _FamilySelection extends StatefulWidget {
@@ -166,6 +195,15 @@ class _GroupHome extends StatelessWidget {
         );
     return MultiRepositoryProvider(
       providers: [
+        RepositoryProvider<HealthChatRepository>(
+          create: (_) => useFirebase && functions != null
+              ? FirebaseHealthChatRepository(
+                  firestore: firestore!,
+                  storage: storage!,
+                  functions: functions!,
+                )
+              : const UnavailableHealthChatRepository(),
+        ),
         RepositoryProvider<FamilyRepository>.value(value: familyRepository),
         RepositoryProvider<RecordsRepository>(
           create: (_) => useFirebase
@@ -236,17 +274,32 @@ class _UnavailableAuth implements AuthRepository {
     required String email,
     required String password,
     String? displayName,
-  }) async => const Failure(RequestFailure('Firebase 인증 설정을 사용할 수 없습니다.'));
+  }) async => const Failure(
+    RequestFailure(
+      'Firebase 인증 설정을 사용할 수 없습니다.',
+      FailureMessageKeys.appAuthUnavailable,
+    ),
+  );
 
   @override
   Future<Result<void>> signIn({
     required String email,
     required String password,
-  }) async => const Failure(RequestFailure('Firebase 인증 설정을 사용할 수 없습니다.'));
+  }) async => const Failure(
+    RequestFailure(
+      'Firebase 인증 설정을 사용할 수 없습니다.',
+      FailureMessageKeys.appAuthUnavailable,
+    ),
+  );
 
   @override
   Future<Result<void>> signInWithProvider(String providerId) async =>
-      const Failure(RequestFailure('Firebase 인증 설정을 사용할 수 없습니다.'));
+      const Failure(
+        RequestFailure(
+          'Firebase 인증 설정을 사용할 수 없습니다.',
+          FailureMessageKeys.appAuthUnavailable,
+        ),
+      );
 
   @override
   Future<Result<void>> signOut() async => const Success(null);

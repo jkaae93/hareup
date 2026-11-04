@@ -59,17 +59,56 @@ bool sameRecordAnnotations(ObservationRecord a, ObservationRecord b) =>
     a.selectedCatId == b.selectedCatId &&
     a.notes == b.notes;
 
+/// Localized labels for [recordShareText], built at the presentation
+/// boundary so domain code stays locale-free.
+class RecordShareStrings {
+  const RecordShareStrings({
+    required this.header,
+    required this.analyzedAt,
+    required this.waterPercent,
+    required this.waterVolume,
+    required this.confirmedUrine,
+    required this.confirmedStool,
+    required this.unavailable,
+    required this.memo,
+    required this.disclaimer,
+  });
+
+  final String header;
+  final String Function(String timestamp) analyzedAt;
+  final String Function(double percent) waterPercent;
+  final String Function(double volumeMl) waterVolume;
+  final String Function(int count) confirmedUrine;
+  final String Function(int count) confirmedStool;
+  final String Function(AnalysisUnavailable unavailable) unavailable;
+  final String Function(String notes) memo;
+  final String disclaimer;
+
+  /// Korean labels preserving the historical share format.
+  factory RecordShareStrings.korean() => RecordShareStrings(
+    header: '[하릅 관찰 기록]',
+    analyzedAt: (timestamp) => '분석 시각: $timestamp',
+    waterPercent: (percent) => '물 감소율: $percent% (추정)',
+    waterVolume: (volumeMl) => '물 감소량: $volumeMl mL (추정)',
+    confirmedUrine: (count) => '확인한 소변: $count회',
+    confirmedStool: (count) => '확인한 대변: $count회',
+    unavailable: (unavailable) => '분석 불가: ${unavailable.reason}',
+    memo: (notes) => '메모: $notes',
+    disclaimer: '사진 분석 결과는 추정 정보이며 진단이 아닙니다.',
+  );
+}
+
 /// Human-readable summary for an explicitly initiated share action.
-String recordShareText(ObservationRecord record) {
+String recordShareText(ObservationRecord record, RecordShareStrings strings) {
   final outcome = switch (record.outcome) {
     WaterOutcome(:final percent, :final volumeMl) =>
-      '물 감소율: $percent% (추정)${volumeMl == null ? '' : '\n물 감소량: $volumeMl mL (추정)'}',
+      '${strings.waterPercent(percent)}${volumeMl == null ? '' : '\n${strings.waterVolume(volumeMl)}'}',
     LitterOutcome(:final urineCount, :final stoolCount) =>
-      '확인한 소변: ${record.correctedUrineCount ?? urineCount}회\n확인한 대변: ${record.correctedStoolCount ?? stoolCount}회',
-    AnalysisUnavailable(:final reason) => '분석 불가: $reason',
+      '${strings.confirmedUrine(record.correctedUrineCount ?? urineCount)}\n${strings.confirmedStool(record.correctedStoolCount ?? stoolCount)}',
+    final AnalysisUnavailable unavailable => strings.unavailable(unavailable),
   };
   final timestamp = record.analyzedAt.toLocal().toString().substring(0, 16);
-  return '[하릅 관찰 기록]\n${record.request.targetName}\n분석 시각: $timestamp\n$outcome${record.notes.isEmpty ? '' : '\n메모: ${record.notes}'}\n사진 분석 결과는 추정 정보이며 진단이 아닙니다.';
+  return '${strings.header}\n${record.request.targetName}\n${strings.analyzedAt(timestamp)}\n$outcome${record.notes.isEmpty ? '' : '\n${strings.memo(record.notes)}'}\n${strings.disclaimer}';
 }
 
 abstract interface class RecordsRepository {

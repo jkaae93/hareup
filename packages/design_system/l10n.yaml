@@ -1,0 +1,5 @@
+arb-dir: lib/l10n
+template-arb-file: design_ko.arb
+output-localization-file: design_localizations.dart
+output-class: DesignLocalizations
+synthetic-package: false

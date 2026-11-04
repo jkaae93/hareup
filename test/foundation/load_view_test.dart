@@ -10,6 +10,9 @@ void main() {
     var retries = 0;
     Widget view(LoadState<int> state) => MaterialApp(
       theme: testTheme,
+      localizationsDelegates: testLocalizationsDelegates,
+      locale: const Locale('ko'),
+      supportedLocales: appSupportedLocales,
       home: Scaffold(
         body: LoadView<int>(
           state: state,

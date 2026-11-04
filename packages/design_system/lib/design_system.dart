@@ -2,6 +2,15 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
+import 'l10n/design_localizations.dart';
+
+export 'l10n/design_localizations.dart';
+
+/// Short accessor for the design system localizations.
+extension DesignLocalizationsX on BuildContext {
+  DesignLocalizations get dsL10n => DesignLocalizations.of(this)!;
+}
+
 abstract final class HareupColors {
   static const primary100 = Color(0xffcce5ff);
   static const primary300 = Color(0xff93ccff);
@@ -414,20 +423,45 @@ class HareupSectionHeader extends StatelessWidget {
     required this.title,
     this.actionLabel,
     this.onAction,
+    this.alignActionToEnd = false,
+    this.actionTooltip,
   });
   final String title;
   final String? actionLabel;
   final VoidCallback? onAction;
+  final bool alignActionToEnd;
+  final String? actionTooltip;
   @override
-  Widget build(BuildContext context) => Wrap(
-    crossAxisAlignment: WrapCrossAlignment.center,
-    spacing: HareupSpacing.small,
-    children: [
-      Text(title, style: Theme.of(context).textTheme.headlineMedium),
-      if (actionLabel != null && onAction != null)
-        TextButton(onPressed: onAction, child: Text(actionLabel!)),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final action = actionLabel != null && onAction != null
+        ? TextButton(onPressed: onAction, child: Text(actionLabel!))
+        : null;
+    final labeledAction = action == null || actionTooltip == null
+        ? action
+        : Tooltip(message: actionTooltip!, child: action);
+    if (alignActionToEnd && labeledAction != null) {
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
+          const SizedBox(width: HareupSpacing.small),
+          labeledAction,
+        ],
+      );
+    }
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: HareupSpacing.small,
+      children: [
+        Text(title, style: Theme.of(context).textTheme.headlineMedium),
+        ?labeledAction,
+      ],
+    );
+  }
 }
 
 /// A consistent surface for related content, sized to its available width.
@@ -599,12 +633,12 @@ class HareupCountField extends StatelessWidget {
         ),
       ),
       IconButton(
-        tooltip: '$label 줄이기',
+        tooltip: context.dsL10n.decreaseCount(label),
         onPressed: enabled ? () => _change(-1) : null,
         icon: const Icon(Icons.remove_circle_outline),
       ),
       IconButton(
-        tooltip: '$label 늘리기',
+        tooltip: context.dsL10n.increaseCount(label),
         onPressed: enabled ? () => _change(1) : null,
         icon: const Icon(Icons.add_circle_outline),
       ),
@@ -619,14 +653,18 @@ class HareupFormPage extends StatelessWidget {
     required this.title,
     required this.content,
     required this.actions,
+    this.appBarActions,
+    this.equalActionWidths = false,
   });
   final Widget title;
   final Widget content;
   final List<Widget> actions;
+  final List<Widget>? appBarActions;
+  final bool equalActionWidths;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: title),
+    appBar: AppBar(title: title, actions: appBarActions),
     body: Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
@@ -670,7 +708,10 @@ class HareupFormPage extends StatelessWidget {
                       children: [
                         Expanded(child: actions.first),
                         const SizedBox(width: HareupSpacing.small),
-                        Expanded(flex: 2, child: actions.last),
+                        Expanded(
+                          flex: equalActionWidths ? 1 : 2,
+                          child: actions.last,
+                        ),
                       ],
                     );
                   }
@@ -704,6 +745,7 @@ class HareupTextEntryPage extends StatefulWidget {
     this.capitalization = TextCapitalization.none,
     this.normalize,
     this.validate,
+    this.initialValue = '',
   });
   final String title;
   final String label;
@@ -715,14 +757,21 @@ class HareupTextEntryPage extends StatefulWidget {
   final TextCapitalization capitalization;
   final String Function(String)? normalize;
   final String? Function(String)? validate;
+  final String initialValue;
 
   @override
   State<HareupTextEntryPage> createState() => _HareupTextEntryPageState();
 }
 
 class _HareupTextEntryPageState extends State<HareupTextEntryPage> {
-  final _controller = TextEditingController();
+  late final TextEditingController _controller;
   final _form = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue);
+  }
 
   @override
   void dispose() {
@@ -762,7 +811,7 @@ class _HareupTextEntryPageState extends State<HareupTextEntryPage> {
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('취소'),
+        child: Text(context.dsL10n.cancelAction),
       ),
       FilledButton(onPressed: _submit, child: Text(widget.submitLabel)),
     ],
@@ -776,13 +825,15 @@ class HareupStatusBadge extends StatelessWidget {
     super.key,
     required this.label,
     this.status = HareupStatus.neutral,
+    this.icon,
   });
   final String label;
   final HareupStatus status;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
-    final (background, foreground, icon) = switch (status) {
+    final (background, foreground, defaultIcon) = switch (status) {
       HareupStatus.neutral => (
         HareupColors.neutral200,
         HareupColors.primary700,
@@ -822,7 +873,7 @@ class HareupStatusBadge extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 16, color: foreground),
+                Icon(icon ?? defaultIcon, size: 16, color: foreground),
                 const SizedBox(width: HareupSpacing.extraSmall),
                 Flexible(
                   child: Text(
@@ -849,15 +900,15 @@ class HareupPhotoPreview extends StatelessWidget {
     required this.label,
     this.height = 140,
     this.fit = BoxFit.contain,
-    this.emptyMessage = '선택된 사진이 없습니다.',
-    this.errorMessage = '사진을 표시할 수 없습니다.',
+    this.emptyMessage,
+    this.errorMessage,
   });
   final Uint8List? bytes;
   final String label;
   final double height;
   final BoxFit fit;
-  final String emptyMessage;
-  final String errorMessage;
+  final String? emptyMessage;
+  final String? errorMessage;
 
   @override
   Widget build(BuildContext context) => Semantics(
@@ -870,12 +921,20 @@ class HareupPhotoPreview extends StatelessWidget {
         height: height,
         color: Theme.of(context).colorScheme.surfaceContainerLow,
         child: bytes == null
-            ? Center(child: Text(emptyMessage, textAlign: TextAlign.center))
+            ? Center(
+                child: Text(
+                  emptyMessage ?? context.dsL10n.photoEmpty,
+                  textAlign: TextAlign.center,
+                ),
+              )
             : Image.memory(
                 bytes!,
                 fit: fit,
                 errorBuilder: (_, _, _) => Center(
-                  child: Text(errorMessage, textAlign: TextAlign.center),
+                  child: Text(
+                    errorMessage ?? context.dsL10n.photoError,
+                    textAlign: TextAlign.center,
+                  ),
                 ),
               ),
       ),
@@ -889,23 +948,30 @@ class HareupPhotoComparison extends StatelessWidget {
     super.key,
     required this.before,
     required this.after,
-    this.beforeLabel = '기준 사진',
-    this.afterLabel = '비교 사진',
+    this.beforeLabel,
+    this.afterLabel,
   });
   final Uint8List? before;
   final Uint8List? after;
-  final String beforeLabel;
-  final String afterLabel;
+  final String? beforeLabel;
+  final String? afterLabel;
 
   @override
   Widget build(BuildContext context) => HareupPanel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('사진 비교', style: Theme.of(context).textTheme.titleMedium),
+        Text(
+          context.dsL10n.photoCompareTitle,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
         const SizedBox(height: HareupSpacing.small),
         LayoutBuilder(
           builder: (context, constraints) {
+            final resolvedBefore =
+                beforeLabel ?? context.dsL10n.photoBeforeDefault;
+            final resolvedAfter =
+                afterLabel ?? context.dsL10n.photoAfterDefault;
             final stack =
                 constraints.maxWidth < 260 ||
                 MediaQuery.textScalerOf(context).scale(1) > 1.5;
@@ -920,18 +986,18 @@ class HareupPhotoComparison extends StatelessWidget {
             if (stack) {
               return Column(
                 children: [
-                  photo(beforeLabel, before),
+                  photo(resolvedBefore, before),
                   const SizedBox(height: HareupSpacing.medium),
-                  photo(afterLabel, after),
+                  photo(resolvedAfter, after),
                 ],
               );
             }
             return Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Expanded(child: photo(beforeLabel, before)),
+                Expanded(child: photo(resolvedBefore, before)),
                 const SizedBox(width: HareupSpacing.small),
-                Expanded(child: photo(afterLabel, after)),
+                Expanded(child: photo(resolvedAfter, after)),
               ],
             );
           },
@@ -947,12 +1013,12 @@ class HareupPhotoActions extends StatelessWidget {
     required this.onCamera,
     required this.onGallery,
     this.onRemove,
-    this.prefix = '사진',
+    this.prefix,
   });
   final VoidCallback? onCamera;
   final VoidCallback? onGallery;
   final VoidCallback? onRemove;
-  final String prefix;
+  final String? prefix;
 
   @override
   Widget build(BuildContext context) {
@@ -961,17 +1027,18 @@ class HareupPhotoActions extends StatelessWidget {
       foregroundColor: HareupColors.primary700,
       minimumSize: const Size(48, 48),
     );
+    final resolvedPrefix = prefix ?? context.dsL10n.photoDefaultWord;
     final camera = TextButton.icon(
       style: style,
       onPressed: onCamera,
       icon: const Icon(Icons.photo_camera_outlined),
-      label: Text('$prefix 촬영'),
+      label: Text(context.dsL10n.takePhoto(resolvedPrefix)),
     );
     final gallery = TextButton.icon(
       style: style,
       onPressed: onGallery,
       icon: const Icon(Icons.photo_library_outlined),
-      label: Text('$prefix 선택'),
+      label: Text(context.dsL10n.choosePhoto(resolvedPrefix)),
     );
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -995,7 +1062,10 @@ class HareupPhotoActions extends StatelessWidget {
               gallery,
             ],
             if (onRemove != null)
-              TextButton(onPressed: onRemove, child: const Text('사진 삭제')),
+              TextButton(
+                onPressed: onRemove,
+                child: Text(context.dsL10n.removePhoto),
+              ),
           ],
         );
       },
@@ -1045,7 +1115,10 @@ class ErrorNotice extends StatelessWidget {
           const SizedBox(height: HareupSpacing.small),
           Text(message, textAlign: TextAlign.center),
           const SizedBox(height: HareupSpacing.small),
-          TextButton(onPressed: onRetry, child: const Text('다시 시도')),
+          TextButton(
+            onPressed: onRetry,
+            child: Text(context.dsL10n.retryAction),
+          ),
         ],
       ),
     ),
@@ -1059,12 +1132,14 @@ class HareupCard extends StatelessWidget {
     this.subtitle,
     this.leading,
     this.onTap,
+    this.trailing,
     this.isThreeLine = false,
   });
   final String title;
   final String? subtitle;
   final Widget? leading;
   final VoidCallback? onTap;
+  final Widget? trailing;
   final bool isThreeLine;
   @override
   Widget build(BuildContext context) => Card(
@@ -1073,7 +1148,8 @@ class HareupCard extends StatelessWidget {
       title: Text(title),
       subtitle: subtitle == null ? null : Text(subtitle!),
       isThreeLine: isThreeLine,
-      trailing: onTap == null ? null : const Icon(Icons.chevron_right),
+      trailing:
+          trailing ?? (onTap == null ? null : const Icon(Icons.chevron_right)),
       onTap: onTap,
     ),
   );
@@ -1083,6 +1159,9 @@ class HareupLoading extends StatelessWidget {
   const HareupLoading({super.key});
   @override
   Widget build(BuildContext context) => Center(
-    child: Semantics(label: '불러오는 중', child: const CircularProgressIndicator()),
+    child: Semantics(
+      label: context.dsL10n.loadingLabel,
+      child: const CircularProgressIndicator(),
+    ),
   );
 }

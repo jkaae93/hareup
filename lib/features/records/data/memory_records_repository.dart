@@ -39,13 +39,23 @@ class MemoryRecordsRepository implements RecordsRepository {
             notes: updated.notes,
           ),
         )) {
-      return const Failure(RequestFailure('수정한 내용을 확인해 주세요.'));
+      return const Failure(
+        RequestFailure(
+          '수정한 내용을 확인해 주세요.',
+          FailureMessageKeys.recordsInvalidAnnotations,
+        ),
+      );
     }
     final key = (original.request.groupId, original.request.id);
     final current = _items[key];
     if (current == null) return const Failure(NotFoundFailure());
     if (!sameRecordAnnotations(current, original)) {
-      return const Failure(RequestFailure('기록이 변경되었습니다. 다시 불러온 후 수정해 주세요.'));
+      return const Failure(
+        RequestFailure(
+          '기록이 변경되었습니다. 다시 불러온 후 수정해 주세요.',
+          FailureMessageKeys.recordsChanged,
+        ),
+      );
     }
     _items[key] = current.withAnnotations(
       urineCount: updated.correctedUrineCount,
@@ -63,7 +73,12 @@ class MemoryRecordsRepository implements RecordsRepository {
     if (existing != null) {
       return _same(existing, record)
           ? const Success(null)
-          : const Failure(RequestFailure('이미 저장된 분석입니다.'));
+          : const Failure(
+              RequestFailure(
+                '이미 저장된 분석입니다.',
+                FailureMessageKeys.recordsAlreadySaved,
+              ),
+            );
     }
     _items[key] = record;
     return const Success(null);

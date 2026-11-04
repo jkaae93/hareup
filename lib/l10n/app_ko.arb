@@ -1,0 +1,2140 @@
+{
+  "@@locale": "ko",
+  "appTitle": "하릅",
+  "@appTitle": {
+    "description": "Application title shown by the operating system."
+  },
+  "failureUnexpected": "요청을 처리하지 못했습니다.",
+  "@failureUnexpected": {
+    "description": "Default message for unexpected failures."
+  },
+  "failureNetwork": "네트워크 연결을 확인해 주세요.",
+  "@failureNetwork": {
+    "description": "Default message for network failures."
+  },
+  "failureSerialization": "데이터를 읽을 수 없습니다.",
+  "@failureSerialization": {
+    "description": "Default message for serialization failures."
+  },
+  "failureTimeout": "요청 시간이 초과되었습니다. 다시 시도해 주세요.",
+  "@failureTimeout": {
+    "description": "Default message for timeout failures."
+  },
+  "failureCancelled": "요청이 취소되었습니다.",
+  "@failureCancelled": {
+    "description": "Default message for cancelled operations."
+  },
+  "failureAuthorization": "접근 권한을 확인해 주세요.",
+  "@failureAuthorization": {
+    "description": "Default message for authorization failures."
+  },
+  "failureNotFound": "요청한 정보를 찾을 수 없습니다.",
+  "@failureNotFound": {
+    "description": "Default message for not-found failures."
+  },
+  "failureServer": "서버에 문제가 발생했습니다. 다시 시도해 주세요.",
+  "@failureServer": {
+    "description": "Default message for server failures."
+  },
+  "failureRequest": "요청을 확인해 주세요.",
+  "@failureRequest": {
+    "description": "Default message for invalid-request failures."
+  },
+  "mainWebSetupMessage": "웹 Firebase 설정이 필요합니다. Firebase Console에서 Web 앱을 등록한 뒤 FIREBASE_WEB_API_KEY와 FIREBASE_WEB_APP_ID를 전달해 실행해 주세요.",
+  "@mainWebSetupMessage": {
+    "description": "Guidance shown when web Firebase options are missing."
+  },
+  "settingsLanguageTitle": "언어",
+  "@settingsLanguageTitle": {
+    "description": "Title for the language section in settings."
+  },
+  "settingsLanguageSystem": "기기 설정 따르기",
+  "@settingsLanguageSystem": {
+    "description": "Language option that follows the device language."
+  },
+  "authProviderUnavailable": "로그인 제공자를 사용할 수 없습니다.",
+  "@authProviderUnavailable": {
+    "description": "Shown when the requested login provider is not configured."
+  },
+  "authCancelled": "로그인을 취소했습니다.",
+  "@authCancelled": {
+    "description": "Shown when the user cancels federated sign-in."
+  },
+  "authInvalidEmail": "이메일 주소 형식이 올바르지 않습니다.",
+  "@authInvalidEmail": {
+    "description": "Shown for malformed email addresses."
+  },
+  "authEmailInUse": "이미 가입된 이메일입니다. 로그인해 주세요.",
+  "@authEmailInUse": {
+    "description": "Shown when signing up with a registered email."
+  },
+  "authWeakPassword": "비밀번호를 6자 이상 입력해 주세요.",
+  "@authWeakPassword": {
+    "description": "Shown for weak passwords."
+  },
+  "authInvalidCredential": "이메일 또는 비밀번호를 확인해 주세요.",
+  "@authInvalidCredential": {
+    "description": "Shown for wrong email or password."
+  },
+  "authTooManyRequests": "시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.",
+  "@authTooManyRequests": {
+    "description": "Shown after too many sign-in attempts."
+  },
+  "authNotEnabled": "Firebase Console에서 이 로그인 제공자를 활성화해 주세요.",
+  "@authNotEnabled": {
+    "description": "Shown when the provider is disabled in Firebase."
+  },
+  "appAuthUnavailable": "Firebase 인증 설정을 사용할 수 없습니다.",
+  "@appAuthUnavailable": {
+    "description": "Shown when no auth repository is configured."
+  },
+  "recordsInvalidAnnotations": "수정한 내용을 확인해 주세요.",
+  "@recordsInvalidAnnotations": {
+    "description": "Shown for invalid record annotations."
+  },
+  "recordsChanged": "기록이 변경되었습니다. 다시 불러온 후 수정해 주세요.",
+  "@recordsChanged": {
+    "description": "Shown on conflicting record edits."
+  },
+  "recordsAlreadySaved": "이미 저장된 분석입니다.",
+  "@recordsAlreadySaved": {
+    "description": "Shown for duplicate analysis saves."
+  },
+  "waterAlreadyRegistered": "이미 등록된 물그릇입니다.",
+  "@waterAlreadyRegistered": {
+    "description": "Shown for duplicate water bowls."
+  },
+  "waterHistoryUnavailable": "수위 기록을 불러올 수 없습니다.",
+  "@waterHistoryUnavailable": {
+    "description": "Shown when level history is unavailable."
+  },
+  "litterAlreadyRegistered": "이미 등록된 화장실입니다.",
+  "@litterAlreadyRegistered": {
+    "description": "Shown for duplicate litter boxes."
+  },
+  "settingsLoadFailed": "앱 정보를 불러오지 못했습니다.",
+  "@settingsLoadFailed": {
+    "description": "Shown when settings info fails to load."
+  },
+  "settingsOpenLinkFailed": "링크를 열지 못했습니다.",
+  "@settingsOpenLinkFailed": {
+    "description": "Shown when an external link fails to open."
+  },
+  "familyUnavailable": "가족 공유는 계정과 서버 연결 후 사용할 수 있습니다.",
+  "@familyUnavailable": {
+    "description": "Shown when family sharing is unavailable."
+  },
+  "familyLoadFailed": "가족 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.",
+  "@familyLoadFailed": {
+    "description": "Shown when family info fails to load."
+  },
+  "familyServerError": "서버에 문제가 있습니다.",
+  "@familyServerError": {
+    "description": "Shown for family server errors."
+  },
+  "analysisPhotoRequired": "필요한 사진을 선택해 주세요.",
+  "@analysisPhotoRequired": {
+    "description": "Shown when required photos are missing."
+  },
+  "analysisPhotoTooLarge": "각 사진은 3MB 이하의 JPEG, PNG 또는 WebP여야 합니다.",
+  "@analysisPhotoTooLarge": {
+    "description": "Shown for oversized or mistyped photos."
+  },
+  "analysisBaselineRequired": "최근 사진과 비교할 사진을 확인해 주세요.",
+  "@analysisBaselineRequired": {
+    "description": "Shown when analysis photos are invalid."
+  },
+  "analysisEachPhotoTooLarge": "분석할 사진은 각각 3MB 이하여야 합니다.",
+  "@analysisEachPhotoTooLarge": {
+    "description": "Shown when an analysis photo is too large."
+  },
+  "analysisUnsupportedType": "JPEG, PNG 또는 WebP 사진만 분석할 수 있습니다.",
+  "@analysisUnsupportedType": {
+    "description": "Shown for unsupported photo types."
+  },
+  "analysisInvalidCounts": "수정한 횟수를 확인해 주세요.",
+  "@analysisInvalidCounts": {
+    "description": "Shown for invalid edited counts."
+  },
+  "analysisUnreliableWater": "물 감소율을 신뢰할 수 없어 분석할 수 없습니다.",
+  "@analysisUnreliableWater": {
+    "description": "Reason when water analysis is unreliable."
+  },
+  "analysisConfidenceUnknown": "분석 신뢰도를 확인할 수 없습니다.",
+  "@analysisConfidenceUnknown": {
+    "description": "Reason when confidence is unknown."
+  },
+  "analysisUnreliableLitter": "배설 흔적을 신뢰할 수 없어 분석할 수 없습니다.",
+  "@analysisUnreliableLitter": {
+    "description": "Reason when litter analysis is unreliable."
+  },
+  "analysisUnknownOutcome": "분석 결과 유형을 확인할 수 없습니다.",
+  "@analysisUnknownOutcome": {
+    "description": "Reason for unknown outcome types."
+  },
+  "analysisServiceUnavailable": "사진 분석 서비스가 아직 준비되지 않았습니다.",
+  "@analysisServiceUnavailable": {
+    "description": "Reason when the analysis service is unavailable."
+  },
+  "storagePhotoNotFound": "저장된 사진 파일을 찾지 못했습니다. 사진 저장소 설정을 확인해 주세요.",
+  "@storagePhotoNotFound": {
+    "description": "Shown when a stored photo is missing."
+  },
+  "storageBucketMissing": "사진 저장소가 설정되지 않았습니다. Firebase Console에서 Storage 버킷을 생성해 주세요.",
+  "@storageBucketMissing": {
+    "description": "Shown when the Storage bucket is missing."
+  },
+  "selectionDeleteTitle": "선택한 {count}개를 삭제할까요?",
+  "@selectionDeleteTitle": {"placeholders": {"count": {"type": "int"}}},
+  "selectionDeleteAction": "선택한 {count}개 삭제",
+  "@selectionDeleteAction": {"placeholders": {"count": {"type": "int"}}},
+  "commonDelete": "삭제",
+  "@commonDelete": {
+    "description": "Label for delete buttons."
+  },
+  "targetDeleteTitle": "{name} 삭제",
+  "@targetDeleteTitle": {
+    "description": "Title for target deletion dialogs.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "targetDeleteMessage": "목록에서 삭제할까요? 기존 사진과 관찰 기록은 보관됩니다. 삭제는 가족 관리자만 할 수 있습니다.",
+  "@targetDeleteMessage": {
+    "description": "Confirmation message for target deletion."
+  },
+  "recordsChartDescription": "각 막대는 한 번의 관찰 결과입니다. 오래된 기록부터 표시합니다.",
+  "@recordsChartDescription": {
+    "description": "Description for observation charts."
+  },
+  "recordsChartMaximumText": "최대 {text}",
+  "@recordsChartMaximumText": {
+    "description": "Maximum label for observation charts.",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsValueWithUnit": "{value}{unit}",
+  "@recordsValueWithUnit": {
+    "description": "Formats a chart value with its unit.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsCountUnit": "회",
+  "@recordsCountUnit": {
+    "description": "Unit for litter counts."
+  },
+  "recordsChecking": "기록 확인 중",
+  "@recordsChecking": {
+    "description": "Status while checking records."
+  },
+  "recordsLoadFailed": "기록을 불러오지 못했습니다.",
+  "@recordsLoadFailed": {
+    "description": "Status when records fail to load."
+  },
+  "recordsEmpty": "분석 기록 없음",
+  "@recordsEmpty": {
+    "description": "Status when no analysis records exist."
+  },
+  "recordsWaterSummary": "물 감소율 {percent}% (추정)",
+  "@recordsWaterSummary": {
+    "description": "One-line water outcome summary.",
+    "placeholders": {
+      "percent": {
+        "type": "double"
+      }
+    }
+  },
+  "recordsLitterSummary": "소변 {urine}회 · 대변 {stool}회 (추정)",
+  "@recordsLitterSummary": {
+    "description": "One-line litter outcome summary.",
+    "placeholders": {
+      "urine": {
+        "type": "int"
+      },
+      "stool": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsUnavailableShort": "분석 불가",
+  "@recordsUnavailableShort": {
+    "description": "Short label for unavailable analysis."
+  },
+  "recordsRecentWith": "최근 기록 · {summary}",
+  "@recordsRecentWith": {
+    "description": "Latest record line with a summary.",
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "authSignUpSubtitle": "함께 돌보는 가족을 위한 계정을 만들어 주세요.",
+  "@authSignUpSubtitle": {
+    "description": "Subtitle on the sign-up form."
+  },
+  "authSignInSubtitle": "매일 사진으로 기록하고 함께 살피는 반려동물 건강 케어",
+  "@authSignInSubtitle": {
+    "description": "Subtitle on the sign-in form."
+  },
+  "authContinueWithGoogle": "Google로 계속",
+  "@authContinueWithGoogle": {
+    "description": "Label for Google sign-in."
+  },
+  "authContinueWithApple": "Apple로 계속",
+  "@authContinueWithApple": {
+    "description": "Label for Apple sign-in."
+  },
+  "authContinueWithKakao": "카카오로 계속",
+  "@authContinueWithKakao": {
+    "description": "Label for Kakao sign-in."
+  },
+  "authOrEmail": "또는 이메일로 계속",
+  "@authOrEmail": {
+    "description": "Divider text between provider and email sign-in."
+  },
+  "authNameLabel": "이름 (선택)",
+  "@authNameLabel": {
+    "description": "Label for the optional name field."
+  },
+  "authEmailLabel": "이메일",
+  "@authEmailLabel": {
+    "description": "Label for the email field."
+  },
+  "authEmailInvalid": "이메일 주소를 확인해 주세요.",
+  "@authEmailInvalid": {
+    "description": "Validation error for email fields."
+  },
+  "authPasswordLabel": "비밀번호",
+  "@authPasswordLabel": {
+    "description": "Label for the password field."
+  },
+  "authSignUpAction": "가입하기",
+  "@authSignUpAction": {
+    "description": "Label for the sign-up button."
+  },
+  "authSignInAction": "로그인",
+  "@authSignInAction": {
+    "description": "Label for the sign-in button."
+  },
+  "authHaveAccount": "이미 계정이 있나요? 로그인",
+  "@authHaveAccount": {
+    "description": "Link to switch to sign-in."
+  },
+  "authNeedAccount": "계정이 없나요? 가입하기",
+  "@authNeedAccount": {
+    "description": "Link to switch to sign-up."
+  },
+  "authRecheckSession": "세션 다시 확인",
+  "@authRecheckSession": {
+    "description": "Button to recheck the auth session."
+  },
+  "petManageTitle": "반려동물 관리",
+  "@petManageTitle": {
+    "description": "Title for the pet management page."
+  },
+  "petAddAction": "반려동물 추가",
+  "@petAddAction": {
+    "description": "Label for adding a pet."
+  },
+  "petEmptyMessage": "등록된 반려동물이 없습니다.\n반려동물을 추가해 주세요.",
+  "@petEmptyMessage": {
+    "description": "Empty message for the pet list."
+  },
+  "petSpeciesCat": "고양이",
+  "@petSpeciesCat": {
+    "description": "Label for cats."
+  },
+  "petSpeciesDog": "강아지",
+  "@petSpeciesDog": {
+    "description": "Label for dogs."
+  },
+  "petAgeMonths": "{age}개월",
+  "@petAgeMonths": {
+    "description": "Pet age in months.",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "petSexFemale": "암컷",
+  "@petSexFemale": {
+    "description": "Label for female pets."
+  },
+  "petSexMale": "수컷",
+  "@petSexMale": {
+    "description": "Label for male pets."
+  },
+  "petSexUnknown": "성별 모름",
+  "@petSexUnknown": {
+    "description": "Label for unknown pet sex."
+  },
+  "petDeleteMessage": "반려동물을 삭제하시겠어요? 연결된 기록의 보관 정책은 아직 정해지지 않았습니다.",
+  "@petDeleteMessage": {
+    "description": "Confirmation message for pet deletion."
+  },
+  "commonSave": "저장",
+  "@commonSave": {
+    "description": "Label for save buttons."
+  },
+  "petPhotoTooLarge": "사진은 10MB 이하로 선택해 주세요.",
+  "@petPhotoTooLarge": {
+    "description": "Notice when a pet photo is too large."
+  },
+  "petPhotoPermissionDenied": "사진 접근 권한을 확인해 주세요. 사진 없이도 저장할 수 있습니다.",
+  "@petPhotoPermissionDenied": {
+    "description": "Notice when photo permission is denied."
+  },
+  "petPhotoUnavailable": "사진을 가져오지 못했습니다. 다시 시도해 주세요.",
+  "@petPhotoUnavailable": {
+    "description": "Notice when a photo cannot be fetched."
+  },
+  "petPhotoReadFailed": "사진을 읽지 못했습니다. 다시 선택해 주세요.",
+  "@petPhotoReadFailed": {
+    "description": "Notice when a photo cannot be read."
+  },
+  "petEditTitle": "반려동물 수정",
+  "@petEditTitle": {
+    "description": "Title for editing a pet."
+  },
+  "petPhotoLabel": "반려동물 사진",
+  "@petPhotoLabel": {
+    "description": "Label for pet photos."
+  },
+  "petPhotoHint": "선택한 사진은 반려동물 프로필에 표시됩니다.",
+  "@petPhotoHint": {
+    "description": "Hint under pet photo actions."
+  },
+  "petNameLabel": "이름",
+  "@petNameLabel": {
+    "description": "Label for the pet name field."
+  },
+  "petNameRequired": "이름을 입력해 주세요.",
+  "@petNameRequired": {
+    "description": "Validation error for empty names."
+  },
+  "petSpeciesLabel": "종류",
+  "@petSpeciesLabel": {
+    "description": "Label for the species field."
+  },
+  "petAgeLabel": "나이 (개월, 선택)",
+  "@petAgeLabel": {
+    "description": "Label for the age field."
+  },
+  "petAgeInvalid": "0 이상의 개월 수를 입력해 주세요.",
+  "@petAgeInvalid": {
+    "description": "Validation error for pet age."
+  },
+  "petSexLabel": "성별 (선택)",
+  "@petSexLabel": {
+    "description": "Label for the sex field."
+  },
+  "petSexUnspecified": "미입력",
+  "@petSexUnspecified": {
+    "description": "Option for unspecified sex."
+  },
+  "petSexNotKnown": "모름",
+  "@petSexNotKnown": {
+    "description": "Option for unknown sex."
+  },
+  "petWeightLabel": "체중 (kg, 선택)",
+  "@petWeightLabel": {
+    "description": "Label for the weight field."
+  },
+  "petWeightInvalid": "0보다 큰 체중을 입력해 주세요.",
+  "@petWeightInvalid": {
+    "description": "Validation error for pet weight."
+  },
+  "waterHistoryTitle": "수위 기록",
+  "@waterHistoryTitle": {
+    "description": "Title for the water level history page."
+  },
+  "waterHistoryEmpty": "저장된 수위 기록이 없습니다.",
+  "@waterHistoryEmpty": {
+    "description": "Empty message for water level history."
+  },
+  "waterTrendTitle": "수위 추이",
+  "@waterTrendTitle": {
+    "description": "Title for the water level trend."
+  },
+  "waterTrendPending": "수위 추정치는 정확도 검증 후 표시됩니다.",
+  "@waterTrendPending": {
+    "description": "Notice while level estimates are gated."
+  },
+  "waterTrendNoData": "그래프에 표시할 수위 기록이 없습니다.",
+  "@waterTrendNoData": {
+    "description": "Notice when no level records exist for the chart."
+  },
+  "waterCurrentLevelEstimated": "현재 수위 (추정)",
+  "@waterCurrentLevelEstimated": {
+    "description": "Chart label for the current level."
+  },
+  "waterCurrentLevelValue": "현재 수위 {current}% (추정)",
+  "@waterCurrentLevelValue": {
+    "description": "Card title with the current level.",
+    "placeholders": {
+      "current": {
+        "type": "String"
+      }
+    }
+  },
+  "waterAnalysisDone": "수위 분석 완료",
+  "@waterAnalysisDone": {
+    "description": "Card title when the level value is hidden."
+  },
+  "waterChangeDecrease": "감소",
+  "@waterChangeDecrease": {
+    "description": "Label for a level decrease."
+  },
+  "waterChangeIncrease": "증가",
+  "@waterChangeIncrease": {
+    "description": "Label for a level increase."
+  },
+  "waterChangeNone": "변화 없음",
+  "@waterChangeNone": {
+    "description": "Label for no level change."
+  },
+  "waterChangeWith": " · {change} {value}%p",
+  "@waterChangeWith": {
+    "description": "Level change suffix for history cards.",
+    "placeholders": {
+      "change": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "familySelectTitle": "가족 선택",
+  "@familySelectTitle": {
+    "description": "Title for the family selection page."
+  },
+  "familyNestBadge": "우리 가족 보금자리",
+  "@familyNestBadge": {
+    "description": "Badge on the family selection page."
+  },
+  "familySelectQuestion": "어떤 가족과 함께 돌볼까요?",
+  "@familySelectQuestion": {
+    "description": "Question on the family selection page."
+  },
+  "familySelectHint": "승인된 가족을 선택해 계속하세요.",
+  "@familySelectHint": {
+    "description": "Hint on the family selection page."
+  },
+  "familyEmptyMessage": "참여 중인 가족이 없습니다. 가족을 만들거나 초대 코드를 입력하세요.",
+  "@familyEmptyMessage": {
+    "description": "Empty message for the family list."
+  },
+  "familyPendingTitle": "관리자 승인 대기 중",
+  "@familyPendingTitle": {
+    "description": "Title for the pending approval card."
+  },
+  "familyPendingMessage": "승인 후 새로고침하면 가족을 선택할 수 있습니다.",
+  "@familyPendingMessage": {
+    "description": "Message for the pending approval card."
+  },
+  "familyRefreshStatus": "승인 상태 새로고침",
+  "@familyRefreshStatus": {
+    "description": "Tooltip for refreshing the approval status."
+  },
+  "familyTogetherTitle": "함께 돌보는 가족",
+  "@familyTogetherTitle": {
+    "description": "Title for the family guidance."
+  },
+  "familyTogetherMessage": "가족 구성원이 같은 반려동물의 기록을 함께 확인할 수 있어요.",
+  "@familyTogetherMessage": {
+    "description": "Message for the family guidance."
+  },
+  "familyCreateAction": "가족 만들기",
+  "@familyCreateAction": {
+    "description": "Label for creating a family."
+  },
+  "familyEnterCodeAction": "초대 코드 입력",
+  "@familyEnterCodeAction": {
+    "description": "Label for entering an invite code."
+  },
+  "familyNameLabel": "가족 이름",
+  "@familyNameLabel": {
+    "description": "Label for the family name field."
+  },
+  "familyCreateSubmit": "만들기",
+  "@familyCreateSubmit": {
+    "description": "Submit label for creating a family."
+  },
+  "familyNameRequired": "가족 이름을 입력해 주세요.",
+  "@familyNameRequired": {
+    "description": "Validation error for empty family names."
+  },
+  "familyInviteCodeLabel": "초대 코드",
+  "@familyInviteCodeLabel": {
+    "description": "Label for the invite code field."
+  },
+  "familyJoinRequestAction": "가입 요청",
+  "@familyJoinRequestAction": {
+    "description": "Submit label for join requests."
+  },
+  "familyInviteCodeInvalid": "6~12자의 영문 또는 숫자를 입력해 주세요.",
+  "@familyInviteCodeInvalid": {
+    "description": "Validation error for invite codes."
+  },
+  "settingsTitle": "설정",
+  "@settingsTitle": {
+    "description": "Title for the settings page."
+  },
+  "settingsEmptyMessage": "설정 정보가 없습니다.",
+  "@settingsEmptyMessage": {
+    "description": "Empty message for settings."
+  },
+  "settingsMyAccount": "내 계정",
+  "@settingsMyAccount": {
+    "description": "Fallback label for the account row."
+  },
+  "settingsPetSingle": "등록된 반려동물: {name}",
+  "@settingsPetSingle": {
+    "description": "Label for a single registered pet.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPetCount": "등록된 반려동물 {count}마리",
+  "@settingsPetCount": {
+    "description": "Label for multiple registered pets.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsNotificationTitle": "스마트 안심 알림 설정",
+  "@settingsNotificationTitle": {
+    "description": "Title for the notification section."
+  },
+  "settingsWaterAlertTitle": "물그릇 사진 분석 알림",
+  "@settingsWaterAlertTitle": {
+    "description": "Title for water bowl alerts."
+  },
+  "settingsWaterAlertMessage": "물그릇 관찰 알림 기능은 준비 중입니다.",
+  "@settingsWaterAlertMessage": {
+    "description": "Message for water bowl alerts."
+  },
+  "settingsLitterAlertTitle": "화장실 이상 징후 알림",
+  "@settingsLitterAlertTitle": {
+    "description": "Title for litter alerts."
+  },
+  "settingsLitterAlertMessage": "화장실 관찰 알림 기능은 준비 중입니다.",
+  "@settingsLitterAlertMessage": {
+    "description": "Message for litter alerts."
+  },
+  "settingsFamilySyncTitle": "가족 돌봄 기록 실시간 동기화",
+  "@settingsFamilySyncTitle": {
+    "description": "Title for family sync."
+  },
+  "settingsFamilySyncMessage": "가족 기록은 앱에서 확인할 수 있습니다.",
+  "@settingsFamilySyncMessage": {
+    "description": "Message for family sync."
+  },
+  "settingsSupportTitle": "앱 정보 및 지원",
+  "@settingsSupportTitle": {
+    "description": "Title for the support section."
+  },
+  "settingsNoticeTitle": "공지사항 및 업데이트 소식",
+  "@settingsNoticeTitle": {
+    "description": "Title for the notices row."
+  },
+  "settingsFaqTitle": "자주 묻는 질문 및 문의",
+  "@settingsFaqTitle": {
+    "description": "Title for the FAQ row."
+  },
+  "settingsTermsTitle": "서비스 이용약관",
+  "@settingsTermsTitle": {
+    "description": "Title for the terms row."
+  },
+  "settingsComingSoon": "준비 중",
+  "@settingsComingSoon": {
+    "description": "Label for unavailable features."
+  },
+  "settingsPrivacyTitle": "개인정보처리방침",
+  "@settingsPrivacyTitle": {
+    "description": "Title for the privacy row."
+  },
+  "settingsVersionTitle": "앱 버전 정보",
+  "@settingsVersionTitle": {
+    "description": "Title for the version card."
+  },
+  "settingsSignOutAction": "로그아웃",
+  "@settingsSignOutAction": {
+    "description": "Label for signing out."
+  },
+  "settingsSignOutConfirm": "이 기기에서 로그아웃할까요?",
+  "@settingsSignOutConfirm": {
+    "description": "Confirmation for signing out."
+  },
+  "settingsWithdrawHint": "하릅 회원 탈퇴 · 준비 중",
+  "@settingsWithdrawHint": {
+    "description": "Hint for account deletion."
+  },
+  "waterPhotoTooLarge": "사진은 3MB 이하여야 합니다.",
+  "@waterPhotoTooLarge": {
+    "description": "Notice when a photo exceeds 3 MB."
+  },
+  "photoFetchFailed": "사진을 가져오지 못했습니다.",
+  "@photoFetchFailed": {
+    "description": "Notice when a photo cannot be fetched."
+  },
+  "photoReadFailed": "사진을 읽지 못했습니다.",
+  "@photoReadFailed": {
+    "description": "Notice when a photo cannot be read."
+  },
+  "waterServiceUnavailable": "사진 분석 서비스를 사용할 수 없습니다.",
+  "@waterServiceUnavailable": {
+    "description": "Notice when the analysis service is missing."
+  },
+  "waterSetupPhotosRequired": "정수기의 앞·뒤·위 사진을 모두 선택해 주세요.",
+  "@waterSetupPhotosRequired": {
+    "description": "Notice when setup photos are incomplete."
+  },
+  "waterReadingPhotoRequired": "정수기 사진을 선택해 주세요.",
+  "@waterReadingPhotoRequired": {
+    "description": "Notice when the reading photo is missing."
+  },
+  "waterLevelUnknownWith": "수위를 확인할 수 없습니다. {reason}",
+  "@waterLevelUnknownWith": {
+    "description": "Notice with an unparsed level reason.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "waterSetupTitle": "정수기 초기 설정",
+  "@waterSetupTitle": {
+    "description": "Title for purifier setup."
+  },
+  "waterObserveTitle": "수위 관찰",
+  "@waterObserveTitle": {
+    "description": "Title for level checks."
+  },
+  "waterSetupGuideTitle": "초기 설정 안내",
+  "@waterSetupGuideTitle": {
+    "description": "Guide title for setup."
+  },
+  "waterObserveGuideTitle": "수위 관찰 안내",
+  "@waterObserveGuideTitle": {
+    "description": "Guide title for level checks."
+  },
+  "waterSetupGuideMessage": "정수기의 앞·뒤·위 사진으로 초기 수위를 추정합니다.",
+  "@waterSetupGuideMessage": {
+    "description": "Guide message for setup."
+  },
+  "waterObserveGuideMessage": "정수기 사진 한 장을 올려 직전 수위와 비교합니다.",
+  "@waterObserveGuideMessage": {
+    "description": "Guide message for level checks."
+  },
+  "waterAngleFront": "앞",
+  "@waterAngleFront": {
+    "description": "Label for the front angle."
+  },
+  "waterAngleBack": "뒤",
+  "@waterAngleBack": {
+    "description": "Label for the back angle."
+  },
+  "waterAngleTop": "위",
+  "@waterAngleTop": {
+    "description": "Label for the top angle."
+  },
+  "waterAnglePhoto": "{angle} 사진",
+  "@waterAnglePhoto": {
+    "description": "Photo label for an angle.",
+    "placeholders": {
+      "angle": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPurifierPhoto": "정수기 사진",
+  "@waterPurifierPhoto": {
+    "description": "Label for purifier photos."
+  },
+  "waterSetupAnalyzeAction": "초기 설정 분석",
+  "@waterSetupAnalyzeAction": {
+    "description": "Button to analyze the setup."
+  },
+  "waterAnalyzeAction": "수위 분석",
+  "@waterAnalyzeAction": {
+    "description": "Button to analyze the level."
+  },
+  "commonNotice": "안내",
+  "@commonNotice": {
+    "description": "Title for notice callouts."
+  },
+  "analysisResultTitle": "분석 결과",
+  "@analysisResultTitle": {
+    "description": "Title for analysis results."
+  },
+  "waterCurrentLevelReading": "현재 수위: {value}% (추정)",
+  "@waterCurrentLevelReading": {
+    "description": "Current level reading line.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPreviousLevelReading": "직전 수위: {value}% (추정)",
+  "@waterPreviousLevelReading": {
+    "description": "Previous level reading line.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterDecreasedSince": "이전보다 {value}%p 감소",
+  "@waterDecreasedSince": {
+    "description": "Level decrease line.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterIncreasedSince": "이전보다 {value}%p 증가 (물 보충 가능)",
+  "@waterIncreasedSince": {
+    "description": "Level increase line.",
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterNoChange": "이전과 변화 없음",
+  "@waterNoChange": {
+    "description": "No level change line."
+  },
+  "waterSavedPending": "분석을 저장했습니다. 수위 추정치는 정확도 검증 후 표시됩니다.",
+  "@waterSavedPending": {
+    "description": "Notice after saving while values are gated."
+  },
+  "waterEstimateDisclaimer": "사진 분석 결과는 추정치이며 실제 음수량을 의미하지 않습니다.",
+  "@waterEstimateDisclaimer": {
+    "description": "Disclaimer for water estimates."
+  },
+  "navHome": "홈",
+  "@navHome": {
+    "description": "Label for the home destination."
+  },
+  "navWater": "물그릇",
+  "@navWater": {
+    "description": "Label for the water bowl destination."
+  },
+  "navLitter": "화장실",
+  "@navLitter": {
+    "description": "Label for the litter box destination."
+  },
+  "navCompare": "사진 비교",
+  "@navCompare": {
+    "description": "Label for the photo comparison destination."
+  },
+  "navRecords": "기록 목록",
+  "@navRecords": {
+    "description": "Label for the records destination."
+  },
+  "homeTargetListError": "대상 목록을 확인한 뒤 다시 시도해 주세요.",
+  "@homeTargetListError": {
+    "description": "Error when targets fail to load."
+  },
+  "homePickRecordsTarget": "기록 대상 선택",
+  "@homePickRecordsTarget": {
+    "description": "Title for picking a record target."
+  },
+  "homePickCompareTarget": "사진 비교 대상 선택",
+  "@homePickCompareTarget": {
+    "description": "Title for picking a comparison target."
+  },
+  "homePickRecordsHint": "기록을 확인할 대상을 선택해 주세요.",
+  "@homePickRecordsHint": {
+    "description": "Hint for picking a record target."
+  },
+  "homePickCompareHint": "사진을 비교할 대상을 선택해 주세요.",
+  "@homePickCompareHint": {
+    "description": "Hint for picking a comparison target."
+  },
+  "homeNoTargets": "먼저 물그릇이나 화장실을 등록해 주세요.",
+  "@homeNoTargets": {
+    "description": "Empty message for the target picker."
+  },
+  "homePetError": "반려동물 목록을 확인한 뒤 다시 시도해 주세요.",
+  "@homePetError": {
+    "description": "Error when pets fail to load."
+  },
+  "homeSwitchFamily": "가족 바꾸기",
+  "@homeSwitchFamily": {
+    "description": "Tooltip for switching families."
+  },
+  "homeManageFamily": "가족 관리",
+  "@homeManageFamily": {
+    "description": "Tooltip for managing the family."
+  },
+  "homeHeadline": "함께 돌보는 하루",
+  "@homeHeadline": {
+    "description": "Headline on the home page."
+  },
+  "homeSubheadline": "오늘도 반려동물의 일상을 살펴보세요.",
+  "@homeSubheadline": {
+    "description": "Subheadline on the home page."
+  },
+  "homeLocalPreview": "개발 미리보기 · 데이터는 앱을 종료하면 사라집니다.",
+  "@homeLocalPreview": {
+    "description": "Notice for the local development preview."
+  },
+  "homePetTitle": "반려동물",
+  "@homePetTitle": {
+    "description": "Title for the pet section."
+  },
+  "homePetEmpty": "반려동물을 등록해 주세요.",
+  "@homePetEmpty": {
+    "description": "Empty message for the pet section."
+  },
+  "homePetCount": "반려동물 {count}마리",
+  "@homePetCount": {
+    "description": "Pet count line.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeEditAction": "수정",
+  "homeWaterManage": "물그릇 관리",
+  "@homeWaterManage": {
+    "description": "Action to manage water bowls."
+  },
+  "homeWaterEmpty": "물그릇을 등록해 주세요.",
+  "@homeWaterEmpty": {
+    "description": "Empty message for the water section."
+  },
+  "homeLitterManage": "화장실 관리",
+  "@homeLitterManage": {
+    "description": "Action to manage litter boxes."
+  },
+  "homeLitterEmpty": "화장실을 등록해 주세요.",
+  "@homeLitterEmpty": {
+    "description": "Empty message for the litter section."
+  },
+  "homeEstimateNotice": "사진 분석 결과는 추정 정보이며, 검증된 항목만 표시됩니다.",
+  "@homeEstimateNotice": {
+    "description": "Estimate notice on the home page."
+  },
+  "analysisPhotoAccessRetry": "사진 접근을 확인하고 다시 시도해 주세요.",
+  "@analysisPhotoAccessRetry": {
+    "description": "Notice when photo selection fails."
+  },
+  "analysisPhotoTooBig10": "사진은 10MB 이하여야 합니다.",
+  "@analysisPhotoTooBig10": {
+    "description": "Notice when a photo exceeds 10 MB."
+  },
+  "analysisPhotoCompareRequired": "비교할 사진을 선택해 주세요.",
+  "@analysisPhotoCompareRequired": {
+    "description": "Notice when the comparison photo is missing."
+  },
+  "analysisCompareTitle": "{name} 사진 비교",
+  "@analysisCompareTitle": {
+    "description": "Title for photo comparison.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "analysisWaterObserve": "물그릇 사진 관찰",
+  "@analysisWaterObserve": {
+    "description": "Badge for water observations."
+  },
+  "analysisLitterObserve": "화장실 사진 관찰",
+  "@analysisLitterObserve": {
+    "description": "Badge for litter observations."
+  },
+  "analysisBaselineVersion": "{photo} {version}번째",
+  "@analysisBaselineVersion": {
+    "description": "Baseline photo version line.",
+    "placeholders": {
+      "photo": {
+        "type": "String"
+      },
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisPhotoGuideTitle": "사진 촬영 가이드",
+  "@analysisPhotoGuideTitle": {
+    "description": "Title for the photo guide."
+  },
+  "analysisWaterGuide": "등록한 정수기 사진과 같은 위치·거리·각도와 충분한 조명에서 정수기 전체가 보이도록 촬영하세요.",
+  "@analysisWaterGuide": {
+    "description": "Photo guide for water bowls."
+  },
+  "analysisLitterGuide": "최근 사진과 같은 위치·거리·각도와 충분한 조명에서 대상 전체가 보이도록 촬영하세요.",
+  "@analysisLitterGuide": {
+    "description": "Photo guide for litter boxes."
+  },
+  "analysisRunAction": "사진 분석",
+  "@analysisRunAction": {
+    "description": "Button to run photo analysis."
+  },
+  "analysisCannotTitle": "분석할 수 없습니다",
+  "@analysisCannotTitle": {
+    "description": "Title when analysis is unavailable."
+  },
+  "analysisModelResponseTitle": "모델 응답",
+  "@analysisModelResponseTitle": {
+    "description": "Title for the model response page."
+  },
+  "analysisViewModelResponse": "모델 응답 보기",
+  "@analysisViewModelResponse": {
+    "description": "Button to view the model response."
+  },
+  "analysisDisclaimerVet": "사진 분석 결과는 추정 정보이며 진단이 아닙니다. 필요한 경우 수의사와 상담하세요.",
+  "@analysisDisclaimerVet": {
+    "description": "Vet disclaimer for analysis results."
+  },
+  "analysisDecreaseRate": "최근 사진 대비 감소율 (추정)",
+  "@analysisDecreaseRate": {
+    "description": "Label for the decrease rate."
+  },
+  "analysisDecreaseVolume": "감소량 (추정)",
+  "@analysisDecreaseVolume": {
+    "description": "Label for the decrease volume."
+  },
+  "analysisWaterCaveat": "보충, 증발, 쏟음 또는 공동 사용의 영향을 받을 수 있습니다.",
+  "@analysisWaterCaveat": {
+    "description": "Caveat for water results."
+  },
+  "analysisOriginalEstimate": "원래 추정",
+  "@analysisOriginalEstimate": {
+    "description": "Label for the original estimate."
+  },
+  "analysisLitterCounts": "소변 {urine}회 · 대변 {stool}회",
+  "@analysisLitterCounts": {
+    "description": "Litter counts line.",
+    "placeholders": {
+      "urine": {
+        "type": "int"
+      },
+      "stool": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisUncertainTraces": "흔적이 겹치거나 가려져 정확하지 않을 수 있습니다.",
+  "@analysisUncertainTraces": {
+    "description": "Notice for uncertain traces."
+  },
+  "analysisObservedQuantity": "관찰량: {quantity} {unit} (추정)",
+  "@analysisObservedQuantity": {
+    "description": "Observed quantity line.",
+    "placeholders": {
+      "quantity": {
+        "type": "double"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "analysisConfirmedUrine": "확인한 소변 흔적 수",
+  "@analysisConfirmedUrine": {
+    "description": "Label for confirmed urine counts."
+  },
+  "analysisConfirmedStool": "확인한 대변 흔적 수",
+  "@analysisConfirmedStool": {
+    "description": "Label for confirmed stool counts."
+  },
+  "analysisSelectCat": "이용 고양이 선택",
+  "@analysisSelectCat": {
+    "description": "Title for cat selection."
+  },
+  "analysisCatUnknown": "미확인",
+  "@analysisCatUnknown": {
+    "description": "Option for an unidentified cat."
+  },
+  "recordsMemoTitle": "특이사항 메모",
+  "@recordsMemoTitle": {
+    "description": "Title for the notes section."
+  },
+  "recordsMemoField": "특이사항 (선택)",
+  "@recordsMemoField": {
+    "description": "Label for the notes field."
+  },
+  "recordsMemoHint": "관찰한 내용을 기록해 주세요.",
+  "@recordsMemoHint": {
+    "description": "Hint for the notes field."
+  },
+  "recordsCountInvalid": "0 이상의 횟수를 입력해 주세요.",
+  "@recordsCountInvalid": {
+    "description": "Validation error for counts."
+  },
+  "recordsSaveAction": "기록 저장",
+  "@recordsSaveAction": {
+    "description": "Button to save a record."
+  },
+  "recordsSavedBadge": "기록을 저장했습니다.",
+  "@recordsSavedBadge": {
+    "description": "Badge after saving a record."
+  },
+  "familyOverviewEmpty": "가족 정보를 찾을 수 없습니다.",
+  "@familyOverviewEmpty": {
+    "description": "Empty message for the family overview."
+  },
+  "familyManageMessage": "가족 구성원과 반려동물의 사진 및 기록을 함께 확인할 수 있습니다.",
+  "@familyManageMessage": {
+    "description": "Guidance message for family management."
+  },
+  "familyCurrentSelected": "현재 선택한 가족",
+  "@familyCurrentSelected": {
+    "description": "Description for the current family."
+  },
+  "familyMemberCount": "가족 구성원 {count}명",
+  "@familyMemberCount": {
+    "description": "Family member count line.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyMembersHeader": "가족 구성원 {count}",
+  "@familyMembersHeader": {
+    "description": "Header for the member list.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyNoMembers": "구성원이 없습니다.",
+  "@familyNoMembers": {
+    "description": "Notice when the family has no members."
+  },
+  "familyRemoveMemberTooltip": "{name} 제거",
+  "@familyRemoveMemberTooltip": {
+    "description": "Label for removing a member.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "familyPendingHeader": "가입 승인 대기 {count}",
+  "@familyPendingHeader": {
+    "description": "Header for pending approvals.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyNoPendingRequests": "승인 대기 중인 가입 요청이 없습니다.",
+  "@familyNoPendingRequests": {
+    "description": "Notice when no requests are pending."
+  },
+  "familyInvitePendingSubtitle": "초대 코드 입력 후 승인 대기 중",
+  "@familyInvitePendingSubtitle": {
+    "description": "Subtitle for pending requests."
+  },
+  "familyApproveAction": "승인",
+  "@familyApproveAction": {
+    "description": "Button to approve a request."
+  },
+  "familyInviteTitle": "가족 초대",
+  "@familyInviteTitle": {
+    "description": "Title for the invite section."
+  },
+  "familyCreateCodeAction": "초대 코드 만들기",
+  "@familyCreateCodeAction": {
+    "description": "Action to create an invite code."
+  },
+  "familyCreateCodeMessage": "가족에게 전달할 코드를 발급합니다.",
+  "@familyCreateCodeMessage": {
+    "description": "Message for creating an invite code."
+  },
+  "familyEnterCodeMessage": "다른 가족에게 받은 코드로 가입을 요청합니다.",
+  "@familyEnterCodeMessage": {
+    "description": "Message for entering an invite code."
+  },
+  "familyInviteCodeTitle": "가족 초대 코드",
+  "@familyInviteCodeTitle": {
+    "description": "Title for the invite code page."
+  },
+  "familyDedicatedCodeTitle": "초대 전용 가족 코드",
+  "@familyDedicatedCodeTitle": {
+    "description": "Title for the dedicated code section."
+  },
+  "familyShareCodeMessage": "함께 돌볼 가족에게 이 코드를 전달해 주세요.",
+  "@familyShareCodeMessage": {
+    "description": "Message for sharing the code."
+  },
+  "familyCodeCopied": "초대 코드를 복사했습니다.",
+  "@familyCodeCopied": {
+    "description": "Notice after copying the code."
+  },
+  "familyCopyCodeAction": "초대 코드 복사하기",
+  "@familyCopyCodeAction": {
+    "description": "Button to copy the code."
+  },
+  "familyJoinGuideTitle": "가족 합류 방법 안내",
+  "@familyJoinGuideTitle": {
+    "description": "Title for the join guide."
+  },
+  "familyJoinGuideMessage": "가족이 로그인한 뒤 초대 코드를 입력하면 가입을 요청할 수 있습니다. 관리자가 승인하면 함께 이용할 수 있습니다.",
+  "@familyJoinGuideMessage": {
+    "description": "Message for the join guide."
+  },
+  "commonClose": "닫기",
+  "@commonClose": {
+    "description": "Label for close buttons."
+  },
+  "familyJoinRequested": "가입 요청을 보냈습니다. 관리자의 승인을 기다려 주세요.",
+  "@familyJoinRequested": {
+    "description": "Notice after requesting to join."
+  },
+  "familyApproved": "가입을 승인했습니다.",
+  "@familyApproved": {
+    "description": "Notice after approving a request."
+  },
+  "familyRemoveConfirm": "이 구성원의 가족 정보 접근이 중단됩니다.",
+  "@familyRemoveConfirm": {
+    "description": "Confirmation for removing a member."
+  },
+  "familyRemoveAction": "제거",
+  "@familyRemoveAction": {
+    "description": "Button to remove a member."
+  },
+  "familyMemberRemoved": "구성원을 제거했습니다.",
+  "@familyMemberRemoved": {
+    "description": "Notice after removing a member."
+  },
+  "commonRegister": "등록",
+  "@commonRegister": {
+    "description": "Label for register buttons."
+  },
+  "commonDeleteFailed": "삭제하지 못했습니다.",
+  "@commonDeleteFailed": {
+    "description": "Notice when deletion fails."
+  },
+  "commonRename": "이름 변경",
+  "@commonRename": {
+    "description": "Label for rename actions."
+  },
+  "commonRenameFailed": "이름을 변경하지 못했습니다.",
+  "@commonRenameFailed": {
+    "description": "Notice when renaming fails."
+  },
+  "commonPositiveNumber": "0보다 큰 숫자를 입력해 주세요.",
+  "@commonPositiveNumber": {
+    "description": "Validation error for non-positive numbers."
+  },
+  "ordinalVersion": "{version}번째",
+  "@ordinalVersion": {
+    "description": "Ordinal version label.",
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "litterAddAction": "화장실 추가",
+  "@litterAddAction": {
+    "description": "Label for adding a litter box."
+  },
+  "litterEmptyMessage": "등록된 화장실이 없습니다.",
+  "@litterEmptyMessage": {
+    "description": "Empty message for the litter list."
+  },
+  "litterRegisterTitle": "화장실 등록",
+  "@litterRegisterTitle": {
+    "description": "Title for litter registration."
+  },
+  "litterHealthBadge": "배변 건강 모니터링",
+  "@litterHealthBadge": {
+    "description": "Badge for litter monitoring."
+  },
+  "litterRegisterHint": "깨끗한 모래 사진과 화장실 정보를 등록해 주세요.",
+  "@litterRegisterHint": {
+    "description": "Hint for litter registration."
+  },
+  "litterPhotoGuide": "깨끗한 모래와 화장실 전체가 보이도록 촬영해 주세요.",
+  "@litterPhotoGuide": {
+    "description": "Photo guide for litter boxes."
+  },
+  "litterAutomaticSection": "자동화장실 기기 여부",
+  "@litterAutomaticSection": {
+    "description": "Section title for automatic devices."
+  },
+  "litterAutomaticLabel": "자동화장실",
+  "@litterAutomaticLabel": {
+    "description": "Label for automatic litter boxes."
+  },
+  "litterAutomaticBlockedTitle": "자동화장실 등록 제한 안내",
+  "@litterAutomaticBlockedTitle": {
+    "description": "Title when automatic boxes are blocked."
+  },
+  "litterAutomaticBlockedMessage": "자동화장실은 분석 대상으로 등록할 수 없습니다.",
+  "@litterAutomaticBlockedMessage": {
+    "description": "Message when automatic boxes are blocked."
+  },
+  "litterBaselineRegisterTitle": "최근 사진 등록",
+  "@litterBaselineRegisterTitle": {
+    "description": "Title for baseline registration."
+  },
+  "litterBaselineRegisterHint": "청소 직후 깨끗한 모래 사진을 등록하세요.",
+  "@litterBaselineRegisterHint": {
+    "description": "Hint for baseline registration."
+  },
+  "litterBaselineLabel": "화장실 최근 사진",
+  "@litterBaselineLabel": {
+    "description": "Label for litter baseline photos."
+  },
+  "litterProfileTitle": "화장실 프로필 및 치수",
+  "@litterProfileTitle": {
+    "description": "Title for the litter profile section."
+  },
+  "litterNameLabel": "화장실 이름",
+  "@litterNameLabel": {
+    "description": "Label for the litter name field."
+  },
+  "litterSharedCats": "함께 사용하는 고양이",
+  "@litterSharedCats": {
+    "description": "Title for sharing cats."
+  },
+  "litterRegisterCatsFirst": "먼저 고양이를 등록해 주세요.",
+  "@litterRegisterCatsFirst": {
+    "description": "Notice when no cats exist."
+  },
+  "litterDimensionsTitle": "상세 규격 치수 (선택)",
+  "@litterDimensionsTitle": {
+    "description": "Title for dimensions."
+  },
+  "litterWidthLabel": "내부 가로 (cm, 선택)",
+  "@litterWidthLabel": {
+    "description": "Label for the width field."
+  },
+  "litterLengthLabel": "내부 세로 (cm, 선택)",
+  "@litterLengthLabel": {
+    "description": "Label for the length field."
+  },
+  "litterHeightLabel": "모래 높이 (cm, 선택)",
+  "@litterHeightLabel": {
+    "description": "Label for the height field."
+  },
+  "litterVolumeGuideTitle": "관찰량 안내",
+  "@litterVolumeGuideTitle": {
+    "description": "Title for the quantity notice."
+  },
+  "litterVolumeGuideMessage": "관찰량 추정은 검증 전이며 치수를 입력해도 제공되지 않습니다.",
+  "@litterVolumeGuideMessage": {
+    "description": "Message for the quantity notice."
+  },
+  "litterCatsAndPhotoRequired": "고양이와 최근 사진을 선택해 주세요.",
+  "@litterCatsAndPhotoRequired": {
+    "description": "Notice when cats or photos are missing."
+  },
+  "litterRenameTitle": "화장실 이름 변경",
+  "@litterRenameTitle": {
+    "description": "Title for renaming."
+  },
+  "litterBaselineChangeFailed": "최근 사진을 변경하지 못했습니다.",
+  "@litterBaselineChangeFailed": {
+    "description": "Notice when baseline change fails."
+  },
+  "litterDeleteAction": "화장실 삭제",
+  "@litterDeleteAction": {
+    "description": "Button to delete a litter box."
+  },
+  "litterBaselineVersion": "최근 사진 {version}번째",
+  "@litterBaselineVersion": {
+    "description": "Baseline version title.",
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "litterNewBaselinePrefix": "새 사진",
+  "@litterNewBaselinePrefix": {
+    "description": "Prefix for new baseline photo actions."
+  },
+  "litterBaselineHistoryTitle": "사진 등록 이력",
+  "@litterBaselineHistoryTitle": {
+    "description": "Title for baseline history."
+  },
+  "litterBaselineGuideTitle": "최근 사진 안내",
+  "@litterBaselineGuideTitle": {
+    "description": "Title for the baseline guide."
+  },
+  "litterBaselineGuideMessage": "청소하거나 모래를 교체했다면 새 사진을 등록하세요. 이전 사진도 보관됩니다.\n사진 분석 결과는 검증된 경우에만 제공됩니다.",
+  "@litterBaselineGuideMessage": {
+    "description": "Message for the baseline guide."
+  },
+  "litterViewRecords": "기록 보기",
+  "@litterViewRecords": {
+    "description": "Button to view records."
+  },
+  "recordsTargetTitle": "{name} 기록",
+  "@recordsTargetTitle": {
+    "description": "Title for a target record page.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsEmptyMessage": "저장된 분석 기록이 없습니다.",
+  "@recordsEmptyMessage": {
+    "description": "Empty message for records."
+  },
+  "recordsLitterTrendTitle": "화장실 횟수 추이",
+  "@recordsLitterTrendTitle": {
+    "description": "Title for the litter trend chart."
+  },
+  "recordsUrineLabel": "소변",
+  "@recordsUrineLabel": {
+    "description": "Label for urine counts."
+  },
+  "recordsStoolLabel": "대변",
+  "@recordsStoolLabel": {
+    "description": "Label for stool counts."
+  },
+  "recordsTimelineTitle": "건강 체크 타임라인",
+  "@recordsTimelineTitle": {
+    "description": "Title for the health timeline."
+  },
+  "recordsHistoryTitle": "사진 분석 기록",
+  "@recordsHistoryTitle": {
+    "description": "Title for the records guidance."
+  },
+  "recordsEstimateDisclaimer": "사진 분석 결과는 추정 정보이며 진단이 아닙니다.",
+  "@recordsEstimateDisclaimer": {
+    "description": "Disclaimer for records."
+  },
+  "recordsFilterAll": "전체",
+  "@recordsFilterAll": {
+    "description": "Filter chip for all records."
+  },
+  "recordsEmptyFiltered": "선택한 종류의 기록이 없습니다.",
+  "@recordsEmptyFiltered": {
+    "description": "Empty message for filtered records."
+  },
+  "recordsDateLabel": "{year}년 {month}월 {day}일",
+  "@recordsDateLabel": {
+    "description": "Date label for record groups.",
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsPhotoLabel": "기록 사진",
+  "@recordsPhotoLabel": {
+    "description": "Label for record photos."
+  },
+  "recordsShareCopied": "공유 문구가 클립보드에 복사되었습니다.",
+  "@recordsShareCopied": {
+    "description": "Notice after copying share text."
+  },
+  "recordsShareFailed": "공유 화면을 열지 못했습니다.",
+  "@recordsShareFailed": {
+    "description": "Notice when sharing fails."
+  },
+  "recordsRegistrationPhoto": "등록 사진",
+  "@recordsRegistrationPhoto": {
+    "description": "Label for registration photos."
+  },
+  "recordsPhotoSelectedAt": "사진 선택: {timestamp}",
+  "@recordsPhotoSelectedAt": {
+    "description": "Photo selection timestamp.",
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsAnalyzedAt": "분석 시각: {timestamp}",
+  "@recordsAnalyzedAt": {
+    "description": "Analysis timestamp.",
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsOutcomeDisclaimer": "관찰 결과는 추정 정보이며 진단이 아닙니다.",
+  "@recordsOutcomeDisclaimer": {
+    "description": "Disclaimer for outcomes."
+  },
+  "recordsUnavailableWith": "분석 불가: {text}",
+  "@recordsUnavailableWith": {
+    "description": "Unavailable line with a reason.",
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsWaterPercentLabel": "물 감소율 (추정)",
+  "@recordsWaterPercentLabel": {
+    "description": "Label for the water percent."
+  },
+  "recordsModelConfidence": "모델 자체 평가 신뢰도 {confidence}% (실제 정확도 아님)",
+  "@recordsModelConfidence": {
+    "description": "Model confidence line.",
+    "placeholders": {
+      "confidence": {
+        "type": "double"
+      }
+    }
+  },
+  "recordsWaterVolumeLabel": "물 감소량 (추정)",
+  "@recordsWaterVolumeLabel": {
+    "description": "Label for the water volume."
+  },
+  "recordsWaterCaveat": "물그릇 기준의 변화이며 개별 반려동물의 음수량은 아닙니다.",
+  "@recordsWaterCaveat": {
+    "description": "Caveat for water results."
+  },
+  "recordsUserConfirmed": "사용자 확인",
+  "@recordsUserConfirmed": {
+    "description": "Label for user-confirmed values."
+  },
+  "recordsObservedQuantity": "관찰량 {quantity} {unit} (추정)",
+  "@recordsObservedQuantity": {
+    "description": "Observed quantity line.",
+    "placeholders": {
+      "quantity": {
+        "type": "double"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsCatWith": "고양이: {name}",
+  "@recordsCatWith": {
+    "description": "Selected cat line.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsCatUnverified": "확인 불가",
+  "@recordsCatUnverified": {
+    "description": "Label when the cat cannot be verified."
+  },
+  "recordsShareAction": "기록 공유하기",
+  "@recordsShareAction": {
+    "description": "Button to share a record."
+  },
+  "recordsEditAction": "기록 수정",
+  "@recordsEditAction": {
+    "description": "Button to edit a record."
+  },
+  "recordsGuardianCheckTitle": "보호자 관찰 확인",
+  "@recordsGuardianCheckTitle": {
+    "description": "Title for the guardian check."
+  },
+  "recordsGuardianCheckMessage": "원래 분석 결과는 유지되며 확인한 값과 메모만 수정됩니다.",
+  "@recordsGuardianCheckMessage": {
+    "description": "Message for the guardian check."
+  },
+  "recordsConfirmedSection": "확인한 관찰",
+  "@recordsConfirmedSection": {
+    "description": "Title for the confirmed section."
+  },
+  "waterAddAction": "물그릇 추가",
+  "@waterAddAction": {
+    "description": "Label for adding a water bowl."
+  },
+  "waterEmptyMessage": "등록된 물그릇이 없습니다.",
+  "@waterEmptyMessage": {
+    "description": "Empty message for the water list."
+  },
+  "photoPermissionCheck": "사진 접근 권한을 확인해 주세요.",
+  "@photoPermissionCheck": {
+    "description": "Notice when photo permission is denied."
+  },
+  "waterRegisterTitle": "물그릇 등록",
+  "@waterRegisterTitle": {
+    "description": "Title for water registration."
+  },
+  "waterIntakeBadge": "음수량 스마트 모니터링",
+  "@waterIntakeBadge": {
+    "description": "Badge for water monitoring."
+  },
+  "waterNewRegisterHeadline": "새 물그릇 등록",
+  "@waterNewRegisterHeadline": {
+    "description": "Headline for water registration."
+  },
+  "waterRegisterHint": "정수기 사진과 기본 정보를 입력해 주세요.",
+  "@waterRegisterHint": {
+    "description": "Hint for water registration."
+  },
+  "waterPhotoGuide": "정수기 전체가 잘 보이도록 서로 다른 각도에서 사진 3장을 촬영해 주세요.",
+  "@waterPhotoGuide": {
+    "description": "Photo guide for water bowls."
+  },
+  "waterAnglePhotosHint": "정수기의 앞, 뒤, 위에서 촬영한 사진을 각각 등록해 주세요.",
+  "@waterAnglePhotosHint": {
+    "description": "Hint for angle photos."
+  },
+  "waterPurifierAnglePhoto": "정수기 {angle} 사진",
+  "@waterPurifierAnglePhoto": {
+    "description": "Purifier photo label for an angle.",
+    "placeholders": {
+      "angle": {
+        "type": "String"
+      }
+    }
+  },
+  "waterAnglePhotoSelected": "{angle} 사진 선택됨",
+  "@waterAnglePhotoSelected": {
+    "description": "Notice that an angle photo is selected.",
+    "placeholders": {
+      "angle": {
+        "type": "String"
+      }
+    }
+  },
+  "waterInfoTitle": "물그릇 정보",
+  "@waterInfoTitle": {
+    "description": "Title for the bowl info section."
+  },
+  "waterNameLabel": "그릇 이름",
+  "@waterNameLabel": {
+    "description": "Label for the bowl name field."
+  },
+  "waterSharedPets": "함께 사용하는 반려동물",
+  "@waterSharedPets": {
+    "description": "Title for sharing pets."
+  },
+  "waterRegisterPetsFirst": "먼저 반려동물을 등록해 주세요.",
+  "@waterRegisterPetsFirst": {
+    "description": "Notice when no pets exist."
+  },
+  "waterSpecsTitle": "선택 물리 사양",
+  "@waterSpecsTitle": {
+    "description": "Title for physical specs."
+  },
+  "waterEmptyWeightLabel": "빈 그릇 무게 (g, 선택)",
+  "@waterEmptyWeightLabel": {
+    "description": "Label for the empty weight field."
+  },
+  "waterFullVolumeLabel": "가득 찬 물의 양 (mL, 선택)",
+  "@waterFullVolumeLabel": {
+    "description": "Label for the full volume field."
+  },
+  "waterFullVolumeHelper": "그릇 무게를 제외한 물의 양",
+  "@waterFullVolumeHelper": {
+    "description": "Helper for the full volume field."
+  },
+  "waterPhotoNotesLabel": "사진 특이사항 (선택)",
+  "@waterPhotoNotesLabel": {
+    "description": "Label for the photo notes field."
+  },
+  "waterPhotoNotesHint": "예: 정수기에 물이 70% 차 있는 상태예요",
+  "@waterPhotoNotesHint": {
+    "description": "Hint for the photo notes field."
+  },
+  "waterMeasureCautionTitle": "측정 유의사항",
+  "@waterMeasureCautionTitle": {
+    "description": "Title for the measurement notice."
+  },
+  "waterMeasureCautionMessage": "부피 추정 기능은 검증 전이며 입력값이 있어도 제공되지 않습니다.",
+  "@waterMeasureCautionMessage": {
+    "description": "Message for the measurement notice."
+  },
+  "waterPetsAndPhotosRequired": "반려동물과 정수기의 앞·뒤·위 사진을 모두 선택해 주세요.",
+  "@waterPetsAndPhotosRequired": {
+    "description": "Notice when pets or photos are missing."
+  },
+  "waterSetupComplete": "정수기 초기 설정을 완료했습니다.",
+  "@waterSetupComplete": {
+    "description": "Notice after setup completes."
+  },
+  "waterSetupLevelUnknown": "정수기는 등록됐지만 초기 수위를 확인하지 못했습니다. 다시 분석해 주세요.",
+  "@waterSetupLevelUnknown": {
+    "description": "Notice when the initial level is unknown."
+  },
+  "waterSetupFailedDetail": "정수기는 등록됐지만 초기 설정에 실패했습니다: {detail}",
+  "@waterSetupFailedDetail": {
+    "description": "Notice with a setup failure detail.",
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "waterRegisteredRetryAnalysis": "정수기는 등록됐습니다. 초기 분석을 다시 시도해 주세요.",
+  "@waterRegisteredRetryAnalysis": {
+    "description": "Notice to retry the initial analysis."
+  },
+  "waterRenameTitle": "물그릇 이름 변경",
+  "@waterRenameTitle": {
+    "description": "Title for renaming."
+  },
+  "waterBowlNameLabel": "물그릇 이름",
+  "@waterBowlNameLabel": {
+    "description": "Label for the bowl name field."
+  },
+  "waterReregisterPhotos": "초기 설정을 위해 정수기 앞·뒤·위 사진을 다시 등록해 주세요.",
+  "@waterReregisterPhotos": {
+    "description": "Notice to re-register photos."
+  },
+  "waterInitialLevelUnknown": "초기 수위를 확인하지 못했습니다. {reason}",
+  "@waterInitialLevelUnknown": {
+    "description": "Notice with an unknown level reason.",
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "waterNewPhotoNotesTitle": "새 정수기 사진 특이사항",
+  "@waterNewPhotoNotesTitle": {
+    "description": "Title for new photo notes."
+  },
+  "waterNewPhotoNotesHint": "예: 물이 70% 차 있는 상태예요",
+  "@waterNewPhotoNotesHint": {
+    "description": "Hint for new photo notes."
+  },
+  "waterSavePhotoAction": "정수기 사진 저장",
+  "@waterSavePhotoAction": {
+    "description": "Button to save a purifier photo."
+  },
+  "waterPhotoChangeFailed": "정수기 사진을 변경하지 못했습니다.",
+  "@waterPhotoChangeFailed": {
+    "description": "Notice when photo change fails."
+  },
+  "waterDetailTitle": "정수기 상세 정보",
+  "@waterDetailTitle": {
+    "description": "Title for purifier details."
+  },
+  "waterSharedWithPets": "물그릇 · 반려동물 {count}마리와 함께 사용",
+  "@waterSharedWithPets": {
+    "description": "Sharing description.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waterDeleteAction": "물그릇 삭제",
+  "@waterDeleteAction": {
+    "description": "Button to delete a water bowl."
+  },
+  "waterPurifierPhotoVersion": "정수기 사진 {version}번째",
+  "@waterPurifierPhotoVersion": {
+    "description": "Purifier photo version title.",
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "waterRecentlyRegistered": "최근 등록 {timestamp}",
+  "@waterRecentlyRegistered": {
+    "description": "Recent registration line.",
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "waterRefillHint": "물을 보충하거나 교체했다면 새 사진을 등록하세요.",
+  "@waterRefillHint": {
+    "description": "Hint for refills."
+  },
+  "waterBowlPurifierPhoto": "{name} 정수기 사진",
+  "@waterBowlPurifierPhoto": {
+    "description": "Purifier photo label for a bowl.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPhotoNotesTitle": "사진 특이사항",
+  "@waterPhotoNotesTitle": {
+    "description": "Title for photo notes."
+  },
+  "waterFirstPhotosTitle": "처음 등록한 정수기 사진",
+  "@waterFirstPhotosTitle": {
+    "description": "Title for first photos."
+  },
+  "waterDeviceTitle": "기기 정보",
+  "@waterDeviceTitle": {
+    "description": "Title for device info."
+  },
+  "waterFullVolumeMetric": "가득 찬 물의 양",
+  "@waterFullVolumeMetric": {
+    "description": "Label for the full volume metric."
+  },
+  "waterEmptyDeviceWeight": "빈 기기 무게",
+  "@waterEmptyDeviceWeight": {
+    "description": "Label for the empty weight metric."
+  },
+  "waterPhotoHistoryTitle": "정수기 사진 변경 이력",
+  "@waterPhotoHistoryTitle": {
+    "description": "Title for photo history."
+  },
+  "waterPhotoHistoryHint": "이전 정수기 사진은 기록과 함께 보관됩니다.",
+  "@waterPhotoHistoryHint": {
+    "description": "Hint for photo history."
+  },
+  "waterCurrentBaseline": "최근 사진",
+  "@waterCurrentBaseline": {
+    "description": "Badge for the current baseline."
+  },
+  "waterOutcomeGuideTitle": "관찰 결과 안내",
+  "@waterOutcomeGuideTitle": {
+    "description": "Title for the outcome guide."
+  },
+  "waterOutcomeGuideMessage": "사진 분석은 최근 사진 대비 변화를 추정하며, 실제 반려동물의 음수량이나 건강 상태를 진단하지 않습니다.",
+  "@waterOutcomeGuideMessage": {
+    "description": "Message for the outcome guide."
+  },
+  "waterReanalyzeAction": "등록 사진 다시 분석하기",
+  "@waterReanalyzeAction": {
+    "description": "Button to reanalyze."
+  },
+  "waterViewHistoryAction": "수위 기록 보기",
+  "@waterViewHistoryAction": {
+    "description": "Button to view level history."
+  },
+  "waterViewPastRecords": "이전 분석 기록 보기",
+  "@waterViewPastRecords": {
+    "description": "Button to view past records."
+  },
+  "waterTakeNewPhoto": "새 사진 촬영",
+  "@waterTakeNewPhoto": {
+    "description": "Button to take a new photo."
+  },
+  "waterChooseNewPhoto": "새 사진 선택",
+  "@waterChooseNewPhoto": {
+    "description": "Button to choose a new photo."
+  },
+  "chatUnavailable": "건강 상담 연결을 사용할 수 없습니다.",
+  "@chatUnavailable": {
+    "description": "Shown when health chat is unavailable."
+  },
+  "chatPhotoSelectFailed": "사진을 선택할 수 없습니다.",
+  "@chatPhotoSelectFailed": {
+    "description": "Notice when photo selection fails."
+  },
+  "chatMentionPets": "반려동물 멘션",
+  "@chatMentionPets": {
+    "description": "Title for the pet mention dialog."
+  },
+  "chatNoPets": "등록된 반려동물이 없습니다.",
+  "@chatNoPets": {
+    "description": "Notice when no pets exist."
+  },
+  "commonDone": "완료",
+  "@commonDone": {
+    "description": "Label for done buttons."
+  },
+  "chatTitle": "반려동물 건강 상담",
+  "@chatTitle": {
+    "description": "Title for the health chat page."
+  },
+  "chatDisclaimer": "AI 답변은 참고 정보이며 진단을 대신하지 않습니다. 멘션한 반려동물의 프로필과 최근 관찰 기록이 AI에 전달됩니다. 대화와 사진은 가족에게 공유됩니다.",
+  "@chatDisclaimer": {
+    "description": "Disclaimer for health chat."
+  },
+  "chatLoadFailed": "대화를 불러오지 못했습니다.",
+  "@chatLoadFailed": {
+    "description": "Error when the conversation fails to load."
+  },
+  "chatEmptyPrompt": "반려동물의 건강에 관해 물어보세요.",
+  "@chatEmptyPrompt": {
+    "description": "Prompt for an empty conversation."
+  },
+  "chatGuardianLabel": "보호자",
+  "@chatGuardianLabel": {
+    "description": "Label for guardian messages."
+  },
+  "chatAssistantLabel": "건강 상담",
+  "@chatAssistantLabel": {
+    "description": "Label for assistant messages."
+  },
+  "chatPhotoLoading": "사진 불러오는 중",
+  "@chatPhotoLoading": {
+    "description": "Label while a photo loads."
+  },
+  "chatRemovePhoto": "사진 제거",
+  "@chatRemovePhoto": {
+    "description": "Tooltip for removing a photo."
+  },
+  "chatAttachPhoto": "사진 첨부",
+  "@chatAttachPhoto": {
+    "description": "Tooltip for attaching a photo."
+  },
+  "chatInputHint": "건강에 대해 물어보세요",
+  "@chatInputHint": {
+    "description": "Hint for the chat input."
+  },
+  "chatSendAction": "전송",
+  "@chatSendAction": {
+    "description": "Tooltip for sending."
+  },
+  "petEditProfile": "프로필 수정",
+  "@petEditProfile": {
+    "description": "Tooltip for editing a profile."
+  },
+  "petHealthLoadFailed": "건강 기록을 불러오지 못했습니다.",
+  "@petHealthLoadFailed": {
+    "description": "Error when health records fail to load."
+  },
+  "petAgeLine": "나이 {age}개월",
+  "@petAgeLine": {
+    "description": "Pet age line.",
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "petWeightLine": "몸무게 {weight} kg",
+  "@petWeightLine": {
+    "description": "Pet weight line.",
+    "placeholders": {
+      "weight": {
+        "type": "double"
+      }
+    }
+  },
+  "petWaterSection": "물그릇 관찰",
+  "@petWaterSection": {
+    "description": "Title for the water section."
+  },
+  "petWaterSectionHint": "함께 사용하는 물그릇의 수위입니다. 개별 음수량은 알 수 없습니다.",
+  "@petWaterSectionHint": {
+    "description": "Hint for the water section."
+  },
+  "petNoBowls": "연결된 물그릇이 없습니다.",
+  "@petNoBowls": {
+    "description": "Notice when no bowls are linked."
+  },
+  "petSharedBowl": "여러 반려동물이 함께 사용",
+  "@petSharedBowl": {
+    "description": "Subtitle for shared bowls."
+  },
+  "petLinkedBowl": "연결된 물그릇",
+  "@petLinkedBowl": {
+    "description": "Subtitle for linked bowls."
+  },
+  "petLevelHistoryFailed": "수위 기록을 불러오지 못했습니다.",
+  "@petLevelHistoryFailed": {
+    "description": "Error when level records fail to load."
+  },
+  "petLevelRecord": "수위 관찰 기록",
+  "@petLevelRecord": {
+    "description": "Title for level records."
+  },
+  "petTimeUnknown": "시간 미확인",
+  "@petTimeUnknown": {
+    "description": "Label for unknown times."
+  },
+  "petLevelHistoryUnavailable": "수위 기록을 사용할 수 없습니다.",
+  "@petLevelHistoryUnavailable": {
+    "description": "Notice when level records are unavailable."
+  },
+  "petLitterSection": "화장실 관찰",
+  "@petLitterSection": {
+    "description": "Title for the litter section."
+  },
+  "petLitterSectionHint": "이 반려동물을 이용자로 선택해 저장한 기록만 표시합니다.",
+  "@petLitterSectionHint": {
+    "description": "Hint for the litter section."
+  },
+  "petNoBoxes": "연결된 화장실이 없습니다.",
+  "@petNoBoxes": {
+    "description": "Notice when no boxes are linked."
+  },
+  "petLinkedBoxes": "연결된 화장실: {names}",
+  "@petLinkedBoxes": {
+    "description": "Linked boxes line.",
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "petNoRecords": "이 반려동물로 지정된 관찰 기록이 없습니다.",
+  "@petNoRecords": {
+    "description": "Notice when no records exist."
+  },
+  "petRecordCountsLine": " · 소변 {urine}회 · 대변 {stool}회",
+  "@petRecordCountsLine": {
+    "description": "Counts suffix for record lines.",
+    "placeholders": {
+      "urine": {
+        "type": "int"
+      },
+      "stool": {
+        "type": "int"
+      }
+    }
+  },
+  "shareHeader": "[하릅 관찰 기록]",
+  "@shareHeader": {
+    "description": "Header for shared record text."
+  },
+  "shareWaterPercent": "물 감소율: {percent}% (추정)",
+  "@shareWaterPercent": {
+    "description": "Share line for water percent.",
+    "placeholders": {
+      "percent": {
+        "type": "double"
+      }
+    }
+  },
+  "shareWaterVolume": "물 감소량: {volume} mL (추정)",
+  "@shareWaterVolume": {
+    "description": "Share line for water volume.",
+    "placeholders": {
+      "volume": {
+        "type": "double"
+      }
+    }
+  },
+  "shareConfirmedUrine": "확인한 소변: {count}회",
+  "@shareConfirmedUrine": {
+    "description": "Share line for urine counts.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareConfirmedStool": "확인한 대변: {count}회",
+  "@shareConfirmedStool": {
+    "description": "Share line for stool counts.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareMemo": "메모: {notes}",
+  "@shareMemo": {
+    "description": "Share line for notes.",
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  },
+  "navHealthReport": "건강리포트",
+  "@navHealthReport": {
+    "description": "Bottom navigation label for HealthReport."
+  },
+  "navChat": "채팅",
+  "@navChat": {
+    "description": "Bottom navigation label for Chat."
+  },
+  "navMyPage": "마이페이지",
+  "@navMyPage": {
+    "description": "Bottom navigation label for MyPage."
+  },
+  "reportNoPets": "건강리포트를 보려면 반려동물을 등록해 주세요.",
+  "@reportNoPets": {
+    "description": "Health report: reportNoPets."
+  },
+  "reportPetSelect": "반려동물 선택",
+  "@reportPetSelect": {
+    "description": "Health report: reportPetSelect."
+  },
+  "reportLoadFailed": "건강리포트를 불러오지 못했습니다.",
+  "@reportLoadFailed": {
+    "description": "Health report: reportLoadFailed."
+  },
+  "reportWaterIntakeTitle": "음수량",
+  "@reportWaterIntakeTitle": {
+    "description": "Health report: reportWaterIntakeTitle."
+  },
+  "reportWaterIntakeUnavailable": "반려동물별 음수량은 아직 측정할 수 없어 그래프를 제공하지 않습니다.",
+  "@reportWaterIntakeUnavailable": {
+    "description": "Health report: reportWaterIntakeUnavailable."
+  },
+  "reportWaterContext": "아래 그래프는 연결된 물그릇의 수위 변화이며, 반려동물의 음수량이 아닙니다.",
+  "@reportWaterContext": {
+    "description": "Health report: reportWaterContext."
+  },
+  "reportWaterLevelTitle": "물그릇 수위 추이",
+  "@reportWaterLevelTitle": {
+    "description": "Health report: reportWaterLevelTitle."
+  },
+  "reportWaterLevelLabel": "현재 수위 (추정)",
+  "@reportWaterLevelLabel": {
+    "description": "Health report: reportWaterLevelLabel."
+  },
+  "reportWaterUnverified": "수위 추정치는 정확도 검증 후 표시됩니다.",
+  "@reportWaterUnverified": {
+    "description": "Health report: reportWaterUnverified."
+  },
+  "reportSharedBowl": "{name} · 함께 사용하는 물그릇",
+  "@reportSharedBowl": {
+    "description": "Health report: reportSharedBowl.",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "reportLitterAmountTitle": "배변량",
+  "@reportLitterAmountTitle": {
+    "description": "Health report: reportLitterAmountTitle."
+  },
+  "reportLitterAttribution": "이 반려동물로 지정해 저장한 기록만 표시합니다.",
+  "@reportLitterAttribution": {
+    "description": "Health report: reportLitterAttribution."
+  },
+  "reportLitterAmountUnavailable": "검증된 배변량 기록이 없어 양을 표시할 수 없습니다.",
+  "@reportLitterAmountUnavailable": {
+    "description": "Health report: reportLitterAmountUnavailable."
+  },
+  "reportLitterAmountLabel": "관찰량 (추정)",
+  "@reportLitterAmountLabel": {
+    "description": "Health report: reportLitterAmountLabel."
+  },
+  "reportLitterCountTitle": "배변 횟수 추이",
+  "@reportLitterCountTitle": {
+    "description": "Health report: reportLitterCountTitle."
+  },
+  "reportLitterCountsUnverified": "배변 흔적 횟수는 정확도 검증 후 표시됩니다.",
+  "@reportLitterCountsUnverified": {
+    "description": "Health report: reportLitterCountsUnverified."
+  }
+}

@@ -3,6 +3,8 @@ import 'package:hareup_design_system/design_system.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_presentation_core/load_view.dart';
 import 'package:hareup_presentation_core/presentation_core.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../domain/settings.dart';
 import '../../pet/domain/pet.dart';
 import 'settings_cubit.dart';
@@ -15,22 +17,30 @@ class SettingsPage extends StatelessWidget {
     this.displayName,
     this.email,
     this.pets = const [],
+    this.languageOverride,
+    this.onLanguageChanged,
   });
   final SettingsRepository repository;
   final Future<void> Function()? onSignOut;
   final String? displayName;
   final String? email;
   final List<Pet> pets;
+
+  /// Current language override. Null follows the device language.
+  final Locale? languageOverride;
+
+  /// Invoked when the user picks a language. The section is hidden when null.
+  final ValueChanged<Locale?>? onLanguageChanged;
   @override
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => SettingsCubit(repository)..load(),
     child: Scaffold(
-      appBar: AppBar(title: const Text('설정')),
+      appBar: AppBar(title: Text(context.l10n.settingsTitle)),
       body: HareupContent(
         child: BlocBuilder<SettingsCubit, LoadState<SettingsInfo>>(
           builder: (context, state) => LoadView<SettingsInfo>(
             state: state,
-            emptyMessage: '설정 정보가 없습니다.',
+            emptyMessage: context.l10n.settingsEmptyMessage,
             onRetry: () => context.read<SettingsCubit>().load(),
             builder: (context, info) => _SettingsBody(
               info: info,
@@ -38,6 +48,8 @@ class SettingsPage extends StatelessWidget {
               displayName: displayName,
               email: email,
               pets: pets,
+              languageOverride: languageOverride,
+              onLanguageChanged: onLanguageChanged,
             ),
           ),
         ),
@@ -53,12 +65,16 @@ class _SettingsBody extends StatelessWidget {
     this.displayName,
     this.email,
     required this.pets,
+    this.languageOverride,
+    this.onLanguageChanged,
   });
   final SettingsInfo info;
   final Future<void> Function()? onSignOut;
   final String? displayName;
   final String? email;
   final List<Pet> pets;
+  final Locale? languageOverride;
+  final ValueChanged<Locale?>? onLanguageChanged;
   @override
   Widget build(BuildContext context) {
     final cubit = context.read<SettingsCubit>();
@@ -82,7 +98,9 @@ class _SettingsBody extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        displayName?.isNotEmpty == true ? displayName! : '내 계정',
+                        displayName?.isNotEmpty == true
+                            ? displayName!
+                            : context.l10n.settingsMyAccount,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       if (email != null && email!.isNotEmpty)
@@ -112,14 +130,16 @@ class _SettingsBody extends StatelessWidget {
                 Expanded(
                   child: Text(
                     pets.length == 1
-                        ? '등록된 반려동물: ${pets.first.name}'
-                        : '등록된 반려동물 ${pets.length}마리',
+                        ? context.l10n.settingsPetSingle(pets.first.name)
+                        : context.l10n.settingsPetCount(pets.length),
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
                 if (pets.length == 1)
                   Text(
-                    pets.first.species == PetSpecies.cat ? '고양이' : '강아지',
+                    pets.first.species == PetSpecies.cat
+                        ? context.l10n.petSpeciesCat
+                        : context.l10n.petSpeciesDog,
                     style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: HareupColors.primary500,
                     ),
@@ -129,33 +149,53 @@ class _SettingsBody extends StatelessWidget {
           ),
           const SizedBox(height: HareupSpacing.large),
         ],
-        const HareupSectionHeader(title: '스마트 안심 알림 설정'),
+        if (onLanguageChanged != null) ...[
+          HareupSectionHeader(title: context.l10n.settingsLanguageTitle),
+          const SizedBox(height: HareupSpacing.small),
+          Card(
+            child: Column(
+              children: [
+                _languageRow(
+                  context,
+                  null,
+                  context.l10n.settingsLanguageSystem,
+                ),
+                const Divider(height: 1),
+                _languageRow(context, const Locale('ko'), '한국어'),
+                const Divider(height: 1),
+                _languageRow(context, const Locale('en'), 'English'),
+              ],
+            ),
+          ),
+          const SizedBox(height: HareupSpacing.large),
+        ],
+        HareupSectionHeader(title: context.l10n.settingsNotificationTitle),
         const SizedBox(height: HareupSpacing.small),
         HareupPanel(
           child: Column(
-            children: const [
+            children: [
               _UnavailableNotificationRow(
                 icon: Icons.water_drop_outlined,
-                title: '물그릇 사진 분석 알림',
-                subtitle: '물그릇 관찰 알림 기능은 준비 중입니다.',
+                title: context.l10n.settingsWaterAlertTitle,
+                subtitle: context.l10n.settingsWaterAlertMessage,
               ),
-              Divider(height: 1),
+              const Divider(height: 1),
               _UnavailableNotificationRow(
                 icon: Icons.favorite_border,
-                title: '화장실 이상 징후 알림',
-                subtitle: '화장실 관찰 알림 기능은 준비 중입니다.',
+                title: context.l10n.settingsLitterAlertTitle,
+                subtitle: context.l10n.settingsLitterAlertMessage,
               ),
-              Divider(height: 1),
+              const Divider(height: 1),
               _UnavailableNotificationRow(
                 icon: Icons.people_outline,
-                title: '가족 돌봄 기록 실시간 동기화',
-                subtitle: '가족 기록은 앱에서 확인할 수 있습니다.',
+                title: context.l10n.settingsFamilySyncTitle,
+                subtitle: context.l10n.settingsFamilySyncMessage,
               ),
             ],
           ),
         ),
         const SizedBox(height: HareupSpacing.large),
-        const HareupSectionHeader(title: '앱 정보 및 지원'),
+        HareupSectionHeader(title: context.l10n.settingsSupportTitle),
         const SizedBox(height: HareupSpacing.small),
         Card(
           child: Column(
@@ -163,7 +203,7 @@ class _SettingsBody extends StatelessWidget {
               _externalRow(
                 context,
                 cubit,
-                '공지사항 및 업데이트 소식',
+                context.l10n.settingsNoticeTitle,
                 Icons.campaign_outlined,
                 info.noticeUrl,
               ),
@@ -171,22 +211,22 @@ class _SettingsBody extends StatelessWidget {
               _externalRow(
                 context,
                 cubit,
-                '자주 묻는 질문 및 문의',
+                context.l10n.settingsFaqTitle,
                 Icons.help_outline,
                 info.supportUrl,
               ),
               const Divider(height: 1),
-              const ListTile(
-                leading: Icon(Icons.description_outlined),
-                title: Text('서비스 이용약관'),
-                trailing: Text('준비 중'),
+              ListTile(
+                leading: const Icon(Icons.description_outlined),
+                title: Text(context.l10n.settingsTermsTitle),
+                trailing: Text(context.l10n.settingsComingSoon),
                 enabled: false,
               ),
               const Divider(height: 1),
               _externalRow(
                 context,
                 cubit,
-                '개인정보처리방침',
+                context.l10n.settingsPrivacyTitle,
                 Icons.verified_user_outlined,
                 info.privacyUrl,
               ),
@@ -196,7 +236,7 @@ class _SettingsBody extends StatelessWidget {
         const SizedBox(height: HareupSpacing.small),
         HareupCard(
           leading: const Icon(Icons.info_outline),
-          title: '앱 버전 정보',
+          title: context.l10n.settingsVersionTitle,
           subtitle: 'v${info.version} (${info.buildNumber})',
         ),
         const SizedBox(height: HareupSpacing.large),
@@ -210,17 +250,17 @@ class _SettingsBody extends StatelessWidget {
                     final confirmed = await showDialog<bool>(
                       context: context,
                       builder: (dialogContext) => AlertDialog(
-                        title: const Text('로그아웃'),
-                        content: const Text('이 기기에서 로그아웃할까요?'),
+                        title: Text(context.l10n.settingsSignOutAction),
+                        content: Text(context.l10n.settingsSignOutConfirm),
                         actions: [
                           TextButton(
                             onPressed: () =>
                                 Navigator.pop(dialogContext, false),
-                            child: const Text('취소'),
+                            child: Text(dialogContext.dsL10n.cancelAction),
                           ),
                           FilledButton(
                             onPressed: () => Navigator.pop(dialogContext, true),
-                            child: const Text('로그아웃'),
+                            child: Text(context.l10n.settingsSignOutAction),
                           ),
                         ],
                       ),
@@ -230,14 +270,26 @@ class _SettingsBody extends StatelessWidget {
                     }
                   },
                   icon: const Icon(Icons.logout),
-                  label: const Text('로그아웃'),
+                  label: Text(context.l10n.settingsSignOutAction),
                 ),
               ),
               const SizedBox(height: HareupSpacing.small),
-              TextButton(onPressed: null, child: const Text('하릅 회원 탈퇴 · 준비 중')),
+              TextButton(
+                onPressed: null,
+                child: Text(context.l10n.settingsWithdrawHint),
+              ),
             ],
           ),
       ],
+    );
+  }
+
+  Widget _languageRow(BuildContext context, Locale? value, String label) {
+    final selected = languageOverride == value;
+    return ListTile(
+      title: Text(label),
+      trailing: selected ? const Icon(Icons.check) : null,
+      onTap: () => onLanguageChanged!(value),
     );
   }
 
@@ -253,7 +305,7 @@ class _SettingsBody extends StatelessWidget {
       leading: Icon(icon),
       title: Text(title),
       trailing: uri == null
-          ? const Text('준비 중')
+          ? Text(context.l10n.settingsComingSoon)
           : const Icon(Icons.chevron_right),
       enabled: uri != null && state is! CommandRunning<void>,
       onTap: uri == null
@@ -265,9 +317,11 @@ class _SettingsBody extends StatelessWidget {
               if (cubit.openCommand.state case CommandFailure<void>(
                 :final failure,
               )) {
-                ScaffoldMessenger.of(
-                  context,
-                ).showSnackBar(SnackBar(content: Text(failure.message)));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(failureDisplayMessage(context, failure)),
+                  ),
+                );
               }
             },
     ),

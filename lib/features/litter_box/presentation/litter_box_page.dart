@@ -3,12 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:hareup_design_system/design_system.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_media/media.dart';
+import '../../shared_data/target_widgets.dart';
+import '../../shared_data/selection_management_page.dart';
 import '../../photo_analysis/domain/analysis.dart';
 import '../../photo_analysis/presentation/analysis_page.dart';
 import '../../records/presentation/records_page.dart';
 import '../../records/domain/record.dart';
 import 'package:hareup_presentation_core/load_view.dart';
 import 'package:hareup_presentation_core/presentation_core.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../domain/litter_box.dart';
 import 'litter_box_cubit.dart';
 
@@ -46,60 +50,93 @@ class LitterBoxPage extends StatelessWidget {
     super.key,
     required this.cats,
     required this.photoSource,
+    this.selectionMode = false,
   });
+  final bool selectionMode;
   final List<CatOption> cats;
   final PhotoSource photoSource;
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('화장실 관리')),
-    floatingActionButton: FloatingActionButton.extended(
-      icon: const Icon(Icons.add),
-      label: const Text('화장실 추가'),
-      onPressed: () {
-        final cubit = context.read<LitterBoxCubit>();
-        Navigator.of(context).push(
+  Widget build(BuildContext context) {
+    if (selectionMode) {
+      final cubit = context.read<LitterBoxCubit>();
+      return SelectionManagementPage<LitterBox>(
+        title: context.l10n.homeLitterManage,
+        emptyMessage: context.l10n.litterEmptyMessage,
+        addLabel: context.l10n.litterAddAction,
+        confirmMessage: context.l10n.targetDeleteMessage,
+        cubit: cubit,
+        idOf: (box) => box.id,
+        nameOf: (box) => box.name,
+        iconOf: (_) => Icons.cleaning_services_outlined,
+        onAdd: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => BlocProvider.value(
               value: cubit,
               child: _LitterEditor(cats: cats, source: photoSource),
             ),
           ),
-        );
-      },
-    ),
-    body: HareupContent(
-      child: BlocBuilder<LitterBoxCubit, LoadState<List<LitterBox>>>(
-        builder: (context, state) => LoadView<List<LitterBox>>(
-          state: state,
-          emptyMessage: '등록된 화장실이 없습니다.',
-          onRetry: () => context.read<LitterBoxCubit>().load(),
-          builder: (context, boxes) => ListView.builder(
-            padding: const EdgeInsets.fromLTRB(
-              HareupSpacing.pageMargin,
-              HareupSpacing.small,
-              HareupSpacing.pageMargin,
-              HareupSpacing.floatingActionClearance,
+        ),
+        onRetry: cubit.load,
+        onDelete: (box) => cubit.remove(box.id),
+        failureMessage: () => switch (cubit.deleteCommand.state) {
+          CommandFailure<void>(:final failure) => failureDisplayMessage(
+            context,
+            failure,
+          ),
+          _ => context.l10n.commonDeleteFailed,
+        },
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(title: Text(context.l10n.homeLitterManage)),
+      bottomNavigationBar: ManagementBottomButton(
+        icon: Icons.add,
+        label: context.l10n.litterAddAction,
+        onPressed: () {
+          final cubit = context.read<LitterBoxCubit>();
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => BlocProvider.value(
+                value: cubit,
+                child: _LitterEditor(cats: cats, source: photoSource),
+              ),
             ),
-            itemCount: boxes.length,
-            itemBuilder: (context, index) {
-              final box = boxes[index];
-              return HareupCard(
-                leading: const CircleAvatar(
-                  child: Icon(Icons.cleaning_services_outlined),
-                ),
-                title: box.name,
-                subtitle:
-                    ('고양이 ${box.catIds.length}마리 · 기준 사진 ${box.currentBaseline.version}번째'),
-                isThreeLine: true,
-                onTap: () =>
-                    showLitterBoxDetail(context, box, photoSource, cats),
-              );
-            },
+          );
+        },
+      ),
+      body: HareupContent(
+        child: BlocBuilder<LitterBoxCubit, LoadState<List<LitterBox>>>(
+          builder: (context, state) => LoadView<List<LitterBox>>(
+            state: state,
+            emptyMessage: context.l10n.litterEmptyMessage,
+            onRetry: () => context.read<LitterBoxCubit>().load(),
+            builder: (context, boxes) => GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.5,
+              ),
+              padding: const EdgeInsets.fromLTRB(
+                HareupSpacing.pageMargin,
+                HareupSpacing.small,
+                HareupSpacing.pageMargin,
+                HareupSpacing.floatingActionClearance,
+              ),
+              itemCount: boxes.length,
+              itemBuilder: (context, index) {
+                final box = boxes[index];
+                return TargetGridTile(
+                  name: box.name,
+                  icon: Icons.cleaning_services_outlined,
+                  onTap: () =>
+                      showLitterBoxDetail(context, box, photoSource, cats),
+                );
+              },
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _LitterEditor extends StatefulWidget {
@@ -140,18 +177,18 @@ class _LitterEditorState extends State<_LitterEditor> {
           : await widget.source.pickFromGallery();
       if (!mounted) return;
       if (selected is PhotoSelectionFailed) {
-        _message('사진 접근을 확인하고 다시 시도해 주세요.');
+        _message(context.l10n.analysisPhotoAccessRetry);
         return;
       }
       if (selected is! PhotoSelected) return;
       if (await selected.file.length() > 10 * 1024 * 1024) {
-        if (mounted) _message('사진은 10MB 이하여야 합니다.');
+        if (mounted) _message(context.l10n.analysisPhotoTooBig10);
         return;
       }
       final bytes = await selected.file.readAsBytes();
       if (mounted) setState(() => _photo = bytes);
     } catch (_) {
-      if (mounted) _message('사진을 읽지 못했습니다.');
+      if (mounted) _message(context.l10n.photoReadFailed);
     } finally {
       if (mounted) setState(() => _picking = false);
     }
@@ -161,7 +198,7 @@ class _LitterEditorState extends State<_LitterEditor> {
     if (value == null || value.trim().isEmpty) return null;
     final number = double.tryParse(value);
     return number == null || !number.isFinite || number <= 0
-        ? '0보다 큰 숫자를 입력해 주세요.'
+        ? context.l10n.commonPositiveNumber
         : null;
   }
 
@@ -169,7 +206,7 @@ class _LitterEditorState extends State<_LitterEditor> {
   Widget build(BuildContext context) {
     final cubit = context.read<LitterBoxCubit>();
     return HareupFormPage(
-      title: const Text('화장실 등록'),
+      title: Text(context.l10n.litterRegisterTitle),
       content: SizedBox(
         width: 380,
         child: Form(
@@ -179,34 +216,34 @@ class _LitterEditorState extends State<_LitterEditor> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const HareupStatusBadge(label: '배변 건강 모니터링'),
+                HareupStatusBadge(label: context.l10n.litterHealthBadge),
                 const SizedBox(height: HareupSpacing.small),
                 Text(
-                  '화장실 등록',
+                  context.l10n.litterRegisterTitle,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: HareupSpacing.small),
-                const Text('깨끗한 모래 사진과 화장실 정보를 등록해 주세요.'),
+                Text(context.l10n.litterRegisterHint),
                 const SizedBox(height: HareupSpacing.large),
-                const HareupGuidance(
-                  title: '사진 촬영 가이드',
-                  message: '깨끗한 모래와 화장실 전체가 보이도록 촬영해 주세요.',
+                HareupGuidance(
+                  title: context.l10n.analysisPhotoGuideTitle,
+                  message: context.l10n.litterPhotoGuide,
                   icon: Icons.center_focus_strong,
                 ),
                 const SizedBox(height: HareupSpacing.medium),
                 HareupFormSection(
-                  title: '자동화장실 기기 여부',
+                  title: context.l10n.litterAutomaticSection,
                   children: [
                     SwitchListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: const Text('자동화장실'),
+                      title: Text(context.l10n.litterAutomaticLabel),
                       value: _automatic,
                       onChanged: (value) => setState(() => _automatic = value),
                     ),
                     if (_automatic)
-                      const HareupGuidance(
-                        title: '자동화장실 등록 제한 안내',
-                        message: '자동화장실은 분석 대상으로 등록할 수 없습니다.',
+                      HareupGuidance(
+                        title: context.l10n.litterAutomaticBlockedTitle,
+                        message: context.l10n.litterAutomaticBlockedMessage,
                         icon: Icons.error_outline,
                         warning: true,
                       ),
@@ -214,17 +251,17 @@ class _LitterEditorState extends State<_LitterEditor> {
                 ),
                 const SizedBox(height: HareupSpacing.medium),
                 HareupFormSection(
-                  title: '기준 사진 등록',
-                  description: '청소 직후 깨끗한 모래 상태를 기준으로 등록하세요.',
+                  title: context.l10n.litterBaselineRegisterTitle,
+                  description: context.l10n.litterBaselineRegisterHint,
                   children: [
                     HareupPhotoPreview(
                       bytes: _photo,
-                      label: '화장실 기준 사진',
+                      label: context.l10n.litterBaselineLabel,
                       height: 220,
                     ),
                     const SizedBox(height: HareupSpacing.small),
                     HareupPhotoActions(
-                      prefix: '기준 사진',
+                      prefix: context.dsL10n.photoBeforeDefault,
                       onCamera: _picking ? null : () => _pick(true),
                       onGallery: _picking ? null : () => _pick(false),
                     ),
@@ -232,23 +269,26 @@ class _LitterEditorState extends State<_LitterEditor> {
                 ),
                 const SizedBox(height: HareupSpacing.medium),
                 HareupFormSection(
-                  title: '화장실 프로필 및 치수',
+                  title: context.l10n.litterProfileTitle,
                   children: [
                     TextFormField(
                       controller: _name,
                       maxLength: 30,
-                      decoration: const InputDecoration(labelText: '화장실 이름'),
+                      decoration: InputDecoration(
+                        labelText: context.l10n.litterNameLabel,
+                      ),
                       validator: (value) =>
                           value == null || value.trim().isEmpty
-                          ? '이름을 입력해 주세요.'
+                          ? context.l10n.petNameRequired
                           : null,
                     ),
                     const SizedBox(height: HareupSpacing.medium),
                     Text(
-                      '함께 사용하는 고양이',
+                      context.l10n.litterSharedCats,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    if (widget.cats.isEmpty) const Text('먼저 고양이를 등록해 주세요.'),
+                    if (widget.cats.isEmpty)
+                      Text(context.l10n.litterRegisterCatsFirst),
                     for (final cat in widget.cats)
                       CheckboxListTile(
                         contentPadding: const EdgeInsets.symmetric(
@@ -270,7 +310,7 @@ class _LitterEditorState extends State<_LitterEditor> {
                       ),
                     const SizedBox(height: HareupSpacing.medium),
                     Text(
-                      '상세 규격 치수 (선택)',
+                      context.l10n.litterDimensionsTitle,
                       style: Theme.of(context).textTheme.titleMedium,
                     ),
                     const SizedBox(height: HareupSpacing.small),
@@ -279,8 +319,8 @@ class _LitterEditorState extends State<_LitterEditor> {
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
-                      decoration: const InputDecoration(
-                        labelText: '내부 가로 (cm, 선택)',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.litterWidthLabel,
                       ),
                       validator: _positive,
                     ),
@@ -290,8 +330,8 @@ class _LitterEditorState extends State<_LitterEditor> {
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
-                      decoration: const InputDecoration(
-                        labelText: '내부 세로 (cm, 선택)',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.litterLengthLabel,
                       ),
                       validator: _positive,
                     ),
@@ -301,17 +341,17 @@ class _LitterEditorState extends State<_LitterEditor> {
                       keyboardType: const TextInputType.numberWithOptions(
                         decimal: true,
                       ),
-                      decoration: const InputDecoration(
-                        labelText: '모래 높이 (cm, 선택)',
+                      decoration: InputDecoration(
+                        labelText: context.l10n.litterHeightLabel,
                       ),
                       validator: _positive,
                     ),
                   ],
                 ),
                 const SizedBox(height: HareupSpacing.medium),
-                const HareupGuidance(
-                  title: '관찰량 안내',
-                  message: '관찰량 추정은 검증 전이며 치수를 입력해도 제공되지 않습니다.',
+                HareupGuidance(
+                  title: context.l10n.litterVolumeGuideTitle,
+                  message: context.l10n.litterVolumeGuideMessage,
                   icon: Icons.lightbulb_outline,
                 ),
                 const SizedBox(height: HareupSpacing.large),
@@ -323,7 +363,7 @@ class _LitterEditorState extends State<_LitterEditor> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('취소'),
+          child: Text(context.dsL10n.cancelAction),
         ),
         BlocBuilder<Command1<void, LitterBox>, CommandState<void>>(
           bloc: cubit.createCommand,
@@ -335,7 +375,7 @@ class _LitterEditorState extends State<_LitterEditor> {
                     if (_selected.isEmpty ||
                         _photo == null ||
                         _photo!.isEmpty) {
-                      _message('고양이와 기준 사진을 선택해 주세요.');
+                      _message(context.l10n.litterCatsAndPhotoRequired);
                       return;
                     }
                     final saved = await cubit.create(
@@ -352,10 +392,10 @@ class _LitterEditorState extends State<_LitterEditor> {
                       Navigator.pop(context);
                     } else if (cubit.createCommand.state
                         case CommandFailure<void>(:final failure)) {
-                      _message(failure.message);
+                      _message(failureDisplayMessage(context, failure));
                     }
                   },
-            child: const Text('등록'),
+            child: Text(context.l10n.commonRegister),
           ),
         ),
       ],
@@ -378,6 +418,69 @@ class _LitterBaselineDialog extends StatefulWidget {
 
 class _LitterBaselineDialogState extends State<_LitterBaselineDialog> {
   bool _busy = false;
+  late String _name = widget.box.name;
+
+  Future<void> _delete() async {
+    final confirmed = await confirmTargetDeletion(context, _name);
+    if (!confirmed || !mounted) return;
+    setState(() => _busy = true);
+    final cubit = context.read<LitterBoxCubit>();
+    final removed = await cubit.remove(widget.box.id);
+    if (!mounted) return;
+    if (removed) {
+      Navigator.pop(context);
+    } else {
+      setState(() => _busy = false);
+      final message = switch (cubit.deleteCommand.state) {
+        CommandFailure<void>(:final failure) => failureDisplayMessage(
+          context,
+          failure,
+        ),
+        _ => context.l10n.commonDeleteFailed,
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  Future<void> _rename() async {
+    final name = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => HareupTextEntryPage(
+          title: context.l10n.litterRenameTitle,
+          label: context.l10n.litterNameLabel,
+          submitLabel: context.l10n.commonSave,
+          initialValue: _name,
+          maxLength: 30,
+          validate: (value) =>
+              value.isEmpty ? context.l10n.petNameRequired : null,
+        ),
+      ),
+    );
+    if (!mounted || name == null || name == _name) return;
+    setState(() => _busy = true);
+    final cubit = context.read<LitterBoxCubit>();
+    final saved = await cubit.rename(widget.box.id, name);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (saved) _name = name;
+    });
+    if (!saved) {
+      final message = switch (cubit.renameCommand.state) {
+        CommandFailure<void>(:final failure) => failureDisplayMessage(
+          context,
+          failure,
+        ),
+        _ => context.l10n.commonRenameFailed,
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
   Future<void> _replace(bool camera) async {
     if (_busy) return;
     setState(() => _busy = true);
@@ -388,16 +491,16 @@ class _LitterBaselineDialogState extends State<_LitterBaselineDialog> {
       if (!mounted) return;
       if (selected is PhotoSelectionFailed) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('사진 접근을 확인하고 다시 시도해 주세요.')),
+          SnackBar(content: Text(context.l10n.analysisPhotoAccessRetry)),
         );
         return;
       }
       if (selected is! PhotoSelected) return;
       if (await selected.file.length() > 10 * 1024 * 1024) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('사진은 10MB 이하여야 합니다.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.analysisPhotoTooBig10)),
+          );
         }
         return;
       }
@@ -411,15 +514,15 @@ class _LitterBaselineDialogState extends State<_LitterBaselineDialog> {
       if (saved) {
         Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('기준 사진을 변경하지 못했습니다.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.litterBaselineChangeFailed)),
+        );
       }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('사진을 읽지 못했습니다.')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.photoReadFailed)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -428,89 +531,104 @@ class _LitterBaselineDialogState extends State<_LitterBaselineDialog> {
 
   @override
   Widget build(BuildContext context) => HareupFormPage(
-    title: Text(widget.box.name),
+    title: Text(_name),
+    appBarActions: [
+      IconButton(
+        tooltip: context.l10n.commonRename,
+        onPressed: _busy ? null : _rename,
+        icon: const Icon(Icons.edit_outlined),
+      ),
+      IconButton(
+        tooltip: context.l10n.litterDeleteAction,
+        onPressed: _busy ? null : _delete,
+        icon: const Icon(Icons.delete_outline),
+      ),
+    ],
     content: SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('기준 사진 ${widget.box.currentBaseline.version}번째'),
-          HareupPhotoPreview(
-            bytes: widget.box.currentBaseline.photo,
-            label: '화장실 기준 사진',
-            height: 120,
-            fit: BoxFit.cover,
-          ),
-          for (final baseline in widget.box.baselines.reversed)
-            Text(
-              '${baseline.version}번째 · ${baseline.createdAt.toLocal().toString().substring(0, 16)}',
-            ),
-          const Text('청소하거나 모래를 교체했다면 새 기준 사진을 등록하세요. 이전 기준은 유지됩니다.'),
-          const Text('사진 분석 결과는 검증된 경우에만 제공됩니다.'),
-          TextButton(
-            onPressed: _busy
-                ? null
-                : () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) =>
-                          RepositoryProvider<RecordsRepository>.value(
-                            value: context.read<RecordsRepository>(),
-                            child: AnalysisPage(
-                              targetId: widget.box.id,
-                              targetName: widget.box.name,
-                              kind: AnalysisKind.litter,
-                              baseline: widget.box.currentBaseline,
-                              photoSource: widget.source,
-                              runtime: context.read<AnalysisRuntime>(),
-                              cats: [
-                                for (final cat in widget.cats)
-                                  AnalysisCat(id: cat.id, name: cat.name),
-                              ],
-                              widthCm: widget.box.widthCm,
-                              lengthCm: widget.box.lengthCm,
-                              litterHeightCm: widget.box.litterHeightCm,
-                            ),
-                          ),
-                    ),
-                  ),
-            child: const Text('사진 비교'),
-          ),
-          TextButton(
-            onPressed: _busy
-                ? null
-                : () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) =>
-                          RepositoryProvider<RecordsRepository>.value(
-                            value: context.read<RecordsRepository>(),
-                            child: RecordsPage(
-                              groupId: context.read<AnalysisRuntime>().groupId,
-                              targetId: widget.box.id,
-                              targetName: widget.box.name,
-                            ),
-                          ),
-                    ),
-                  ),
-            child: const Text('기록 보기'),
-          ),
-          Wrap(
+          HareupFormSection(
+            title: context.dsL10n.photoBeforeDefault,
             children: [
-              TextButton(
-                onPressed: _busy ? null : () => _replace(true),
-                child: const Text('새 기준 촬영'),
+              HareupPhotoPreview(
+                bytes: widget.box.currentBaseline.photo,
+                label: context.l10n.litterBaselineLabel,
+                height: 120,
+                fit: BoxFit.cover,
               ),
-              TextButton(
-                onPressed: _busy ? null : () => _replace(false),
-                child: const Text('새 기준 선택'),
+              const SizedBox(height: HareupSpacing.medium),
+              HareupPhotoActions(
+                prefix: context.l10n.litterNewBaselinePrefix,
+                onCamera: _busy ? null : () => _replace(true),
+                onGallery: _busy ? null : () => _replace(false),
               ),
             ],
           ),
+          const SizedBox(height: HareupSpacing.medium),
+          HareupFormSection(
+            title: context.l10n.litterBaselineHistoryTitle,
+            children: [
+              for (final baseline in widget.box.baselines.reversed)
+                Text(
+                  '${context.l10n.ordinalVersion(baseline.version)} · ${baseline.createdAt.toLocal().toString().substring(0, 16)}',
+                ),
+            ],
+          ),
+          const SizedBox(height: HareupSpacing.medium),
+          HareupGuidance(
+            title: context.l10n.litterBaselineGuideTitle,
+            message: context.l10n.litterBaselineGuideMessage,
+          ),
+          const SizedBox(height: HareupSpacing.medium),
         ],
       ),
     ),
+    equalActionWidths: true,
     actions: [
-      TextButton(
-        onPressed: _busy ? null : () => Navigator.pop(context),
-        child: const Text('닫기'),
+      OutlinedButton(
+        onPressed: _busy
+            ? null
+            : () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => RepositoryProvider<RecordsRepository>.value(
+                    value: context.read<RecordsRepository>(),
+                    child: AnalysisPage(
+                      targetId: widget.box.id,
+                      targetName: _name,
+                      kind: AnalysisKind.litter,
+                      baseline: widget.box.currentBaseline,
+                      photoSource: widget.source,
+                      runtime: context.read<AnalysisRuntime>(),
+                      cats: [
+                        for (final cat in widget.cats)
+                          AnalysisCat(id: cat.id, name: cat.name),
+                      ],
+                      widthCm: widget.box.widthCm,
+                      lengthCm: widget.box.lengthCm,
+                      litterHeightCm: widget.box.litterHeightCm,
+                    ),
+                  ),
+                ),
+              ),
+        child: Text(context.l10n.navCompare),
+      ),
+      FilledButton(
+        onPressed: _busy
+            ? null
+            : () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => RepositoryProvider<RecordsRepository>.value(
+                    value: context.read<RecordsRepository>(),
+                    child: RecordsPage(
+                      groupId: context.read<AnalysisRuntime>().groupId,
+                      targetId: widget.box.id,
+                      targetName: _name,
+                    ),
+                  ),
+                ),
+              ),
+        child: Text(context.l10n.litterViewRecords),
       ),
     ],
   );

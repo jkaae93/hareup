@@ -1,0 +1,79 @@
+{
+  "@@locale": "ko",
+  "cancelAction": "취소",
+  "@cancelAction": {
+    "description": "Label for cancel buttons."
+  },
+  "retryAction": "다시 시도",
+  "@retryAction": {
+    "description": "Label for retry buttons on error notices."
+  },
+  "loadingLabel": "불러오는 중",
+  "@loadingLabel": {
+    "description": "Accessibility label for loading indicators."
+  },
+  "photoEmpty": "선택된 사진이 없습니다.",
+  "@photoEmpty": {
+    "description": "Default empty state for photo previews."
+  },
+  "photoError": "사진을 표시할 수 없습니다.",
+  "@photoError": {
+    "description": "Default error state for photo previews."
+  },
+  "photoBeforeDefault": "최근 사진",
+  "@photoBeforeDefault": {
+    "description": "Default label for the before photo in comparisons."
+  },
+  "photoAfterDefault": "비교 사진",
+  "@photoAfterDefault": {
+    "description": "Default label for the after photo in comparisons."
+  },
+  "photoCompareTitle": "사진 비교",
+  "@photoCompareTitle": {
+    "description": "Title for photo comparisons."
+  },
+  "photoDefaultWord": "사진",
+  "@photoDefaultWord": {
+    "description": "Default word composed into photo action labels."
+  },
+  "takePhoto": "{prefix} 촬영",
+  "@takePhoto": {
+    "description": "Label for taking a photo.",
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "choosePhoto": "{prefix} 선택",
+  "@choosePhoto": {
+    "description": "Label for choosing a photo.",
+    "placeholders": {
+      "prefix": {
+        "type": "String"
+      }
+    }
+  },
+  "removePhoto": "사진 삭제",
+  "@removePhoto": {
+    "description": "Label for removing a photo."
+  },
+  "decreaseCount": "{label} 줄이기",
+  "@decreaseCount": {
+    "description": "Tooltip for decreasing a count field.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  },
+  "increaseCount": "{label} 늘리기",
+  "@increaseCount": {
+    "description": "Tooltip for increasing a count field.",
+    "placeholders": {
+      "label": {
+        "type": "String"
+      }
+    }
+  }
+}

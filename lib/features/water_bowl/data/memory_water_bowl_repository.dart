@@ -6,6 +6,30 @@ import '../domain/water_bowl.dart';
 class MemoryWaterBowlRepository implements WaterBowlRepository {
   final _items = <String, WaterBowl>{};
   @override
+  Future<Result<void>> delete(String id) async => _items.remove(id) == null
+      ? const Failure(NotFoundFailure())
+      : const Success(null);
+  @override
+  Future<Result<void>> rename(String id, String name) async {
+    final bowl = _items[id];
+    if (bowl == null) return const Failure(NotFoundFailure());
+    if (name.trim().isEmpty || name.trim().length > 30) {
+      return const Failure(RequestFailure());
+    }
+    _items[id] = WaterBowl(
+      id: bowl.id,
+      name: name.trim(),
+      petIds: bowl.petIds,
+      baselines: bowl.baselines,
+      registrationPhotos: bowl.registrationPhotos,
+      emptyWeightGrams: bowl.emptyWeightGrams,
+      fullWaterMl: bowl.fullWaterMl,
+      levelProfile: bowl.levelProfile,
+    );
+    return const Success(null);
+  }
+
+  @override
   Future<Result<List<WaterBowl>>> list() async =>
       Success(List.unmodifiable(_items.values));
   @override
