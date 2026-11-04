@@ -24,7 +24,7 @@ class DesignLocalizationsEn extends DesignLocalizations {
   String get photoError => 'Cannot display the photo.';
 
   @override
-  String get photoBeforeDefault => 'Baseline photo';
+  String get photoBeforeDefault => 'Latest photo';
 
   @override
   String get photoAfterDefault => 'Comparison photo';

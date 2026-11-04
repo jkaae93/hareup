@@ -117,6 +117,7 @@ void main() {
       await tester.tap(find.text('완료'));
       await tester.pumpAndSettle();
       expect(find.text('@나비'), findsOneWidget);
+      expect(tester.getTopLeft(find.byType(InputChip)).dx, lessThan(16));
       await tester.tap(find.byTooltip('사진 첨부'));
       await tester.pumpAndSettle();
       await tester.enterText(find.byType(TextField), '건강 상태가 궁금해요');

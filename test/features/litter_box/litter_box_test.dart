@@ -139,10 +139,10 @@ void main() {
         find.widgetWithText(TextFormField, '내부 가로 (cm, 선택)'),
         '40',
       );
-      await tester.ensureVisible(find.text('기준 사진 선택'));
+      await tester.ensureVisible(find.text('최근 사진 선택'));
       tester.testTextInput.hide();
       await tester.pumpAndSettle();
-      await tester.tap(find.text('기준 사진 선택'));
+      await tester.tap(find.text('최근 사진 선택'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('등록'));
       await tester.pumpAndSettle();

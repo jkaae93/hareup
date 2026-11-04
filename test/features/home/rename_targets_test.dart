@@ -67,7 +67,9 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text(oldName));
         await tester.pumpAndSettle();
-        await tester.tap(find.text('이름 변경'));
+        await tester.tap(
+          isLitter ? find.byTooltip('이름 변경') : find.text('이름 변경'),
+        );
         await tester.pumpAndSettle();
         expect(find.text(oldName), findsOneWidget);
         await tester.enterText(find.byType(TextFormField), '   ');
@@ -98,13 +100,17 @@ void main() {
         await tester.tap(find.text(newName));
         await tester.pumpAndSettle();
         final deleteLabel = isLitter ? '화장실 삭제' : '물그릇 삭제';
-        await tester.tap(find.text(deleteLabel));
+        await tester.tap(
+          isLitter ? find.byTooltip(deleteLabel) : find.text(deleteLabel),
+        );
         await tester.pumpAndSettle();
         expect(find.textContaining('기존 사진과 관찰 기록은 보관됩니다.'), findsOneWidget);
         await tester.tap(find.text('취소'));
         await tester.pumpAndSettle();
         expect(find.text(newName), findsOneWidget);
-        await tester.tap(find.text(deleteLabel));
+        await tester.tap(
+          isLitter ? find.byTooltip(deleteLabel) : find.text(deleteLabel),
+        );
         await tester.pumpAndSettle();
         await tester.tap(find.text('삭제'));
         await tester.pumpAndSettle();

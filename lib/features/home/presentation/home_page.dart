@@ -11,10 +11,12 @@ import '../../family/domain/family.dart';
 import '../../family/presentation/family_page.dart';
 import '../../health_chat/domain/health_chat.dart';
 import '../../health_chat/presentation/health_chat_page.dart';
+import '../../health_report/presentation/health_report_page.dart';
 import '../../litter_box/domain/litter_box.dart';
 import '../../litter_box/presentation/litter_box_cubit.dart';
 import '../../litter_box/presentation/litter_box_page.dart';
 import '../../pet/domain/pet.dart';
+import '../../my_page/presentation/my_page.dart';
 import '../../shared_data/target_widgets.dart';
 import '../../settings/data/platform_settings_repository.dart';
 import '../../settings/presentation/settings_page.dart';
@@ -38,6 +40,48 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+  int _reportRevision = 0;
+  final _visited = <int>{0};
+
+  void _selectTab(int index) {
+    if (index == _selectedIndex) return;
+    setState(() {
+      _selectedIndex = index;
+      _visited.add(index);
+      if (index == 1) _reportRevision++;
+    });
+  }
+
+  void _openSettings() {
+    final auth = context.read<AuthCubit>();
+    final locale = context.read<LocaleCubit>();
+    final pets = _pets(context) ?? const <Pet>[];
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => SettingsPage(
+          repository: const PlatformSettingsRepository(),
+          onSignOut: auth.signOut,
+          languageOverride: locale.state,
+          onLanguageChanged: locale.setOverride,
+          displayName: auth.state.session?.displayName,
+          email: auth.state.session?.email,
+          pets: pets,
+        ),
+      ),
+    );
+  }
+
+  void _openFamily() {
+    final repository = context.read<FamilyRepository>();
+    final groupId = context.read<AnalysisRuntime>().groupId;
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => FamilyPage(repository: repository, groupId: groupId),
+      ),
+    );
+  }
+
   List<Pet>? _pets(BuildContext context) =>
       switch (context.read<PetCubit>().state) {
         Loaded<List<Pet>>(:final data) => data,
@@ -59,6 +103,7 @@ class _HomePageState extends State<HomePage> {
         builder: (_) => BlocProvider.value(
           value: waterBowlCubit,
           child: WaterBowlPage(
+            selectionMode: true,
             pets: [
               for (final pet in pets) BowlPetOption(id: pet.id, name: pet.name),
             ],
@@ -71,7 +116,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _openPets(BuildContext context) {
+  void _openPets(BuildContext context, {bool selectionMode = false}) {
     final cubit = context.read<PetCubit>();
     final water = context.read<WaterBowlCubit>().repository;
     final litter = context.read<LitterBoxCubit>().repository;
@@ -82,6 +127,7 @@ class _HomePageState extends State<HomePage> {
         builder: (_) => BlocProvider.value(
           value: cubit,
           child: PetPage(
+            selectionMode: selectionMode,
             waterRepository: water,
             litterRepository: litter,
             recordsRepository: records,
@@ -111,6 +157,7 @@ class _HomePageState extends State<HomePage> {
           child: BlocProvider.value(
             value: cubit,
             child: LitterBoxPage(
+              selectionMode: true,
               cats: _catOptions(pets),
               photoSource: PhotoPicker(),
             ),
@@ -265,226 +312,237 @@ class _HomePageState extends State<HomePage> {
   ).showSnackBar(SnackBar(content: Text(context.l10n.homePetError)));
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(
-      title: Text(context.l10n.appTitle),
-      actions: [
-        IconButton(
-          tooltip: context.l10n.chatAssistantLabel,
-          icon: const Icon(Icons.chat_bubble_outline),
-          onPressed: () {
-            final pets = _pets(context);
-            if (pets == null) {
-              _petError(context);
-              return;
-            }
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => HealthChatPage(
+  Widget build(BuildContext context) => PopScope(
+    canPop: _selectedIndex == 0,
+    onPopInvokedWithResult: (didPop, _) {
+      if (!didPop && _selectedIndex != 0) _selectTab(0);
+    },
+    child: Scaffold(
+      appBar: _selectedIndex == 0
+          ? AppBar(title: Text(context.l10n.appTitle))
+          : null,
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _selectedIndex,
+        onDestinationSelected: _selectTab,
+        destinations: [
+          NavigationDestination(
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: context.l10n.navHome,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.insights_outlined),
+            selectedIcon: const Icon(Icons.insights),
+            label: context.l10n.navHealthReport,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.chat_bubble_outline),
+            selectedIcon: const Icon(Icons.chat_bubble),
+            label: context.l10n.navChat,
+          ),
+          NavigationDestination(
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: context.l10n.navMyPage,
+          ),
+        ],
+      ),
+      body: IndexedStack(
+        index: _selectedIndex,
+        children: [
+          _buildDashboard(context),
+          if (_visited.contains(1))
+            BlocBuilder<PetCubit, LoadState<List<Pet>>>(
+              builder: (context, state) {
+                if (state case Failed<List<Pet>>(:final failure)) {
+                  return Scaffold(
+                    body: ErrorNotice(
+                      message: failure.message,
+                      onRetry: () => context.read<PetCubit>().load(),
+                    ),
+                  );
+                }
+                final pets = _pets(context);
+                if (pets == null) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return HealthReportPage(
+                  key: ValueKey(_reportRevision),
+                  pets: pets,
+                  waterRepository: context.read<WaterBowlCubit>().repository,
+                  recordsRepository: context.read<RecordsRepository>(),
+                  runtime: context.read<AnalysisRuntime>(),
+                  onViewTargets: () => _openTargetPicker(records: true),
+                  onViewRecords: () {
+                    final repository = context.read<RecordsRepository>();
+                    final groupId = context.read<AnalysisRuntime>().groupId;
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => GroupRecordsPage(
+                          repository: repository,
+                          groupId: groupId,
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            )
+          else
+            const SizedBox.shrink(),
+          if (_visited.contains(2))
+            BlocBuilder<PetCubit, LoadState<List<Pet>>>(
+              builder: (context, state) {
+                if (state case Failed<List<Pet>>(:final failure)) {
+                  return Scaffold(
+                    body: ErrorNotice(
+                      message: failure.message,
+                      onRetry: () => context.read<PetCubit>().load(),
+                    ),
+                  );
+                }
+                final pets = _pets(context);
+                if (pets == null) {
+                  return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                return HealthChatPage(
                   repository: context.read<HealthChatRepository>(),
                   groupId: context.read<AnalysisRuntime>().groupId,
                   pets: pets,
                   photoSource: PhotoPicker(),
-                ),
-              ),
-            );
-          },
-        ),
-        IconButton(
-          tooltip: context.l10n.settingsTitle,
-          icon: const Icon(Icons.settings_outlined),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => SettingsPage(
-                repository: const PlatformSettingsRepository(),
-                onSignOut: context.read<AuthCubit>().signOut,
-                languageOverride: context.read<LocaleCubit>().state,
-                onLanguageChanged: context.read<LocaleCubit>().setOverride,
-                displayName: context
-                    .read<AuthCubit>()
-                    .state
-                    .session
-                    ?.displayName,
-                email: context.read<AuthCubit>().state.session?.email,
-                pets: _pets(context) ?? const [],
-              ),
-            ),
-          ),
-        ),
-        if (widget.onChangeFamily case final onChangeFamily?)
-          IconButton(
-            tooltip: context.l10n.homeSwitchFamily,
-            icon: const Icon(Icons.switch_account_outlined),
-            onPressed: onChangeFamily,
-          ),
-        IconButton(
-          tooltip: context.l10n.homeManageFamily,
-          icon: const Icon(Icons.people_outline),
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => FamilyPage(
-                repository: context.read<FamilyRepository>(),
-                groupId: context.read<AnalysisRuntime>().groupId,
-              ),
-            ),
-          ),
-        ),
-      ],
+                );
+              },
+            )
+          else
+            const SizedBox.shrink(),
+          if (_visited.contains(3))
+            MyPage(
+              onFamily: _openFamily,
+              onSettings: _openSettings,
+              onSwitchFamily: widget.onChangeFamily,
+            )
+          else
+            const SizedBox.shrink(),
+        ],
+      ),
     ),
-    bottomNavigationBar: NavigationBar(
-      selectedIndex: 0,
-      onDestinationSelected: (index) {
-        switch (index) {
-          case 1:
-            _openWater(context);
-          case 2:
-            _openLitter(context);
-          case 3:
-            _openTargetPicker(records: false);
-          case 4:
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (_) => GroupRecordsPage(
-                  repository: context.read<RecordsRepository>(),
-                  groupId: context.read<AnalysisRuntime>().groupId,
-                ),
-              ),
-            );
-        }
-      },
-      destinations: [
-        NavigationDestination(
-          icon: const Icon(Icons.home_outlined),
-          selectedIcon: const Icon(Icons.home),
-          label: context.l10n.navHome,
+  );
+
+  Widget _buildDashboard(BuildContext context) => Center(
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(
+        maxWidth: HareupSpacing.maxContentWidth,
+      ),
+      child: ListView(
+        padding: const EdgeInsets.symmetric(
+          horizontal: HareupSpacing.pageMargin,
+          vertical: HareupSpacing.medium,
         ),
-        NavigationDestination(
-          icon: const Icon(Icons.water_drop_outlined),
-          label: context.l10n.navWater,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.cleaning_services_outlined),
-          label: context.l10n.navLitter,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.compare_outlined),
-          label: context.l10n.navCompare,
-        ),
-        NavigationDestination(
-          icon: const Icon(Icons.history),
-          label: context.l10n.navRecords,
-        ),
-      ],
-    ),
-    body: Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(
-          maxWidth: HareupSpacing.maxContentWidth,
-        ),
-        child: ListView(
-          padding: const EdgeInsets.symmetric(
-            horizontal: HareupSpacing.pageMargin,
-            vertical: HareupSpacing.medium,
+        children: [
+          Text(
+            context.l10n.homeHeadline,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
-          children: [
-            Text(
-              context.l10n.homeHeadline,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: HareupSpacing.small),
-            Text(
-              context.l10n.homeSubheadline,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: HareupSpacing.small),
-            if (context.read<AnalysisRuntime>().groupId == 'local-development')
-              Text(context.l10n.homeLocalPreview),
-            const SizedBox(height: HareupSpacing.large),
-            BlocBuilder<PetCubit, LoadState<List<Pet>>>(
-              builder: (context, state) => _DashboardSection<Pet>(
-                title: context.l10n.homePetTitle,
-                manageLabel: context.l10n.petManageTitle,
-                state: state,
-                empty: context.l10n.homePetEmpty,
-                onManage: () => _openPets(context),
-                onRetry: () => context.read<PetCubit>().load(),
-                item: (pet) => ListTile(
-                  leading: CircleAvatar(
-                    foregroundImage: pet.profile.photoBytes == null
-                        ? null
-                        : MemoryImage(pet.profile.photoBytes!),
-                    child: const Icon(Icons.pets),
-                  ),
-                  title: Text(pet.name),
-                  subtitle: Text(
-                    pet.species == PetSpecies.cat
-                        ? context.l10n.petSpeciesCat
-                        : context.l10n.petSpeciesDog,
-                  ),
-                  onTap: () => _openPets(context),
+          const SizedBox(height: HareupSpacing.small),
+          Text(
+            context.l10n.homeSubheadline,
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: HareupSpacing.small),
+          if (context.read<AnalysisRuntime>().groupId == 'local-development')
+            Text(context.l10n.homeLocalPreview),
+          const SizedBox(height: HareupSpacing.large),
+          BlocBuilder<PetCubit, LoadState<List<Pet>>>(
+            builder: (context, state) => _DashboardSection<Pet>(
+              title: context.l10n.homePetTitle,
+              manageLabel: context.l10n.homeEditAction,
+              manageTooltip: context.l10n.petManageTitle,
+              state: state,
+              empty: context.l10n.homePetEmpty,
+              onManage: () => _openPets(context, selectionMode: true),
+              onRetry: () => context.read<PetCubit>().load(),
+              item: (pet) => ListTile(
+                leading: CircleAvatar(
+                  foregroundImage: pet.profile.photoBytes == null
+                      ? null
+                      : MemoryImage(pet.profile.photoBytes!),
+                  child: const Icon(Icons.pets),
                 ),
-                count: (pets) => context.l10n.homePetCount(pets.length),
+                title: Text(pet.name),
+                subtitle: Text(
+                  pet.species == PetSpecies.cat
+                      ? context.l10n.petSpeciesCat
+                      : context.l10n.petSpeciesDog,
+                ),
+                onTap: () => _openPets(context),
+              ),
+              count: (pets) => context.l10n.homePetCount(pets.length),
+            ),
+          ),
+          BlocBuilder<WaterBowlCubit, LoadState<List<WaterBowl>>>(
+            builder: (context, state) => _DashboardSection<WaterBowl>(
+              title: context.l10n.navWater,
+              manageLabel: context.l10n.homeEditAction,
+              manageTooltip: context.l10n.homeWaterManage,
+              state: state,
+              empty: context.l10n.homeWaterEmpty,
+              onManage: () => _openWater(context),
+              onRetry: () => context.read<WaterBowlCubit>().load(),
+              grid: true,
+              item: (bowl) => TargetGridTile(
+                name: bowl.name,
+                icon: Icons.water_drop_outlined,
+                onTap: () async {
+                  await showWaterBowlDetail(context, bowl, PhotoPicker());
+                },
               ),
             ),
-            BlocBuilder<WaterBowlCubit, LoadState<List<WaterBowl>>>(
-              builder: (context, state) => _DashboardSection<WaterBowl>(
-                title: context.l10n.navWater,
-                manageLabel: context.l10n.homeWaterManage,
-                state: state,
-                empty: context.l10n.homeWaterEmpty,
-                onManage: () => _openWater(context),
-                onRetry: () => context.read<WaterBowlCubit>().load(),
-                grid: true,
-                item: (bowl) => TargetGridTile(
-                  name: bowl.name,
-                  icon: Icons.water_drop_outlined,
-                  onTap: () async {
-                    await showWaterBowlDetail(context, bowl, PhotoPicker());
-                  },
-                ),
+          ),
+          BlocBuilder<LitterBoxCubit, LoadState<List<LitterBox>>>(
+            builder: (context, state) => _DashboardSection<LitterBox>(
+              title: context.l10n.navLitter,
+              manageLabel: context.l10n.homeEditAction,
+              manageTooltip: context.l10n.homeLitterManage,
+              state: state,
+              empty: context.l10n.homeLitterEmpty,
+              onManage: () => _openLitter(context),
+              onRetry: () => context.read<LitterBoxCubit>().load(),
+              grid: true,
+              item: (box) => TargetGridTile(
+                name: box.name,
+                icon: Icons.cleaning_services_outlined,
+                onTap: () async {
+                  final pets = _pets(context);
+                  if (pets == null) {
+                    _petError(context);
+                    return;
+                  }
+                  await showLitterBoxDetail(
+                    context,
+                    box,
+                    PhotoPicker(),
+                    _catOptions(pets),
+                  );
+                },
               ),
             ),
-            BlocBuilder<LitterBoxCubit, LoadState<List<LitterBox>>>(
-              builder: (context, state) => _DashboardSection<LitterBox>(
-                title: context.l10n.navLitter,
-                manageLabel: context.l10n.homeLitterManage,
-                state: state,
-                empty: context.l10n.homeLitterEmpty,
-                onManage: () => _openLitter(context),
-                onRetry: () => context.read<LitterBoxCubit>().load(),
-                grid: true,
-                item: (box) => TargetGridTile(
-                  name: box.name,
-                  icon: Icons.cleaning_services_outlined,
-                  onTap: () async {
-                    final pets = _pets(context);
-                    if (pets == null) {
-                      _petError(context);
-                      return;
-                    }
-                    await showLitterBoxDetail(
-                      context,
-                      box,
-                      PhotoPicker(),
-                      _catOptions(pets),
-                    );
-                  },
-                ),
+          ),
+          const SizedBox(height: HareupSpacing.medium),
+          Card(
+            color: HareupColors.surfaceContainer,
+            child: Padding(
+              padding: const EdgeInsets.all(HareupSpacing.medium),
+              child: Text(
+                context.l10n.homeEstimateNotice,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
-            const SizedBox(height: HareupSpacing.medium),
-            Card(
-              color: HareupColors.surfaceContainer,
-              child: Padding(
-                padding: const EdgeInsets.all(HareupSpacing.medium),
-                child: Text(
-                  context.l10n.homeEstimateNotice,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     ),
   );
@@ -500,10 +558,12 @@ class _DashboardSection<T> extends StatelessWidget {
     required this.onRetry,
     required this.item,
     this.count,
+    this.manageTooltip,
     this.grid = false,
   });
   final String title;
   final String manageLabel;
+  final String? manageTooltip;
   final LoadState<List<T>> state;
   final String empty;
   final VoidCallback onManage;
@@ -521,6 +581,8 @@ class _DashboardSection<T> extends StatelessWidget {
           title: title,
           actionLabel: manageLabel,
           onAction: onManage,
+          alignActionToEnd: manageTooltip != null,
+          actionTooltip: manageTooltip,
         ),
         switch (state) {
           Initial<List<T>>() || Loading<List<T>>() => const Padding(

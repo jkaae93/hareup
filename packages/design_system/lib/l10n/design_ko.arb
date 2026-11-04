@@ -20,7 +20,7 @@
   "@photoError": {
     "description": "Default error state for photo previews."
   },
-  "photoBeforeDefault": "기준 사진",
+  "photoBeforeDefault": "최근 사진",
   "@photoBeforeDefault": {
     "description": "Default label for the before photo in comparisons."
   },

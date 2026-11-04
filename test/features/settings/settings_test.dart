@@ -62,30 +62,37 @@ void main() {
       expect(await insecure.load(), isA<Failure<SettingsInfo>>());
     },
   );
-  testWidgets('shows version, hides missing links and reports launch failure', (
-    tester,
-  ) async {
-    final fake = FakeSettings(
-      privacyUrl: Uri.parse('https://example.com/privacy'),
-    );
-    await tester.pumpWidget(
-      MaterialApp(
-        theme: testTheme,
-        localizationsDelegates: testLocalizationsDelegates,
-        locale: const Locale('ko'),
-        supportedLocales: appSupportedLocales,
-        home: SettingsPage(repository: fake),
-      ),
-    );
-    await tester.pumpAndSettle();
-    expect(find.text('1.2.3 (4)'), findsOneWidget);
-    expect(find.text('문의 및 지원'), findsNothing);
-    expect(find.text('공지사항'), findsNothing);
-    await tester.tap(find.text('개인정보처리방침'));
-    await tester.pump();
-    expect(find.text('링크 열기 실패'), findsOneWidget);
-    expect(fake.opens, 1);
-  });
+  testWidgets(
+    'shows version, disables missing links and reports launch failure',
+    (tester) async {
+      final fake = FakeSettings(
+        privacyUrl: Uri.parse('https://example.com/privacy'),
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: testTheme,
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
+          home: SettingsPage(repository: fake),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.scrollUntilVisible(find.text('v1.2.3 (4)'), 200);
+      expect(find.text('v1.2.3 (4)'), findsOneWidget);
+      for (final label in ['자주 묻는 질문 및 문의', '공지사항 및 업데이트 소식']) {
+        final tile = tester.widget<ListTile>(
+          find.ancestor(of: find.text(label), matching: find.byType(ListTile)),
+        );
+        expect(tile.enabled, isFalse);
+      }
+      await tester.ensureVisible(find.text('개인정보처리방침'));
+      await tester.tap(find.text('개인정보처리방침'));
+      await tester.pump();
+      expect(find.text('링크 열기 실패'), findsOneWidget);
+      expect(fake.opens, 1);
+    },
+  );
   testWidgets('load failure can be retried', (tester) async {
     final fake = FakeSettings(failLoad: true);
     await tester.pumpWidget(
@@ -102,7 +109,8 @@ void main() {
     fake.failLoad = false;
     await tester.tap(find.text('다시 시도'));
     await tester.pumpAndSettle();
-    expect(find.text('1.2.3 (4)'), findsOneWidget);
+    await tester.scrollUntilVisible(find.text('v1.2.3 (4)'), 200);
+    expect(find.text('v1.2.3 (4)'), findsOneWidget);
     expect(fake.loads, 2);
   });
 }

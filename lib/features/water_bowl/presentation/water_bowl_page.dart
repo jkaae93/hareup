@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_media/media.dart';
 import 'package:hareup_core/core.dart';
 import '../../shared_data/target_widgets.dart';
+import '../../shared_data/selection_management_page.dart';
 import '../../photo_analysis/domain/analysis.dart';
 import '../../records/domain/record.dart';
 import '../../records/presentation/records_page.dart';
@@ -46,78 +47,117 @@ class WaterBowlPage extends StatelessWidget {
     required this.photoSource,
     required this.analysisRuntime,
     required this.recordsRepository,
+    this.selectionMode = false,
   });
+  final bool selectionMode;
   final List<BowlPetOption> pets;
   final PhotoSource photoSource;
   final AnalysisRuntime analysisRuntime;
   final RecordsRepository recordsRepository;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(context.l10n.homeWaterManage)),
-    floatingActionButton: Builder(
-      builder: (context) {
-        final cubit = context.read<WaterBowlCubit>();
-        return FloatingActionButton.extended(
-          onPressed: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => BlocProvider.value(
-                value: cubit,
-                child: _BowlForm(
-                  pets: pets,
-                  photoSource: photoSource,
-                  analysisRuntime: analysisRuntime,
-                  recordsRepository: recordsRepository,
-                ),
+  Widget build(BuildContext context) {
+    if (selectionMode) {
+      final cubit = context.read<WaterBowlCubit>();
+      return SelectionManagementPage<WaterBowl>(
+        title: context.l10n.homeWaterManage,
+        emptyMessage: context.l10n.waterEmptyMessage,
+        addLabel: context.l10n.waterAddAction,
+        confirmMessage: context.l10n.targetDeleteMessage,
+        cubit: cubit,
+        idOf: (bowl) => bowl.id,
+        nameOf: (bowl) => bowl.name,
+        iconOf: (_) => Icons.water_drop_outlined,
+        onAdd: () => Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => BlocProvider.value(
+              value: cubit,
+              child: _BowlForm(
+                pets: pets,
+                photoSource: photoSource,
+                analysisRuntime: analysisRuntime,
+                recordsRepository: recordsRepository,
               ),
             ),
           ),
-          label: Text(context.l10n.waterAddAction),
-          icon: const Icon(Icons.add),
-        );
-      },
-    ),
-    body: HareupContent(
-      child: BlocBuilder<WaterBowlCubit, LoadState<List<WaterBowl>>>(
-        builder: (context, state) => LoadView<List<WaterBowl>>(
-          state: state,
-          emptyMessage: context.l10n.waterEmptyMessage,
-          onRetry: () => context.read<WaterBowlCubit>().load(),
-          builder: (context, bowls) => GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.5,
-            ),
-            padding: const EdgeInsets.fromLTRB(
-              HareupSpacing.pageMargin,
-              HareupSpacing.small,
-              HareupSpacing.pageMargin,
-              HareupSpacing.floatingActionClearance,
-            ),
-            itemCount: bowls.length,
-            itemBuilder: (context, index) {
-              final bowl = bowls[index];
-              return TargetGridTile(
-                name: bowl.name,
-                icon: Icons.water_drop_outlined,
-                onTap: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => _WaterBowlDetailPage(
-                      bowl: bowl,
-                      cubit: context.read<WaterBowlCubit>(),
-                      photoSource: photoSource,
-                      analysisRuntime: analysisRuntime,
-                      recordsRepository: recordsRepository,
-                    ),
+        ),
+        onRetry: cubit.load,
+        onDelete: (bowl) => cubit.remove(bowl.id),
+        failureMessage: () => switch (cubit.deleteCommand.state) {
+          CommandFailure<void>(:final failure) => failureDisplayMessage(
+            context,
+            failure,
+          ),
+          _ => context.l10n.commonDeleteFailed,
+        },
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(title: Text(context.l10n.homeWaterManage)),
+      bottomNavigationBar: Builder(
+        builder: (context) {
+          final cubit = context.read<WaterBowlCubit>();
+          return ManagementBottomButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => BlocProvider.value(
+                  value: cubit,
+                  child: _BowlForm(
+                    pets: pets,
+                    photoSource: photoSource,
+                    analysisRuntime: analysisRuntime,
+                    recordsRepository: recordsRepository,
                   ),
                 ),
-              );
-            },
+              ),
+            ),
+            label: context.l10n.waterAddAction,
+            icon: Icons.add,
+          );
+        },
+      ),
+      body: HareupContent(
+        child: BlocBuilder<WaterBowlCubit, LoadState<List<WaterBowl>>>(
+          builder: (context, state) => LoadView<List<WaterBowl>>(
+            state: state,
+            emptyMessage: context.l10n.waterEmptyMessage,
+            onRetry: () => context.read<WaterBowlCubit>().load(),
+            builder: (context, bowls) => GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.5,
+              ),
+              padding: const EdgeInsets.fromLTRB(
+                HareupSpacing.pageMargin,
+                HareupSpacing.small,
+                HareupSpacing.pageMargin,
+                HareupSpacing.floatingActionClearance,
+              ),
+              itemCount: bowls.length,
+              itemBuilder: (context, index) {
+                final bowl = bowls[index];
+                return TargetGridTile(
+                  name: bowl.name,
+                  icon: Icons.water_drop_outlined,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => _WaterBowlDetailPage(
+                        bowl: bowl,
+                        cubit: context.read<WaterBowlCubit>(),
+                        photoSource: photoSource,
+                        analysisRuntime: analysisRuntime,
+                        recordsRepository: recordsRepository,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _BowlForm extends StatefulWidget {
@@ -698,6 +738,12 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
                   height: 220,
                   fit: BoxFit.contain,
                 ),
+                const SizedBox(height: HareupSpacing.medium),
+                HareupPhotoActions(
+                  prefix: context.l10n.litterNewBaselinePrefix,
+                  onCamera: _busy ? null : () => _replace(true),
+                  onGallery: _busy ? null : () => _replace(false),
+                ),
                 if (baseline.notes.isNotEmpty) ...[
                   const SizedBox(height: HareupSpacing.small),
                   HareupGuidance(
@@ -790,41 +836,6 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
               ),
               const SizedBox(height: HareupSpacing.small),
             ],
-            OutlinedButton.icon(
-              onPressed: _busy
-                  ? null
-                  : () async {
-                      await Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => WaterLevelPage(
-                            bowl: bowl,
-                            photoSource: widget.photoSource,
-                            runtime: widget.analysisRuntime,
-                          ),
-                        ),
-                      );
-                      await widget.cubit.load();
-                      if (context.mounted) Navigator.pop(context);
-                    },
-              icon: const Icon(Icons.water_drop_outlined),
-              label: Text(context.l10n.waterObserveTitle),
-            ),
-            const SizedBox(height: HareupSpacing.small),
-            OutlinedButton.icon(
-              onPressed: _busy
-                  ? null
-                  : () => Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => WaterLevelHistoryPage(
-                          runtime: widget.analysisRuntime,
-                          bowlId: bowl.id,
-                        ),
-                      ),
-                    ),
-              icon: const Icon(Icons.history),
-              label: Text(context.l10n.waterViewHistoryAction),
-            ),
-            const SizedBox(height: HareupSpacing.small),
             TextButton(
               onPressed: _busy
                   ? null
@@ -858,18 +869,39 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
           child: Row(
             children: [
               Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: _busy ? null : () => _replace(true),
-                  icon: const Icon(Icons.camera_alt_outlined),
-                  label: Text(context.l10n.waterTakeNewPhoto),
+                child: OutlinedButton(
+                  onPressed: _busy
+                      ? null
+                      : () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (_) => WaterLevelPage(
+                                bowl: bowl,
+                                photoSource: widget.photoSource,
+                                runtime: widget.analysisRuntime,
+                              ),
+                            ),
+                          );
+                          await widget.cubit.load();
+                          if (context.mounted) Navigator.pop(context);
+                        },
+                  child: Text(context.l10n.waterObserveTitle),
                 ),
               ),
               const SizedBox(width: HareupSpacing.small),
               Expanded(
-                child: FilledButton.icon(
-                  onPressed: _busy ? null : () => _replace(false),
-                  icon: const Icon(Icons.photo_library_outlined),
-                  label: Text(context.l10n.waterChooseNewPhoto),
+                child: FilledButton(
+                  onPressed: _busy
+                      ? null
+                      : () => Navigator.of(context).push(
+                          MaterialPageRoute<void>(
+                            builder: (_) => WaterLevelHistoryPage(
+                              runtime: widget.analysisRuntime,
+                              bowlId: bowl.id,
+                            ),
+                          ),
+                        ),
+                  child: Text(context.l10n.waterViewHistoryAction),
                 ),
               ),
             ],

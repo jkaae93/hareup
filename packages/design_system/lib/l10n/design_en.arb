@@ -5,7 +5,7 @@
   "loadingLabel": "Loading",
   "photoEmpty": "No photo selected.",
   "photoError": "Cannot display the photo.",
-  "photoBeforeDefault": "Baseline photo",
+  "photoBeforeDefault": "Latest photo",
   "photoAfterDefault": "Comparison photo",
   "photoCompareTitle": "Compare photos",
   "photoDefaultWord": "photo",

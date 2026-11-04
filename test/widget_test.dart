@@ -12,7 +12,12 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('반려동물 관리'));
+    final edit = find.byTooltip('반려동물 관리');
+    expect(
+      find.descendant(of: edit, matching: find.text('수정')),
+      findsOneWidget,
+    );
+    await tester.tap(edit);
     await tester.pumpAndSettle();
     await tester.tap(find.text('반려동물 추가'));
     await tester.pumpAndSettle();

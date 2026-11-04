@@ -24,7 +24,7 @@ class DesignLocalizationsKo extends DesignLocalizations {
   String get photoError => '사진을 표시할 수 없습니다.';
 
   @override
-  String get photoBeforeDefault => '기준 사진';
+  String get photoBeforeDefault => '최근 사진';
 
   @override
   String get photoAfterDefault => '비교 사진';

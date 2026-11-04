@@ -129,7 +129,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.text('하릅'), findsOneWidget);
-    expect(find.text('반려동물 관리'), findsOneWidget);
+    expect(find.byTooltip('반려동물 관리'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
@@ -213,7 +213,7 @@ void main() {
         ),
       ),
     );
-    expect(find.text('기준 사진'), findsOneWidget);
+    expect(find.text('최근 사진'), findsOneWidget);
     expect(find.text('비교 사진'), findsOneWidget);
     expect(find.text('선택된 사진이 없습니다.'), findsNWidgets(2));
     expect(tester.takeException(), isNull);

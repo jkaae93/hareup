@@ -124,7 +124,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analysisBaselineRequired =>
-      'Check the baseline and comparison photos.';
+      'Check the latest photo and the comparison photo.';
 
   @override
   String get analysisEachPhotoTooLarge =>
@@ -161,6 +161,16 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get storageBucketMissing =>
       'Photo storage is not set up. Create a Storage bucket in the Firebase Console.';
+
+  @override
+  String selectionDeleteTitle(int count) {
+    return 'Delete $count selected items?';
+  }
+
+  @override
+  String selectionDeleteAction(int count) {
+    return 'Delete $count selected';
+  }
 
   @override
   String get commonDelete => 'Delete';
@@ -691,6 +701,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get homeEditAction => 'Edit';
+
+  @override
   String get homeWaterManage => 'Manage water bowls';
 
   @override
@@ -740,7 +753,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get analysisLitterGuide =>
-      'Photograph the whole target from the same position, distance, and angle with enough light.';
+      'Photograph the whole target from the same position, distance, and angle as the latest photo, with enough light.';
 
   @override
   String get analysisRunAction => 'Analyze photo';
@@ -759,7 +772,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Photo analysis is estimated, not a diagnosis. Consult a vet if needed.';
 
   @override
-  String get analysisDecreaseRate => 'Decrease from baseline (estimated)';
+  String get analysisDecreaseRate => 'Decrease from latest photo (estimated)';
 
   @override
   String get analysisDecreaseVolume => 'Decrease volume (estimated)';
@@ -967,14 +980,14 @@ class AppLocalizationsEn extends AppLocalizations {
       'Automatic litter boxes cannot be registered for analysis.';
 
   @override
-  String get litterBaselineRegisterTitle => 'Register baseline photo';
+  String get litterBaselineRegisterTitle => 'Register latest photo';
 
   @override
   String get litterBaselineRegisterHint =>
-      'Register the clean state right after cleaning as the baseline.';
+      'Register a photo of the clean litter right after cleaning.';
 
   @override
-  String get litterBaselineLabel => 'Litter box baseline photo';
+  String get litterBaselineLabel => 'Latest litter box photo';
 
   @override
   String get litterProfileTitle => 'Profile & dimensions';
@@ -1008,35 +1021,34 @@ class AppLocalizationsEn extends AppLocalizations {
       'Quantity estimates are unverified and unavailable even with dimensions.';
 
   @override
-  String get litterCatsAndPhotoRequired => 'Select cats and a baseline photo.';
+  String get litterCatsAndPhotoRequired => 'Select cats and a photo.';
 
   @override
   String get litterRenameTitle => 'Rename litter box';
 
   @override
-  String get litterBaselineChangeFailed =>
-      'Could not change the baseline photo.';
+  String get litterBaselineChangeFailed => 'Could not change the latest photo.';
 
   @override
   String get litterDeleteAction => 'Delete litter box';
 
   @override
   String litterBaselineVersion(int version) {
-    return 'Baseline photo No. $version';
+    return 'Latest photo No. $version';
   }
 
   @override
-  String get litterNewBaselinePrefix => 'new baseline';
+  String get litterNewBaselinePrefix => 'new photo';
 
   @override
-  String get litterBaselineHistoryTitle => 'Baseline history';
+  String get litterBaselineHistoryTitle => 'Photo history';
 
   @override
-  String get litterBaselineGuideTitle => 'Baseline photo guide';
+  String get litterBaselineGuideTitle => 'Latest photo guide';
 
   @override
   String get litterBaselineGuideMessage =>
-      'Register a new baseline after cleaning or changing litter. Previous baselines are kept.\nAnalysis results are only provided when validated.';
+      'Register a new photo after cleaning or changing litter. Previous photos are kept.\nAnalysis results are only provided when validated.';
 
   @override
   String get litterViewRecords => 'View records';
@@ -1332,14 +1344,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get waterPhotoHistoryHint => 'Older photos are kept with records.';
 
   @override
-  String get waterCurrentBaseline => 'Current baseline';
+  String get waterCurrentBaseline => 'Latest photo';
 
   @override
   String get waterOutcomeGuideTitle => 'About observations';
 
   @override
   String get waterOutcomeGuideMessage =>
-      'Analysis estimates change from the baseline; it does not diagnose intake or health.';
+      'Analysis estimates change from the latest photo; it does not diagnose intake or health.';
 
   @override
   String get waterReanalyzeAction => 'Reanalyze registration photos';
@@ -1376,7 +1388,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get chatDisclaimer =>
-      'AI answers are for reference, not diagnosis. Chats and photos are shared with family.';
+      'AI answers are for reference, not diagnosis. Mentioned pets’ profiles and recent observations are sent to the AI. Chats and photos are shared with family.';
 
   @override
   String get chatLoadFailed => 'Could not load the conversation.';
@@ -1499,4 +1511,69 @@ class AppLocalizationsEn extends AppLocalizations {
   String shareMemo(String notes) {
     return 'Notes: $notes';
   }
+
+  @override
+  String get navHealthReport => 'Health report';
+
+  @override
+  String get navChat => 'Chat';
+
+  @override
+  String get navMyPage => 'My page';
+
+  @override
+  String get reportNoPets => 'Register a pet to view the health report.';
+
+  @override
+  String get reportPetSelect => 'Select a pet';
+
+  @override
+  String get reportLoadFailed => 'Could not load the health report.';
+
+  @override
+  String get reportWaterIntakeTitle => 'Water intake';
+
+  @override
+  String get reportWaterIntakeUnavailable =>
+      'Individual water intake is not yet measured, so no intake chart is available.';
+
+  @override
+  String get reportWaterContext =>
+      'The chart below shows the linked bowl’s water level, not the pet’s water intake.';
+
+  @override
+  String get reportWaterLevelTitle => 'Water bowl level';
+
+  @override
+  String get reportWaterLevelLabel => 'Current level (estimate)';
+
+  @override
+  String get reportWaterUnverified =>
+      'Water level estimates will appear after validation.';
+
+  @override
+  String reportSharedBowl(String name) {
+    return '$name · shared water bowl';
+  }
+
+  @override
+  String get reportLitterAmountTitle => 'Waste quantity';
+
+  @override
+  String get reportLitterAttribution =>
+      'Only records explicitly assigned to this pet are shown.';
+
+  @override
+  String get reportLitterAmountUnavailable =>
+      'No validated waste quantity records are available.';
+
+  @override
+  String get reportLitterAmountLabel => 'Observed quantity (estimate)';
+
+  @override
+  String get reportLitterCountTitle => 'Litter observations';
+
+  @override
+  String get reportLitterCountsUnverified =>
+      'Litter observation counts will appear after validation.';
 }

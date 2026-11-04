@@ -423,20 +423,45 @@ class HareupSectionHeader extends StatelessWidget {
     required this.title,
     this.actionLabel,
     this.onAction,
+    this.alignActionToEnd = false,
+    this.actionTooltip,
   });
   final String title;
   final String? actionLabel;
   final VoidCallback? onAction;
+  final bool alignActionToEnd;
+  final String? actionTooltip;
   @override
-  Widget build(BuildContext context) => Wrap(
-    crossAxisAlignment: WrapCrossAlignment.center,
-    spacing: HareupSpacing.small,
-    children: [
-      Text(title, style: Theme.of(context).textTheme.headlineMedium),
-      if (actionLabel != null && onAction != null)
-        TextButton(onPressed: onAction, child: Text(actionLabel!)),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final action = actionLabel != null && onAction != null
+        ? TextButton(onPressed: onAction, child: Text(actionLabel!))
+        : null;
+    final labeledAction = action == null || actionTooltip == null
+        ? action
+        : Tooltip(message: actionTooltip!, child: action);
+    if (alignActionToEnd && labeledAction != null) {
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              title,
+              style: Theme.of(context).textTheme.headlineMedium,
+            ),
+          ),
+          const SizedBox(width: HareupSpacing.small),
+          labeledAction,
+        ],
+      );
+    }
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: HareupSpacing.small,
+      children: [
+        Text(title, style: Theme.of(context).textTheme.headlineMedium),
+        ?labeledAction,
+      ],
+    );
+  }
 }
 
 /// A consistent surface for related content, sized to its available width.
@@ -628,14 +653,18 @@ class HareupFormPage extends StatelessWidget {
     required this.title,
     required this.content,
     required this.actions,
+    this.appBarActions,
+    this.equalActionWidths = false,
   });
   final Widget title;
   final Widget content;
   final List<Widget> actions;
+  final List<Widget>? appBarActions;
+  final bool equalActionWidths;
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: title),
+    appBar: AppBar(title: title, actions: appBarActions),
     body: Align(
       alignment: Alignment.topCenter,
       child: ConstrainedBox(
@@ -679,7 +708,10 @@ class HareupFormPage extends StatelessWidget {
                       children: [
                         Expanded(child: actions.first),
                         const SizedBox(width: HareupSpacing.small),
-                        Expanded(flex: 2, child: actions.last),
+                        Expanded(
+                          flex: equalActionWidths ? 1 : 2,
+                          child: actions.last,
+                        ),
                       ],
                     );
                   }
@@ -793,13 +825,15 @@ class HareupStatusBadge extends StatelessWidget {
     super.key,
     required this.label,
     this.status = HareupStatus.neutral,
+    this.icon,
   });
   final String label;
   final HareupStatus status;
+  final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
-    final (background, foreground, icon) = switch (status) {
+    final (background, foreground, defaultIcon) = switch (status) {
       HareupStatus.neutral => (
         HareupColors.neutral200,
         HareupColors.primary700,
@@ -839,7 +873,7 @@ class HareupStatusBadge extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(icon, size: 16, color: foreground),
+                Icon(icon ?? defaultIcon, size: 16, color: foreground),
                 const SizedBox(width: HareupSpacing.extraSmall),
                 Flexible(
                   child: Text(

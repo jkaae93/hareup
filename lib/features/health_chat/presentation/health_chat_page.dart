@@ -245,23 +245,26 @@ class _HealthChatPageState extends State<HealthChatPage> {
             ),
           ),
           if (_selected.isNotEmpty)
-            SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                children: [
-                  for (final pet in widget.pets.where(
-                    (pet) => _selected.contains(pet.id),
-                  ))
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4),
-                      child: InputChip(
-                        label: Text('@${pet.name}'),
-                        onDeleted: _busy
-                            ? null
-                            : () => setState(() => _selected.remove(pet.id)),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    for (final pet in widget.pets.where(
+                      (pet) => _selected.contains(pet.id),
+                    ))
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: InputChip(
+                          label: Text('@${pet.name}'),
+                          onDeleted: _busy
+                              ? null
+                              : () => setState(() => _selected.remove(pet.id)),
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
           if (_photo != null)

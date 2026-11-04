@@ -115,7 +115,7 @@ class AppLocalizationsKo extends AppLocalizations {
   String get analysisPhotoTooLarge => '각 사진은 3MB 이하의 JPEG, PNG 또는 WebP여야 합니다.';
 
   @override
-  String get analysisBaselineRequired => '기준 사진과 비교할 사진을 확인해 주세요.';
+  String get analysisBaselineRequired => '최근 사진과 비교할 사진을 확인해 주세요.';
 
   @override
   String get analysisEachPhotoTooLarge => '분석할 사진은 각각 3MB 이하여야 합니다.';
@@ -147,6 +147,16 @@ class AppLocalizationsKo extends AppLocalizations {
   @override
   String get storageBucketMissing =>
       '사진 저장소가 설정되지 않았습니다. Firebase Console에서 Storage 버킷을 생성해 주세요.';
+
+  @override
+  String selectionDeleteTitle(int count) {
+    return '선택한 $count개를 삭제할까요?';
+  }
+
+  @override
+  String selectionDeleteAction(int count) {
+    return '선택한 $count개 삭제';
+  }
 
   @override
   String get commonDelete => '삭제';
@@ -661,6 +671,9 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String get homeEditAction => '수정';
+
+  @override
   String get homeWaterManage => '물그릇 관리';
 
   @override
@@ -709,7 +722,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get analysisLitterGuide =>
-      '기준 사진과 같은 위치·거리·각도와 충분한 조명에서 대상 전체가 보이도록 촬영하세요.';
+      '최근 사진과 같은 위치·거리·각도와 충분한 조명에서 대상 전체가 보이도록 촬영하세요.';
 
   @override
   String get analysisRunAction => '사진 분석';
@@ -728,7 +741,7 @@ class AppLocalizationsKo extends AppLocalizations {
       '사진 분석 결과는 추정 정보이며 진단이 아닙니다. 필요한 경우 수의사와 상담하세요.';
 
   @override
-  String get analysisDecreaseRate => '기준 대비 감소율 (추정)';
+  String get analysisDecreaseRate => '최근 사진 대비 감소율 (추정)';
 
   @override
   String get analysisDecreaseVolume => '감소량 (추정)';
@@ -926,13 +939,13 @@ class AppLocalizationsKo extends AppLocalizations {
   String get litterAutomaticBlockedMessage => '자동화장실은 분석 대상으로 등록할 수 없습니다.';
 
   @override
-  String get litterBaselineRegisterTitle => '기준 사진 등록';
+  String get litterBaselineRegisterTitle => '최근 사진 등록';
 
   @override
-  String get litterBaselineRegisterHint => '청소 직후 깨끗한 모래 상태를 기준으로 등록하세요.';
+  String get litterBaselineRegisterHint => '청소 직후 깨끗한 모래 사진을 등록하세요.';
 
   @override
-  String get litterBaselineLabel => '화장실 기준 사진';
+  String get litterBaselineLabel => '화장실 최근 사진';
 
   @override
   String get litterProfileTitle => '화장실 프로필 및 치수';
@@ -965,34 +978,34 @@ class AppLocalizationsKo extends AppLocalizations {
   String get litterVolumeGuideMessage => '관찰량 추정은 검증 전이며 치수를 입력해도 제공되지 않습니다.';
 
   @override
-  String get litterCatsAndPhotoRequired => '고양이와 기준 사진을 선택해 주세요.';
+  String get litterCatsAndPhotoRequired => '고양이와 최근 사진을 선택해 주세요.';
 
   @override
   String get litterRenameTitle => '화장실 이름 변경';
 
   @override
-  String get litterBaselineChangeFailed => '기준 사진을 변경하지 못했습니다.';
+  String get litterBaselineChangeFailed => '최근 사진을 변경하지 못했습니다.';
 
   @override
   String get litterDeleteAction => '화장실 삭제';
 
   @override
   String litterBaselineVersion(int version) {
-    return '기준 사진 $version번째';
+    return '최근 사진 $version번째';
   }
 
   @override
-  String get litterNewBaselinePrefix => '새 기준';
+  String get litterNewBaselinePrefix => '새 사진';
 
   @override
-  String get litterBaselineHistoryTitle => '기준 사진 이력';
+  String get litterBaselineHistoryTitle => '사진 등록 이력';
 
   @override
-  String get litterBaselineGuideTitle => '기준 사진 안내';
+  String get litterBaselineGuideTitle => '최근 사진 안내';
 
   @override
   String get litterBaselineGuideMessage =>
-      '청소하거나 모래를 교체했다면 새 기준 사진을 등록하세요. 이전 기준은 유지됩니다.\n사진 분석 결과는 검증된 경우에만 제공됩니다.';
+      '청소하거나 모래를 교체했다면 새 사진을 등록하세요. 이전 사진도 보관됩니다.\n사진 분석 결과는 검증된 경우에만 제공됩니다.';
 
   @override
   String get litterViewRecords => '기록 보기';
@@ -1278,14 +1291,14 @@ class AppLocalizationsKo extends AppLocalizations {
   String get waterPhotoHistoryHint => '이전 정수기 사진은 기록과 함께 보관됩니다.';
 
   @override
-  String get waterCurrentBaseline => '현재 기준';
+  String get waterCurrentBaseline => '최근 사진';
 
   @override
   String get waterOutcomeGuideTitle => '관찰 결과 안내';
 
   @override
   String get waterOutcomeGuideMessage =>
-      '사진 분석은 기준 대비 변화를 추정하며, 실제 반려동물의 음수량이나 건강 상태를 진단하지 않습니다.';
+      '사진 분석은 최근 사진 대비 변화를 추정하며, 실제 반려동물의 음수량이나 건강 상태를 진단하지 않습니다.';
 
   @override
   String get waterReanalyzeAction => '등록 사진 다시 분석하기';
@@ -1322,7 +1335,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get chatDisclaimer =>
-      'AI의 답변은 참고 정보이며 진단을 대신하지 않습니다. 대화와 사진은 가족에게 공유됩니다.';
+      'AI 답변은 참고 정보이며 진단을 대신하지 않습니다. 멘션한 반려동물의 프로필과 최근 관찰 기록이 AI에 전달됩니다. 대화와 사진은 가족에게 공유됩니다.';
 
   @override
   String get chatLoadFailed => '대화를 불러오지 못했습니다.';
@@ -1443,4 +1456,64 @@ class AppLocalizationsKo extends AppLocalizations {
   String shareMemo(String notes) {
     return '메모: $notes';
   }
+
+  @override
+  String get navHealthReport => '건강리포트';
+
+  @override
+  String get navChat => '채팅';
+
+  @override
+  String get navMyPage => '마이페이지';
+
+  @override
+  String get reportNoPets => '건강리포트를 보려면 반려동물을 등록해 주세요.';
+
+  @override
+  String get reportPetSelect => '반려동물 선택';
+
+  @override
+  String get reportLoadFailed => '건강리포트를 불러오지 못했습니다.';
+
+  @override
+  String get reportWaterIntakeTitle => '음수량';
+
+  @override
+  String get reportWaterIntakeUnavailable =>
+      '반려동물별 음수량은 아직 측정할 수 없어 그래프를 제공하지 않습니다.';
+
+  @override
+  String get reportWaterContext => '아래 그래프는 연결된 물그릇의 수위 변화이며, 반려동물의 음수량이 아닙니다.';
+
+  @override
+  String get reportWaterLevelTitle => '물그릇 수위 추이';
+
+  @override
+  String get reportWaterLevelLabel => '현재 수위 (추정)';
+
+  @override
+  String get reportWaterUnverified => '수위 추정치는 정확도 검증 후 표시됩니다.';
+
+  @override
+  String reportSharedBowl(String name) {
+    return '$name · 함께 사용하는 물그릇';
+  }
+
+  @override
+  String get reportLitterAmountTitle => '배변량';
+
+  @override
+  String get reportLitterAttribution => '이 반려동물로 지정해 저장한 기록만 표시합니다.';
+
+  @override
+  String get reportLitterAmountUnavailable => '검증된 배변량 기록이 없어 양을 표시할 수 없습니다.';
+
+  @override
+  String get reportLitterAmountLabel => '관찰량 (추정)';
+
+  @override
+  String get reportLitterCountTitle => '배변 횟수 추이';
+
+  @override
+  String get reportLitterCountsUnverified => '배변 흔적 횟수는 정확도 검증 후 표시됩니다.';
 }

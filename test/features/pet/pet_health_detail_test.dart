@@ -1,4 +1,5 @@
 import 'dart:typed_data';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hareup_core/core.dart';
@@ -33,6 +34,55 @@ class FakeHistory implements AnalysisService, WaterLevelHistoryService {
 }
 
 void main() {
+  testWidgets(
+    'profile presents photo and traits with design components and edit action',
+    (tester) async {
+      final photo = base64Decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/aXkAAAAASUVORK5CYII=',
+      );
+      var edited = false;
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('ko'),
+          localizationsDelegates: const [
+            ...AppLocalizations.localizationsDelegates,
+            DesignLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: PetDetailPage(
+            pet: Pet(
+              id: 'cat',
+              name: '나비',
+              species: PetSpecies.cat,
+              profile: PetProfile(
+                photoBytes: photo,
+                ageMonths: 24,
+                sex: PetSex.female,
+                weightKg: 4.5,
+              ),
+            ),
+            waterRepository: MemoryWaterBowlRepository(),
+            litterRepository: MemoryLitterBoxRepository(),
+            recordsRepository: MemoryRecordsRepository(),
+            runtime: AnalysisRuntime(service: FakeHistory(), groupId: 'g'),
+            onEdit: () => edited = true,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<HareupPhotoPreview>(find.byType(HareupPhotoPreview))
+            .bytes,
+        photo,
+      );
+      expect(find.text('24개월'), findsOneWidget);
+      expect(find.text('암컷'), findsOneWidget);
+      expect(find.textContaining('4.5'), findsOneWidget);
+      await tester.tap(find.text('프로필 수정'));
+      expect(edited, isTrue);
+    },
+  );
   testWidgets('pet health page shows English labels when English is selected', (
     tester,
   ) async {
@@ -55,11 +105,11 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Water bowl observations'), findsOneWidget);
-    expect(find.text('No linked water bowls.'), findsOneWidget);
+    expect(find.text('Water bowl observations'), findsNothing);
+    expect(find.text('Litter box observations'), findsNothing);
   });
   testWidgets(
-    'shows shared water as shared and only litter records explicitly attributed to pet',
+    'shows linked water bowls and litter boxes as chips without observations',
     (tester) async {
       final water = MemoryWaterBowlRepository();
       final litter = MemoryLitterBoxRepository();
@@ -132,13 +182,14 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(
-        find.text('함께 사용하는 물그릇의 수위입니다. 개별 음수량은 알 수 없습니다.'),
-        findsOneWidget,
-      );
-      expect(find.text('현재 수위 42.0% (추정)'), findsOneWidget);
-      await tester.scrollUntilVisible(find.text('나비 기록'), 200);
-      expect(find.text('나비 기록'), findsOneWidget);
+      expect(find.text('공용 정수기'), findsOneWidget);
+      expect(find.text('공용 화장실'), findsOneWidget);
+      expect(find.byIcon(Icons.water_drop_outlined), findsOneWidget);
+      expect(find.byIcon(Icons.cleaning_services_outlined), findsOneWidget);
+      expect(find.text('물그릇 관찰'), findsNothing);
+      expect(find.text('화장실 관찰'), findsNothing);
+      expect(find.text('현재 수위 42.0% (추정)'), findsNothing);
+      expect(find.text('나비 기록'), findsNothing);
       expect(find.text('미확인 기록'), findsNothing);
       expect(find.text('보리 기록'), findsNothing);
     },

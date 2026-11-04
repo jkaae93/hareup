@@ -131,7 +131,7 @@ abstract class DesignLocalizations {
   /// Default label for the before photo in comparisons.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진'**
+  /// **'최근 사진'**
   String get photoBeforeDefault;
 
   /// Default label for the after photo in comparisons.

@@ -4,6 +4,7 @@ import 'package:hareup_design_system/design_system.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_media/media.dart';
 import '../../shared_data/target_widgets.dart';
+import '../../shared_data/selection_management_page.dart';
 import '../../photo_analysis/domain/analysis.dart';
 import '../../photo_analysis/presentation/analysis_page.dart';
 import '../../records/presentation/records_page.dart';
@@ -49,59 +50,93 @@ class LitterBoxPage extends StatelessWidget {
     super.key,
     required this.cats,
     required this.photoSource,
+    this.selectionMode = false,
   });
+  final bool selectionMode;
   final List<CatOption> cats;
   final PhotoSource photoSource;
   @override
-  Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: Text(context.l10n.homeLitterManage)),
-    floatingActionButton: FloatingActionButton.extended(
-      icon: const Icon(Icons.add),
-      label: Text(context.l10n.litterAddAction),
-      onPressed: () {
-        final cubit = context.read<LitterBoxCubit>();
-        Navigator.of(context).push(
+  Widget build(BuildContext context) {
+    if (selectionMode) {
+      final cubit = context.read<LitterBoxCubit>();
+      return SelectionManagementPage<LitterBox>(
+        title: context.l10n.homeLitterManage,
+        emptyMessage: context.l10n.litterEmptyMessage,
+        addLabel: context.l10n.litterAddAction,
+        confirmMessage: context.l10n.targetDeleteMessage,
+        cubit: cubit,
+        idOf: (box) => box.id,
+        nameOf: (box) => box.name,
+        iconOf: (_) => Icons.cleaning_services_outlined,
+        onAdd: () => Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => BlocProvider.value(
               value: cubit,
               child: _LitterEditor(cats: cats, source: photoSource),
             ),
           ),
-        );
-      },
-    ),
-    body: HareupContent(
-      child: BlocBuilder<LitterBoxCubit, LoadState<List<LitterBox>>>(
-        builder: (context, state) => LoadView<List<LitterBox>>(
-          state: state,
-          emptyMessage: context.l10n.litterEmptyMessage,
-          onRetry: () => context.read<LitterBoxCubit>().load(),
-          builder: (context, boxes) => GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 1.5,
+        ),
+        onRetry: cubit.load,
+        onDelete: (box) => cubit.remove(box.id),
+        failureMessage: () => switch (cubit.deleteCommand.state) {
+          CommandFailure<void>(:final failure) => failureDisplayMessage(
+            context,
+            failure,
+          ),
+          _ => context.l10n.commonDeleteFailed,
+        },
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(title: Text(context.l10n.homeLitterManage)),
+      bottomNavigationBar: ManagementBottomButton(
+        icon: Icons.add,
+        label: context.l10n.litterAddAction,
+        onPressed: () {
+          final cubit = context.read<LitterBoxCubit>();
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => BlocProvider.value(
+                value: cubit,
+                child: _LitterEditor(cats: cats, source: photoSource),
+              ),
             ),
-            padding: const EdgeInsets.fromLTRB(
-              HareupSpacing.pageMargin,
-              HareupSpacing.small,
-              HareupSpacing.pageMargin,
-              HareupSpacing.floatingActionClearance,
+          );
+        },
+      ),
+      body: HareupContent(
+        child: BlocBuilder<LitterBoxCubit, LoadState<List<LitterBox>>>(
+          builder: (context, state) => LoadView<List<LitterBox>>(
+            state: state,
+            emptyMessage: context.l10n.litterEmptyMessage,
+            onRetry: () => context.read<LitterBoxCubit>().load(),
+            builder: (context, boxes) => GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 1.5,
+              ),
+              padding: const EdgeInsets.fromLTRB(
+                HareupSpacing.pageMargin,
+                HareupSpacing.small,
+                HareupSpacing.pageMargin,
+                HareupSpacing.floatingActionClearance,
+              ),
+              itemCount: boxes.length,
+              itemBuilder: (context, index) {
+                final box = boxes[index];
+                return TargetGridTile(
+                  name: box.name,
+                  icon: Icons.cleaning_services_outlined,
+                  onTap: () =>
+                      showLitterBoxDetail(context, box, photoSource, cats),
+                );
+              },
             ),
-            itemCount: boxes.length,
-            itemBuilder: (context, index) {
-              final box = boxes[index];
-              return TargetGridTile(
-                name: box.name,
-                icon: Icons.cleaning_services_outlined,
-                onTap: () =>
-                    showLitterBoxDetail(context, box, photoSource, cats),
-              );
-            },
           ),
         ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _LitterEditor extends StatefulWidget {
@@ -497,24 +532,24 @@ class _LitterBaselineDialogState extends State<_LitterBaselineDialog> {
   @override
   Widget build(BuildContext context) => HareupFormPage(
     title: Text(_name),
+    appBarActions: [
+      IconButton(
+        tooltip: context.l10n.commonRename,
+        onPressed: _busy ? null : _rename,
+        icon: const Icon(Icons.edit_outlined),
+      ),
+      IconButton(
+        tooltip: context.l10n.litterDeleteAction,
+        onPressed: _busy ? null : _delete,
+        icon: const Icon(Icons.delete_outline),
+      ),
+    ],
     content: SingleChildScrollView(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          OutlinedButton.icon(
-            onPressed: _busy ? null : _rename,
-            icon: const Icon(Icons.edit_outlined),
-            label: Text(context.l10n.commonRename),
-          ),
-          TextButton.icon(
-            onPressed: _busy ? null : _delete,
-            icon: const Icon(Icons.delete_outline),
-            label: Text(context.l10n.litterDeleteAction),
-          ),
           HareupFormSection(
-            title: context.l10n.litterBaselineVersion(
-              widget.box.currentBaseline.version,
-            ),
+            title: context.dsL10n.photoBeforeDefault,
             children: [
               HareupPhotoPreview(
                 bytes: widget.box.currentBaseline.photo,
@@ -546,59 +581,54 @@ class _LitterBaselineDialogState extends State<_LitterBaselineDialog> {
             message: context.l10n.litterBaselineGuideMessage,
           ),
           const SizedBox(height: HareupSpacing.medium),
-          TextButton(
-            onPressed: _busy
-                ? null
-                : () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) =>
-                          RepositoryProvider<RecordsRepository>.value(
-                            value: context.read<RecordsRepository>(),
-                            child: AnalysisPage(
-                              targetId: widget.box.id,
-                              targetName: _name,
-                              kind: AnalysisKind.litter,
-                              baseline: widget.box.currentBaseline,
-                              photoSource: widget.source,
-                              runtime: context.read<AnalysisRuntime>(),
-                              cats: [
-                                for (final cat in widget.cats)
-                                  AnalysisCat(id: cat.id, name: cat.name),
-                              ],
-                              widthCm: widget.box.widthCm,
-                              lengthCm: widget.box.lengthCm,
-                              litterHeightCm: widget.box.litterHeightCm,
-                            ),
-                          ),
-                    ),
-                  ),
-            child: Text(context.l10n.navCompare),
-          ),
-          TextButton(
-            onPressed: _busy
-                ? null
-                : () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) =>
-                          RepositoryProvider<RecordsRepository>.value(
-                            value: context.read<RecordsRepository>(),
-                            child: RecordsPage(
-                              groupId: context.read<AnalysisRuntime>().groupId,
-                              targetId: widget.box.id,
-                              targetName: _name,
-                            ),
-                          ),
-                    ),
-                  ),
-            child: Text(context.l10n.litterViewRecords),
-          ),
         ],
       ),
     ),
+    equalActionWidths: true,
     actions: [
-      TextButton(
-        onPressed: _busy ? null : () => Navigator.pop(context),
-        child: Text(context.l10n.commonClose),
+      OutlinedButton(
+        onPressed: _busy
+            ? null
+            : () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => RepositoryProvider<RecordsRepository>.value(
+                    value: context.read<RecordsRepository>(),
+                    child: AnalysisPage(
+                      targetId: widget.box.id,
+                      targetName: _name,
+                      kind: AnalysisKind.litter,
+                      baseline: widget.box.currentBaseline,
+                      photoSource: widget.source,
+                      runtime: context.read<AnalysisRuntime>(),
+                      cats: [
+                        for (final cat in widget.cats)
+                          AnalysisCat(id: cat.id, name: cat.name),
+                      ],
+                      widthCm: widget.box.widthCm,
+                      lengthCm: widget.box.lengthCm,
+                      litterHeightCm: widget.box.litterHeightCm,
+                    ),
+                  ),
+                ),
+              ),
+        child: Text(context.l10n.navCompare),
+      ),
+      FilledButton(
+        onPressed: _busy
+            ? null
+            : () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => RepositoryProvider<RecordsRepository>.value(
+                    value: context.read<RecordsRepository>(),
+                    child: RecordsPage(
+                      groupId: context.read<AnalysisRuntime>().groupId,
+                      targetId: widget.box.id,
+                      targetName: _name,
+                    ),
+                  ),
+                ),
+              ),
+        child: Text(context.l10n.litterViewRecords),
       ),
     ],
   );

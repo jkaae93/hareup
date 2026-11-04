@@ -311,7 +311,7 @@ abstract class AppLocalizations {
   /// Shown when analysis photos are invalid.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진과 비교할 사진을 확인해 주세요.'**
+  /// **'최근 사진과 비교할 사진을 확인해 주세요.'**
   String get analysisBaselineRequired;
 
   /// Shown when an analysis photo is too large.
@@ -373,6 +373,18 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'사진 저장소가 설정되지 않았습니다. Firebase Console에서 Storage 버킷을 생성해 주세요.'**
   String get storageBucketMissing;
+
+  /// No description provided for @selectionDeleteTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 {count}개를 삭제할까요?'**
+  String selectionDeleteTitle(int count);
+
+  /// No description provided for @selectionDeleteAction.
+  ///
+  /// In ko, this message translates to:
+  /// **'선택한 {count}개 삭제'**
+  String selectionDeleteAction(int count);
 
   /// Label for delete buttons.
   ///
@@ -1322,6 +1334,12 @@ abstract class AppLocalizations {
   /// **'반려동물 {count}마리'**
   String homePetCount(int count);
 
+  /// No description provided for @homeEditAction.
+  ///
+  /// In ko, this message translates to:
+  /// **'수정'**
+  String get homeEditAction;
+
   /// Action to manage water bowls.
   ///
   /// In ko, this message translates to:
@@ -1409,7 +1427,7 @@ abstract class AppLocalizations {
   /// Photo guide for litter boxes.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진과 같은 위치·거리·각도와 충분한 조명에서 대상 전체가 보이도록 촬영하세요.'**
+  /// **'최근 사진과 같은 위치·거리·각도와 충분한 조명에서 대상 전체가 보이도록 촬영하세요.'**
   String get analysisLitterGuide;
 
   /// Button to run photo analysis.
@@ -1445,7 +1463,7 @@ abstract class AppLocalizations {
   /// Label for the decrease rate.
   ///
   /// In ko, this message translates to:
-  /// **'기준 대비 감소율 (추정)'**
+  /// **'최근 사진 대비 감소율 (추정)'**
   String get analysisDecreaseRate;
 
   /// Label for the decrease volume.
@@ -1811,19 +1829,19 @@ abstract class AppLocalizations {
   /// Title for baseline registration.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진 등록'**
+  /// **'최근 사진 등록'**
   String get litterBaselineRegisterTitle;
 
   /// Hint for baseline registration.
   ///
   /// In ko, this message translates to:
-  /// **'청소 직후 깨끗한 모래 상태를 기준으로 등록하세요.'**
+  /// **'청소 직후 깨끗한 모래 사진을 등록하세요.'**
   String get litterBaselineRegisterHint;
 
   /// Label for litter baseline photos.
   ///
   /// In ko, this message translates to:
-  /// **'화장실 기준 사진'**
+  /// **'화장실 최근 사진'**
   String get litterBaselineLabel;
 
   /// Title for the litter profile section.
@@ -1889,7 +1907,7 @@ abstract class AppLocalizations {
   /// Notice when cats or photos are missing.
   ///
   /// In ko, this message translates to:
-  /// **'고양이와 기준 사진을 선택해 주세요.'**
+  /// **'고양이와 최근 사진을 선택해 주세요.'**
   String get litterCatsAndPhotoRequired;
 
   /// Title for renaming.
@@ -1901,7 +1919,7 @@ abstract class AppLocalizations {
   /// Notice when baseline change fails.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진을 변경하지 못했습니다.'**
+  /// **'최근 사진을 변경하지 못했습니다.'**
   String get litterBaselineChangeFailed;
 
   /// Button to delete a litter box.
@@ -1913,31 +1931,31 @@ abstract class AppLocalizations {
   /// Baseline version title.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진 {version}번째'**
+  /// **'최근 사진 {version}번째'**
   String litterBaselineVersion(int version);
 
   /// Prefix for new baseline photo actions.
   ///
   /// In ko, this message translates to:
-  /// **'새 기준'**
+  /// **'새 사진'**
   String get litterNewBaselinePrefix;
 
   /// Title for baseline history.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진 이력'**
+  /// **'사진 등록 이력'**
   String get litterBaselineHistoryTitle;
 
   /// Title for the baseline guide.
   ///
   /// In ko, this message translates to:
-  /// **'기준 사진 안내'**
+  /// **'최근 사진 안내'**
   String get litterBaselineGuideTitle;
 
   /// Message for the baseline guide.
   ///
   /// In ko, this message translates to:
-  /// **'청소하거나 모래를 교체했다면 새 기준 사진을 등록하세요. 이전 기준은 유지됩니다.\n사진 분석 결과는 검증된 경우에만 제공됩니다.'**
+  /// **'청소하거나 모래를 교체했다면 새 사진을 등록하세요. 이전 사진도 보관됩니다.\n사진 분석 결과는 검증된 경우에만 제공됩니다.'**
   String get litterBaselineGuideMessage;
 
   /// Button to view records.
@@ -2441,7 +2459,7 @@ abstract class AppLocalizations {
   /// Badge for the current baseline.
   ///
   /// In ko, this message translates to:
-  /// **'현재 기준'**
+  /// **'최근 사진'**
   String get waterCurrentBaseline;
 
   /// Title for the outcome guide.
@@ -2453,7 +2471,7 @@ abstract class AppLocalizations {
   /// Message for the outcome guide.
   ///
   /// In ko, this message translates to:
-  /// **'사진 분석은 기준 대비 변화를 추정하며, 실제 반려동물의 음수량이나 건강 상태를 진단하지 않습니다.'**
+  /// **'사진 분석은 최근 사진 대비 변화를 추정하며, 실제 반려동물의 음수량이나 건강 상태를 진단하지 않습니다.'**
   String get waterOutcomeGuideMessage;
 
   /// Button to reanalyze.
@@ -2525,7 +2543,7 @@ abstract class AppLocalizations {
   /// Disclaimer for health chat.
   ///
   /// In ko, this message translates to:
-  /// **'AI의 답변은 참고 정보이며 진단을 대신하지 않습니다. 대화와 사진은 가족에게 공유됩니다.'**
+  /// **'AI 답변은 참고 정보이며 진단을 대신하지 않습니다. 멘션한 반려동물의 프로필과 최근 관찰 기록이 AI에 전달됩니다. 대화와 사진은 가족에게 공유됩니다.'**
   String get chatDisclaimer;
 
   /// Error when the conversation fails to load.
@@ -2731,6 +2749,120 @@ abstract class AppLocalizations {
   /// In ko, this message translates to:
   /// **'메모: {notes}'**
   String shareMemo(String notes);
+
+  /// Bottom navigation label for HealthReport.
+  ///
+  /// In ko, this message translates to:
+  /// **'건강리포트'**
+  String get navHealthReport;
+
+  /// Bottom navigation label for Chat.
+  ///
+  /// In ko, this message translates to:
+  /// **'채팅'**
+  String get navChat;
+
+  /// Bottom navigation label for MyPage.
+  ///
+  /// In ko, this message translates to:
+  /// **'마이페이지'**
+  String get navMyPage;
+
+  /// Health report: reportNoPets.
+  ///
+  /// In ko, this message translates to:
+  /// **'건강리포트를 보려면 반려동물을 등록해 주세요.'**
+  String get reportNoPets;
+
+  /// Health report: reportPetSelect.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려동물 선택'**
+  String get reportPetSelect;
+
+  /// Health report: reportLoadFailed.
+  ///
+  /// In ko, this message translates to:
+  /// **'건강리포트를 불러오지 못했습니다.'**
+  String get reportLoadFailed;
+
+  /// Health report: reportWaterIntakeTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'음수량'**
+  String get reportWaterIntakeTitle;
+
+  /// Health report: reportWaterIntakeUnavailable.
+  ///
+  /// In ko, this message translates to:
+  /// **'반려동물별 음수량은 아직 측정할 수 없어 그래프를 제공하지 않습니다.'**
+  String get reportWaterIntakeUnavailable;
+
+  /// Health report: reportWaterContext.
+  ///
+  /// In ko, this message translates to:
+  /// **'아래 그래프는 연결된 물그릇의 수위 변화이며, 반려동물의 음수량이 아닙니다.'**
+  String get reportWaterContext;
+
+  /// Health report: reportWaterLevelTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'물그릇 수위 추이'**
+  String get reportWaterLevelTitle;
+
+  /// Health report: reportWaterLevelLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'현재 수위 (추정)'**
+  String get reportWaterLevelLabel;
+
+  /// Health report: reportWaterUnverified.
+  ///
+  /// In ko, this message translates to:
+  /// **'수위 추정치는 정확도 검증 후 표시됩니다.'**
+  String get reportWaterUnverified;
+
+  /// Health report: reportSharedBowl.
+  ///
+  /// In ko, this message translates to:
+  /// **'{name} · 함께 사용하는 물그릇'**
+  String reportSharedBowl(String name);
+
+  /// Health report: reportLitterAmountTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'배변량'**
+  String get reportLitterAmountTitle;
+
+  /// Health report: reportLitterAttribution.
+  ///
+  /// In ko, this message translates to:
+  /// **'이 반려동물로 지정해 저장한 기록만 표시합니다.'**
+  String get reportLitterAttribution;
+
+  /// Health report: reportLitterAmountUnavailable.
+  ///
+  /// In ko, this message translates to:
+  /// **'검증된 배변량 기록이 없어 양을 표시할 수 없습니다.'**
+  String get reportLitterAmountUnavailable;
+
+  /// Health report: reportLitterAmountLabel.
+  ///
+  /// In ko, this message translates to:
+  /// **'관찰량 (추정)'**
+  String get reportLitterAmountLabel;
+
+  /// Health report: reportLitterCountTitle.
+  ///
+  /// In ko, this message translates to:
+  /// **'배변 횟수 추이'**
+  String get reportLitterCountTitle;
+
+  /// Health report: reportLitterCountsUnverified.
+  ///
+  /// In ko, this message translates to:
+  /// **'배변 흔적 횟수는 정확도 검증 후 표시됩니다.'**
+  String get reportLitterCountsUnverified;
 }
 
 class _AppLocalizationsDelegate
