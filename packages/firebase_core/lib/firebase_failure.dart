@@ -26,12 +26,14 @@ AppFailure firebaseFailure(Object error) {
       if (error.plugin == 'firebase_storage') {
         return const NotFoundFailure(
           '저장된 사진 파일을 찾지 못했습니다. 사진 저장소 설정을 확인해 주세요.',
+          FailureMessageKeys.storagePhotoNotFound,
         );
       }
       return const NotFoundFailure();
     case 'bucket-not-found':
       return const RequestFailure(
         '사진 저장소가 설정되지 않았습니다. Firebase Console에서 Storage 버킷을 생성해 주세요.',
+        FailureMessageKeys.storageBucketMissing,
       );
     case 'invalid-argument':
     case 'failed-precondition':

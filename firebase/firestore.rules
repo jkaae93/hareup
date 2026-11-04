@@ -56,6 +56,10 @@ service cloud.firestore {
         allow create, update: if isFamilyMember(groupId);
         allow delete: if isFamilyAdmin(groupId);
       }
+      match /healthChatMessages/{messageId} {
+        allow read: if isFamilyMember(groupId);
+        allow write: if false;
+      }
     }
 
     match /familyInviteCodes/{codeHash} {

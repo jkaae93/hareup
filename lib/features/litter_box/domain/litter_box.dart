@@ -33,6 +33,8 @@ class CatOption {
 abstract interface class LitterBoxRepository {
   Future<Result<List<LitterBox>>> list();
   Future<Result<void>> create(LitterBox box);
+  Future<Result<void>> rename(String id, String name);
+  Future<Result<void>> delete(String id);
   Future<Result<void>> replaceBaseline(
     String id,
     Uint8List photo,

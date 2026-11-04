@@ -24,6 +24,30 @@ class FirestoreLitterBoxRepository implements LitterBoxRepository {
       _firestore.collection('groups').doc(groupId).collection('litterBoxes');
 
   @override
+  Future<Result<void>> delete(String id) async {
+    try {
+      await _boxes.doc(id).delete();
+      return const Success(null);
+    } catch (error) {
+      return Failure(firebaseFailure(error));
+    }
+  }
+
+  @override
+  Future<Result<void>> rename(String id, String name) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty || trimmed.length > 30) {
+      return const Failure(RequestFailure());
+    }
+    try {
+      await _boxes.doc(id).update({'name': trimmed});
+      return const Success(null);
+    } catch (error) {
+      return Failure(firebaseFailure(error));
+    }
+  }
+
+  @override
   Future<Result<List<LitterBox>>> list() async {
     try {
       final snapshot = await _boxes.orderBy('name').get();
@@ -84,7 +108,12 @@ class FirestoreLitterBoxRepository implements LitterBoxRepository {
       return await _firestore.runTransaction((transaction) async {
         final existing = await transaction.get(document);
         if (existing.exists) {
-          return const Failure(RequestFailure('이미 등록된 화장실입니다.'));
+          return const Failure(
+            RequestFailure(
+              '이미 등록된 화장실입니다.',
+              FailureMessageKeys.litterAlreadyRegistered,
+            ),
+          );
         }
         transaction.set(document, {
           'name': box.name,

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:hareup/app/app.dart';
 import '../../test_support.dart';
 import 'package:hareup/features/home/presentation/home_page.dart';
+import 'package:hareup/features/shared_data/target_widgets.dart';
 import 'package:hareup/features/pet/domain/pet.dart';
 import 'package:hareup/features/pet/presentation/pet_cubit.dart';
 import 'package:hareup/features/water_bowl/presentation/water_bowl_cubit.dart';
@@ -18,7 +19,7 @@ void main() {
     'home shows registered animals and targets and opens target details',
     (tester) async {
       await tester.pumpWidget(
-        const HareupApp(authRepository: TestSignedInAuth()),
+        const HareupApp(authRepository: TestSignedInAuth(), initialLocale: Locale('ko')),
       );
       await tester.pumpAndSettle();
       final context = tester.element(find.byType(HomePage));
@@ -74,7 +75,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const HareupApp(authRepository: TestSignedInAuth()),
+      const HareupApp(authRepository: TestSignedInAuth(), initialLocale: Locale('ko')),
     );
     await tester.pumpAndSettle();
     expect(find.text('반려동물을 등록해 주세요.'), findsOneWidget);
@@ -86,7 +87,7 @@ void main() {
     'bottom navigation opens the selected target for analysis and records',
     (tester) async {
       await tester.pumpWidget(
-        const HareupApp(authRepository: TestSignedInAuth()),
+        const HareupApp(authRepository: TestSignedInAuth(), initialLocale: Locale('ko')),
       );
       await tester.pumpAndSettle();
       final context = tester.element(find.byType(HomePage));
@@ -107,7 +108,7 @@ void main() {
       await tester.tap(find.text('거실 물그릇'));
       await tester.pumpAndSettle();
       expect(find.byType(WaterLevelPage), findsOneWidget);
-      await tester.pageBack();
+      await tapBackButton(tester);
       await tester.pumpAndSettle();
       await tester.tap(find.text('기록 목록').last);
       await tester.pumpAndSettle();
@@ -120,7 +121,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const HareupApp(authRepository: TestSignedInAuth()),
+      const HareupApp(authRepository: TestSignedInAuth(), initialLocale: Locale('ko')),
     );
     await tester.pumpAndSettle();
     final context = tester.element(find.byType(HomePage));
@@ -136,7 +137,7 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final litterTile = find.widgetWithText(ListTile, '화장실');
+    final litterTile = find.widgetWithText(TargetGridTile, '화장실');
     await tester.scrollUntilVisible(
       litterTile,
       200,
@@ -148,13 +149,17 @@ void main() {
           .first,
     );
     await tester.pumpAndSettle();
+    await tester.ensureVisible(litterTile);
+    await tester.pumpAndSettle();
     await tester.tap(litterTile);
     await tester.pumpAndSettle();
     expect(find.byType(AlertDialog), findsNothing);
+    await tester.ensureVisible(find.text('기록 보기'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('기록 보기'));
     await tester.pumpAndSettle();
     expect(find.text('저장된 분석 기록이 없습니다.'), findsOneWidget);
-    await tester.pageBack();
+    await tapBackButton(tester);
     await tester.pumpAndSettle();
     await tester.tap(find.text('사진 비교'));
     await tester.pumpAndSettle();
@@ -166,7 +171,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const HareupApp(authRepository: TestSignedInAuth()),
+      const HareupApp(authRepository: TestSignedInAuth(), initialLocale: Locale('ko')),
     );
     await tester.pumpAndSettle();
 
@@ -186,7 +191,7 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      const HareupApp(authRepository: TestSignedInAuth()),
+      const HareupApp(authRepository: TestSignedInAuth(), initialLocale: Locale('ko')),
     );
     await tester.pumpAndSettle();
     final context = tester.element(find.byType(HomePage));
@@ -218,6 +223,7 @@ void main() {
     expect(find.text('화장실 추가'), findsOneWidget);
     await tester.tap(find.text('화장실 테스트'));
     await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('기록 보기'), 200);
     await tester.tap(find.text('기록 보기'));
     await tester.pumpAndSettle();
     expect(find.text('저장된 분석 기록이 없습니다.'), findsOneWidget);

@@ -8,13 +8,15 @@ class FamilyAccessState {
     this.families = const [],
     this.pendingGroupId,
     this.isLoading = false,
-    this.failureMessage,
+    this.failure,
   });
 
   final List<FamilyGroup> families;
   final String? pendingGroupId;
   final bool isLoading;
-  final String? failureMessage;
+
+  /// Resolved to display text at the presentation boundary.
+  final AppFailure? failure;
 }
 
 class FamilyAccessCubit extends Cubit<FamilyAccessState> {
@@ -46,7 +48,7 @@ class FamilyAccessCubit extends Cubit<FamilyAccessState> {
         FamilyAccessState(
           families: state.families,
           pendingGroupId: state.pendingGroupId,
-          failureMessage: failure.message,
+          failure: failure,
         ),
       );
     }
@@ -70,12 +72,7 @@ class FamilyAccessCubit extends Cubit<FamilyAccessState> {
       );
       return value;
     } else if (result case Failure<String>(:final failure)) {
-      emit(
-        FamilyAccessState(
-          families: state.families,
-          failureMessage: failure.message,
-        ),
-      );
+      emit(FamilyAccessState(families: state.families, failure: failure));
     }
     return null;
   }
@@ -88,12 +85,7 @@ class FamilyAccessCubit extends Cubit<FamilyAccessState> {
       emit(FamilyAccessState(families: state.families, pendingGroupId: value));
       return value;
     } else if (result case Failure<String>(:final failure)) {
-      emit(
-        FamilyAccessState(
-          families: state.families,
-          failureMessage: failure.message,
-        ),
-      );
+      emit(FamilyAccessState(families: state.families, failure: failure));
     }
     return null;
   }
@@ -109,7 +101,7 @@ class FamilyAccessCubit extends Cubit<FamilyAccessState> {
         FamilyAccessState(
           families: state.families,
           pendingGroupId: groupId,
-          failureMessage: failure.message,
+          failure: failure,
         ),
       );
     }

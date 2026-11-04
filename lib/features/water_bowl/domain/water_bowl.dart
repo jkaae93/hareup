@@ -41,6 +41,8 @@ class BowlPetOption {
 abstract interface class WaterBowlRepository {
   Future<Result<List<WaterBowl>>> list();
   Future<Result<void>> create(WaterBowl bowl);
+  Future<Result<void>> rename(String id, String name);
+  Future<Result<void>> delete(String id);
   Future<Result<void>> replaceBaseline(
     String bowlId,
     Uint8List photo,

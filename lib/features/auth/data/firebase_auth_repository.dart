@@ -82,13 +82,20 @@ class FirebaseAuthRepository implements AuthRepository {
   Future<Result<void>> signInWithProvider(String providerId) async {
     final provider = _providers[providerId];
     if (provider == null) {
-      return const Failure(RequestFailure('로그인 제공자를 사용할 수 없습니다.'));
+      return const Failure(
+        RequestFailure(
+          '로그인 제공자를 사용할 수 없습니다.',
+          FailureMessageKeys.authProviderUnavailable,
+        ),
+      );
     }
     try {
       await provider.signIn(_auth);
       return const Success(null);
     } on FederatedSignInCancelled {
-      return const Failure(CancelledFailure('로그인을 취소했습니다.'));
+      return const Failure(
+        CancelledFailure('로그인을 취소했습니다.', FailureMessageKeys.authCancelled),
+      );
     } catch (error) {
       return Failure(_authFailure(error));
     }
@@ -114,22 +121,37 @@ class FirebaseAuthRepository implements AuthRepository {
   AppFailure _authFailure(Object error) {
     if (error is FirebaseAuthException) {
       return switch (error.code) {
-        'invalid-email' => const RequestFailure('이메일 주소 형식이 올바르지 않습니다.'),
+        'invalid-email' => const RequestFailure(
+          '이메일 주소 형식이 올바르지 않습니다.',
+          FailureMessageKeys.authInvalidEmail,
+        ),
         'email-already-in-use' => const RequestFailure(
           '이미 가입된 이메일입니다. 로그인해 주세요.',
+          FailureMessageKeys.authEmailInUse,
         ),
-        'weak-password' => const RequestFailure('비밀번호를 6자 이상 입력해 주세요.'),
+        'weak-password' => const RequestFailure(
+          '비밀번호를 6자 이상 입력해 주세요.',
+          FailureMessageKeys.authWeakPassword,
+        ),
         'invalid-credential' ||
         'wrong-password' ||
-        'user-not-found' => const AuthorizationFailure('이메일 또는 비밀번호를 확인해 주세요.'),
+        'user-not-found' => const AuthorizationFailure(
+          '이메일 또는 비밀번호를 확인해 주세요.',
+          FailureMessageKeys.authInvalidCredential,
+        ),
         'too-many-requests' => const RequestFailure(
           '시도가 너무 많습니다. 잠시 후 다시 시도해 주세요.',
+          FailureMessageKeys.authTooManyRequests,
         ),
         'operation-not-allowed' => const RequestFailure(
           'Firebase Console에서 이 로그인 제공자를 활성화해 주세요.',
+          FailureMessageKeys.authNotEnabled,
         ),
         'popup-closed-by-user' ||
-        'web-context-cancelled' => const CancelledFailure('로그인을 취소했습니다.'),
+        'web-context-cancelled' => const CancelledFailure(
+          '로그인을 취소했습니다.',
+          FailureMessageKeys.authCancelled,
+        ),
         _ => firebaseFailure(error),
       };
     }

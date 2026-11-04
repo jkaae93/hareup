@@ -1,24 +1,27 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_design_system/design_system.dart';
 import 'package:hareup_media/media.dart';
 import 'package:hareup_presentation_core/presentation_core.dart';
+import '../../../app/failure_messages.dart';
+import '../../../app/locale_cubit.dart';
+import '../../../l10n/l10n.dart';
 import '../../auth/presentation/auth_cubit.dart';
 import '../../family/domain/family.dart';
 import '../../family/presentation/family_page.dart';
+import '../../health_chat/domain/health_chat.dart';
+import '../../health_chat/presentation/health_chat_page.dart';
 import '../../litter_box/domain/litter_box.dart';
 import '../../litter_box/presentation/litter_box_cubit.dart';
 import '../../litter_box/presentation/litter_box_page.dart';
 import '../../pet/domain/pet.dart';
+import '../../shared_data/target_widgets.dart';
 import '../../settings/data/platform_settings_repository.dart';
 import '../../settings/presentation/settings_page.dart';
 import '../../photo_analysis/domain/analysis.dart';
 import '../../photo_analysis/presentation/analysis_page.dart';
 import '../../records/presentation/records_page.dart';
 import '../../records/domain/record.dart';
-import '../../records/presentation/recent_record_summary.dart';
 import '../../pet/presentation/pet_cubit.dart';
 import '../../pet/presentation/pet_page.dart';
 import '../../water_bowl/domain/water_bowl.dart';
@@ -35,8 +38,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int _recordsRevision = 0;
-
   List<Pet>? _pets(BuildContext context) =>
       switch (context.read<PetCubit>().state) {
         Loaded<List<Pet>>(:final data) => data,
@@ -68,15 +69,25 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-    if (mounted) setState(() => _recordsRevision++);
   }
 
   void _openPets(BuildContext context) {
     final cubit = context.read<PetCubit>();
+    final water = context.read<WaterBowlCubit>().repository;
+    final litter = context.read<LitterBoxCubit>().repository;
+    final records = context.read<RecordsRepository>();
+    final runtime = context.read<AnalysisRuntime>();
     Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) =>
-            BlocProvider.value(value: cubit, child: const PetPage()),
+        builder: (_) => BlocProvider.value(
+          value: cubit,
+          child: PetPage(
+            waterRepository: water,
+            litterRepository: litter,
+            recordsRepository: records,
+            runtime: runtime,
+          ),
+        ),
       ),
     );
   }
@@ -107,7 +118,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
     );
-    if (mounted) setState(() => _recordsRevision++);
   }
 
   Future<void> _openTargetPicker({required bool records}) async {
@@ -124,13 +134,19 @@ class _HomePageState extends State<HomePage> {
     if (waters == null || litters == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('대상 목록을 확인한 뒤 다시 시도해 주세요.')));
+      ).showSnackBar(SnackBar(content: Text(context.l10n.homeTargetListError)));
       return;
     }
     final selected = await Navigator.of(context).push<Object>(
       MaterialPageRoute(
         builder: (pickerContext) => Scaffold(
-          appBar: AppBar(title: Text(records ? '기록 대상 선택' : '사진 비교 대상 선택')),
+          appBar: AppBar(
+            title: Text(
+              records
+                  ? pickerContext.l10n.homePickRecordsTarget
+                  : pickerContext.l10n.homePickCompareTarget,
+            ),
+          ),
           body: HareupContent(
             child: ListView(
               padding: const EdgeInsets.symmetric(
@@ -139,13 +155,16 @@ class _HomePageState extends State<HomePage> {
               ),
               children: [
                 Text(
-                  records ? '기록을 확인할 대상을 선택해 주세요.' : '사진을 비교할 대상을 선택해 주세요.',
+                  records
+                      ? pickerContext.l10n.homePickRecordsHint
+                      : pickerContext.l10n.homePickCompareHint,
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 const SizedBox(height: HareupSpacing.medium),
                 if (waters.isEmpty && litters.isEmpty)
-                  const EmptyNotice(message: '먼저 물그릇이나 화장실을 등록해 주세요.'),
-                if (waters.isNotEmpty) const HareupSectionHeader(title: '물그릇'),
+                  EmptyNotice(message: pickerContext.l10n.homeNoTargets),
+                if (waters.isNotEmpty)
+                  HareupSectionHeader(title: pickerContext.l10n.navWater),
                 for (final bowl in waters)
                   HareupCard(
                     title: bowl.name,
@@ -154,7 +173,8 @@ class _HomePageState extends State<HomePage> {
                     ),
                     onTap: () => Navigator.pop(pickerContext, bowl),
                   ),
-                if (litters.isNotEmpty) const HareupSectionHeader(title: '화장실'),
+                if (litters.isNotEmpty)
+                  HareupSectionHeader(title: pickerContext.l10n.navLitter),
                 for (final box in litters)
                   HareupCard(
                     title: box.name,
@@ -234,7 +254,6 @@ class _HomePageState extends State<HomePage> {
       );
     }
     if (mounted && isWater) await context.read<WaterBowlCubit>().load();
-    if (mounted) setState(() => _recordsRevision++);
   }
 
   List<CatOption> _catOptions(List<Pet> pets) => [
@@ -243,21 +262,44 @@ class _HomePageState extends State<HomePage> {
   ];
   void _petError(BuildContext context) => ScaffoldMessenger.of(
     context,
-  ).showSnackBar(const SnackBar(content: Text('반려동물 목록을 확인한 뒤 다시 시도해 주세요.')));
+  ).showSnackBar(SnackBar(content: Text(context.l10n.homePetError)));
 
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(
-      title: const Text('하릅'),
+      title: Text(context.l10n.appTitle),
       actions: [
         IconButton(
-          tooltip: '설정',
+          tooltip: context.l10n.chatAssistantLabel,
+          icon: const Icon(Icons.chat_bubble_outline),
+          onPressed: () {
+            final pets = _pets(context);
+            if (pets == null) {
+              _petError(context);
+              return;
+            }
+            Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => HealthChatPage(
+                  repository: context.read<HealthChatRepository>(),
+                  groupId: context.read<AnalysisRuntime>().groupId,
+                  pets: pets,
+                  photoSource: PhotoPicker(),
+                ),
+              ),
+            );
+          },
+        ),
+        IconButton(
+          tooltip: context.l10n.settingsTitle,
           icon: const Icon(Icons.settings_outlined),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
               builder: (_) => SettingsPage(
                 repository: const PlatformSettingsRepository(),
                 onSignOut: context.read<AuthCubit>().signOut,
+                languageOverride: context.read<LocaleCubit>().state,
+                onLanguageChanged: context.read<LocaleCubit>().setOverride,
                 displayName: context
                     .read<AuthCubit>()
                     .state
@@ -271,12 +313,12 @@ class _HomePageState extends State<HomePage> {
         ),
         if (widget.onChangeFamily case final onChangeFamily?)
           IconButton(
-            tooltip: '가족 바꾸기',
+            tooltip: context.l10n.homeSwitchFamily,
             icon: const Icon(Icons.switch_account_outlined),
             onPressed: onChangeFamily,
           ),
         IconButton(
-          tooltip: '가족 관리',
+          tooltip: context.l10n.homeManageFamily,
           icon: const Icon(Icons.people_outline),
           onPressed: () => Navigator.of(context).push(
             MaterialPageRoute<void>(
@@ -310,25 +352,28 @@ class _HomePageState extends State<HomePage> {
             );
         }
       },
-      destinations: const [
+      destinations: [
         NavigationDestination(
-          icon: Icon(Icons.home_outlined),
-          selectedIcon: Icon(Icons.home),
-          label: '홈',
+          icon: const Icon(Icons.home_outlined),
+          selectedIcon: const Icon(Icons.home),
+          label: context.l10n.navHome,
         ),
         NavigationDestination(
-          icon: Icon(Icons.water_drop_outlined),
-          label: '물그릇',
+          icon: const Icon(Icons.water_drop_outlined),
+          label: context.l10n.navWater,
         ),
         NavigationDestination(
-          icon: Icon(Icons.cleaning_services_outlined),
-          label: '화장실',
+          icon: const Icon(Icons.cleaning_services_outlined),
+          label: context.l10n.navLitter,
         ),
         NavigationDestination(
-          icon: Icon(Icons.compare_outlined),
-          label: '사진 비교',
+          icon: const Icon(Icons.compare_outlined),
+          label: context.l10n.navCompare,
         ),
-        NavigationDestination(icon: Icon(Icons.history), label: '기록 목록'),
+        NavigationDestination(
+          icon: const Icon(Icons.history),
+          label: context.l10n.navRecords,
+        ),
       ],
     ),
     body: Center(
@@ -342,22 +387,25 @@ class _HomePageState extends State<HomePage> {
             vertical: HareupSpacing.medium,
           ),
           children: [
-            Text('함께 돌보는 하루', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              context.l10n.homeHeadline,
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: HareupSpacing.small),
             Text(
-              '오늘도 반려동물의 일상을 살펴보세요.',
+              context.l10n.homeSubheadline,
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: HareupSpacing.small),
             if (context.read<AnalysisRuntime>().groupId == 'local-development')
-              const Text('개발 미리보기 · 데이터는 앱을 종료하면 사라집니다.'),
+              Text(context.l10n.homeLocalPreview),
             const SizedBox(height: HareupSpacing.large),
             BlocBuilder<PetCubit, LoadState<List<Pet>>>(
               builder: (context, state) => _DashboardSection<Pet>(
-                title: '반려동물',
-                manageLabel: '반려동물 관리',
+                title: context.l10n.homePetTitle,
+                manageLabel: context.l10n.petManageTitle,
                 state: state,
-                empty: '반려동물을 등록해 주세요.',
+                empty: context.l10n.homePetEmpty,
                 onManage: () => _openPets(context),
                 onRetry: () => context.read<PetCubit>().load(),
                 item: (pet) => ListTile(
@@ -368,60 +416,47 @@ class _HomePageState extends State<HomePage> {
                     child: const Icon(Icons.pets),
                   ),
                   title: Text(pet.name),
-                  subtitle: Text(pet.species == PetSpecies.cat ? '고양이' : '강아지'),
+                  subtitle: Text(
+                    pet.species == PetSpecies.cat
+                        ? context.l10n.petSpeciesCat
+                        : context.l10n.petSpeciesDog,
+                  ),
                   onTap: () => _openPets(context),
                 ),
-                count: (pets) => '반려동물 ${pets.length}마리',
+                count: (pets) => context.l10n.homePetCount(pets.length),
               ),
             ),
             BlocBuilder<WaterBowlCubit, LoadState<List<WaterBowl>>>(
               builder: (context, state) => _DashboardSection<WaterBowl>(
-                title: '물그릇',
-                manageLabel: '물그릇 관리',
+                title: context.l10n.navWater,
+                manageLabel: context.l10n.homeWaterManage,
                 state: state,
-                empty: '물그릇을 등록해 주세요.',
+                empty: context.l10n.homeWaterEmpty,
                 onManage: () => _openWater(context),
                 onRetry: () => context.read<WaterBowlCubit>().load(),
-                item: (bowl) => _TargetDashboardItem(
-                  title: bowl.name,
-                  photo: bowl.currentBaseline.photo,
+                grid: true,
+                item: (bowl) => TargetGridTile(
+                  name: bowl.name,
                   icon: Icons.water_drop_outlined,
-                  photoActionLabel: '사진 등록',
-                  summary: Text(
-                    bowl.levelProfile == null
-                        ? '정수기 초기 설정이 필요합니다.'
-                        : '수위 관찰을 시작할 수 있습니다.',
-                  ),
-                  onDetails: () async {
+                  onTap: () async {
                     await showWaterBowlDetail(context, bowl, PhotoPicker());
-                    if (mounted) setState(() => _recordsRevision++);
                   },
-                  onRecords: () => _openTarget(bowl, records: true),
-                  onCompare: () => _openTarget(bowl, records: false),
                 ),
               ),
             ),
             BlocBuilder<LitterBoxCubit, LoadState<List<LitterBox>>>(
               builder: (context, state) => _DashboardSection<LitterBox>(
-                title: '화장실',
-                manageLabel: '화장실 관리',
+                title: context.l10n.navLitter,
+                manageLabel: context.l10n.homeLitterManage,
                 state: state,
-                empty: '화장실을 등록해 주세요.',
+                empty: context.l10n.homeLitterEmpty,
                 onManage: () => _openLitter(context),
                 onRetry: () => context.read<LitterBoxCubit>().load(),
-                item: (box) => _TargetDashboardItem(
-                  title: box.name,
-                  photo: box.currentBaseline.photo,
+                grid: true,
+                item: (box) => TargetGridTile(
+                  name: box.name,
                   icon: Icons.cleaning_services_outlined,
-                  photoActionLabel: '사진 비교',
-                  summary: RecentRecordSummary(
-                    key: ValueKey('litter-${box.id}-$_recordsRevision'),
-                    repository: context.read<RecordsRepository>(),
-                    groupId: context.read<AnalysisRuntime>().groupId,
-                    targetId: box.id,
-                    kind: AnalysisKind.litter,
-                  ),
-                  onDetails: () async {
+                  onTap: () async {
                     final pets = _pets(context);
                     if (pets == null) {
                       _petError(context);
@@ -433,10 +468,7 @@ class _HomePageState extends State<HomePage> {
                       PhotoPicker(),
                       _catOptions(pets),
                     );
-                    if (mounted) setState(() => _recordsRevision++);
                   },
-                  onRecords: () => _openTarget(box, records: true),
-                  onCompare: () => _openTarget(box, records: false),
                 ),
               ),
             ),
@@ -446,7 +478,7 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: const EdgeInsets.all(HareupSpacing.medium),
                 child: Text(
-                  '사진 분석 결과는 추정 정보이며, 검증된 항목만 표시됩니다.',
+                  context.l10n.homeEstimateNotice,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
@@ -468,6 +500,7 @@ class _DashboardSection<T> extends StatelessWidget {
     required this.onRetry,
     required this.item,
     this.count,
+    this.grid = false,
   });
   final String title;
   final String manageLabel;
@@ -477,6 +510,7 @@ class _DashboardSection<T> extends StatelessWidget {
   final VoidCallback onRetry;
   final Widget Function(T) item;
   final String Function(List<T>)? count;
+  final bool grid;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: HareupSpacing.large),
@@ -489,102 +523,32 @@ class _DashboardSection<T> extends StatelessWidget {
           onAction: onManage,
         ),
         switch (state) {
-          Initial<List<T>>() || Loading<List<T>>() => const Center(
-            child: CircularProgressIndicator(),
+          Initial<List<T>>() || Loading<List<T>>() => const Padding(
+            padding: EdgeInsets.all(HareupSpacing.large),
+            child: HareupLoading(),
           ),
-          Empty<List<T>>() => Card(child: ListTile(title: Text(empty))),
-          Failed<List<T>>(:final failure) => Row(
-            children: [
-              Expanded(child: Text(failure.message)),
-              TextButton(onPressed: onRetry, child: const Text('다시 시도')),
-            ],
+          Empty<List<T>>() => HareupCard(title: empty, onTap: onManage),
+          Failed<List<T>>(:final failure) => ErrorNotice(
+            message: failureDisplayMessage(context, failure),
+            onRetry: onRetry,
           ),
           Loaded<List<T>>(:final data) => Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (count != null) Text(count!(data)),
-              for (final value in data) Card(child: item(value)),
+              if (grid)
+                GridView.count(
+                  crossAxisCount: 2,
+                  childAspectRatio: 1.5,
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [for (final value in data) item(value)],
+                )
+              else
+                for (final value in data) Card(child: item(value)),
             ],
           ),
         },
-      ],
-    ),
-  );
-}
-
-class _TargetDashboardItem extends StatelessWidget {
-  const _TargetDashboardItem({
-    required this.title,
-    required this.photo,
-    required this.icon,
-    required this.photoActionLabel,
-    required this.summary,
-    required this.onDetails,
-    required this.onRecords,
-    required this.onCompare,
-  });
-  final String title;
-  final Uint8List photo;
-  final IconData icon;
-  final String photoActionLabel;
-  final Widget summary;
-  final VoidCallback onDetails;
-  final VoidCallback onRecords;
-  final VoidCallback onCompare;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(HareupSpacing.medium),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        ListTile(
-          contentPadding: EdgeInsets.zero,
-          leading: CircleAvatar(child: Icon(icon)),
-          title: Text(title, style: Theme.of(context).textTheme.titleMedium),
-          trailing: const Icon(Icons.chevron_right),
-          onTap: onDetails,
-        ),
-        Container(
-          padding: const EdgeInsets.all(HareupSpacing.small),
-          decoration: BoxDecoration(
-            color: HareupColors.neutral100,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              SizedBox(
-                width: 84,
-                child: HareupPhotoPreview(
-                  bytes: photo,
-                  label: '$title 기준 사진',
-                  height: 84,
-                  fit: BoxFit.cover,
-                ),
-              ),
-              const SizedBox(width: HareupSpacing.medium),
-              Expanded(child: summary),
-            ],
-          ),
-        ),
-        const SizedBox(height: HareupSpacing.small),
-        Wrap(
-          spacing: HareupSpacing.small,
-          runSpacing: HareupSpacing.extraSmall,
-          alignment: WrapAlignment.end,
-          children: [
-            OutlinedButton.icon(
-              onPressed: onRecords,
-              icon: const Icon(Icons.history),
-              label: const Text('기록 보기'),
-            ),
-            FilledButton.icon(
-              onPressed: onCompare,
-              icon: const Icon(Icons.photo_camera_outlined),
-              label: Text(photoActionLabel),
-            ),
-          ],
-        ),
       ],
     ),
   );

@@ -181,16 +181,21 @@ class FirebaseFamilyRepository implements FamilyRepository {
     return value;
   }
 
-  static AppFailure _mapError(
-    FirebaseFunctionsException error,
-  ) => switch (error.code) {
-    'unauthenticated' || 'permission-denied' => const AuthorizationFailure(),
-    'not-found' => const NotFoundFailure(),
-    'invalid-argument' ||
-    'already-exists' ||
-    'failed-precondition' => RequestFailure(error.message ?? '요청을 확인해 주세요.'),
-    'unavailable' || 'deadline-exceeded' => const NetworkFailure(),
-    'internal' => const ServerFailure('가족 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'),
-    _ => ServerFailure(error.message ?? '서버에 문제가 있습니다.'),
-  };
+  static AppFailure _mapError(FirebaseFunctionsException error) =>
+      switch (error.code) {
+        'unauthenticated' ||
+        'permission-denied' => const AuthorizationFailure(),
+        'not-found' => const NotFoundFailure(),
+        'invalid-argument' || 'already-exists' || 'failed-precondition' =>
+          RequestFailure(error.message ?? '요청을 확인해 주세요.'),
+        'unavailable' || 'deadline-exceeded' => const NetworkFailure(),
+        'internal' => const ServerFailure(
+          '가족 정보를 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+          FailureMessageKeys.familyLoadFailed,
+        ),
+        _ => ServerFailure(
+          error.message ?? '서버에 문제가 있습니다.',
+          error.message == null ? FailureMessageKeys.familyServerError : null,
+        ),
+      };
 }

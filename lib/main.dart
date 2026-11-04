@@ -7,8 +7,11 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:kakao_flutter_sdk_user/kakao_flutter_sdk_user.dart';
 import 'package:flutter/material.dart';
 import 'package:hareup_design_system/design_system.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'app/app.dart';
+import 'app/locale_store.dart';
 import 'firebase_options.dart';
+import 'l10n/l10n.dart';
 import 'features/auth/data/apple_auth_provider.dart';
 import 'features/auth/data/firebase_auth_repository.dart';
 import 'features/auth/data/google_auth_provider.dart';
@@ -17,8 +20,12 @@ import 'features/family/data/firebase_family_repository.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final localeStore = SharedPreferencesLocaleStore(
+    await SharedPreferences.getInstance(),
+  );
+  final initialLocale = await localeStore.load();
   if (kIsWeb && !DefaultFirebaseOptions.hasWebConfiguration) {
-    runApp(const _FirebaseWebSetupApp());
+    runApp(_FirebaseWebSetupApp(initialLocale: initialLocale));
     return;
   }
 
@@ -43,29 +50,40 @@ Future<void> main() async {
       firestore: FirebaseFirestore.instance,
       storage: FirebaseStorage.instance,
       functions: functions,
+      localeStore: localeStore,
+      initialLocale: initialLocale,
     ),
   );
 }
 
 class _FirebaseWebSetupApp extends StatelessWidget {
-  const _FirebaseWebSetupApp();
+  const _FirebaseWebSetupApp({this.initialLocale});
+
+  final Locale? initialLocale;
 
   @override
   Widget build(BuildContext context) => MaterialApp(
-    title: '하릅',
+    onGenerateTitle: (context) => context.l10n.appTitle,
     theme: HareupTheme.light,
-    home: Scaffold(
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.all(HareupSpacing.medium),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: HareupSpacing.maxContentWidth,
-            ),
-            child: Text(
-              '웹 Firebase 설정이 필요합니다. Firebase Console에서 Web 앱을 등록한 뒤 '
-              'FIREBASE_WEB_API_KEY와 FIREBASE_WEB_APP_ID를 전달해 실행해 주세요.',
-              textAlign: TextAlign.center,
+    locale: initialLocale,
+    supportedLocales: appSupportedLocales,
+    localizationsDelegates: [
+      ...AppLocalizations.localizationsDelegates,
+      DesignLocalizations.delegate,
+    ],
+    home: Builder(
+      builder: (context) => Scaffold(
+        body: Center(
+          child: Padding(
+            padding: EdgeInsets.all(HareupSpacing.medium),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: HareupSpacing.maxContentWidth,
+              ),
+              child: Text(
+                context.l10n.mainWebSetupMessage,
+                textAlign: TextAlign.center,
+              ),
             ),
           ),
         ),

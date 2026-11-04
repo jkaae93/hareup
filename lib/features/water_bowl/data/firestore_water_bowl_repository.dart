@@ -25,6 +25,30 @@ class FirestoreWaterBowlRepository implements WaterBowlRepository {
       _firestore.collection('groups').doc(groupId).collection('waterBowls');
 
   @override
+  Future<Result<void>> delete(String id) async {
+    try {
+      await _bowls.doc(id).delete();
+      return const Success(null);
+    } catch (error) {
+      return Failure(firebaseFailure(error));
+    }
+  }
+
+  @override
+  Future<Result<void>> rename(String id, String name) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty || trimmed.length > 30) {
+      return const Failure(RequestFailure());
+    }
+    try {
+      await _bowls.doc(id).update({'name': trimmed});
+      return const Success(null);
+    } catch (error) {
+      return Failure(firebaseFailure(error));
+    }
+  }
+
+  @override
   Future<Result<List<WaterBowl>>> list() async {
     try {
       final snapshot = await _bowls.orderBy('name').get();
@@ -116,7 +140,12 @@ class FirestoreWaterBowlRepository implements WaterBowlRepository {
       return await _firestore.runTransaction((transaction) async {
         final existing = await transaction.get(document);
         if (existing.exists) {
-          return const Failure(RequestFailure('이미 등록된 물그릇입니다.'));
+          return const Failure(
+            RequestFailure(
+              '이미 등록된 물그릇입니다.',
+              FailureMessageKeys.waterAlreadyRegistered,
+            ),
+          );
         }
         transaction.set(document, {
           'name': bowl.name,

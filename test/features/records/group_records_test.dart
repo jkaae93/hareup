@@ -39,7 +39,7 @@ void main() {
       AnalysisKind.litter,
       1,
     ).withAnnotations(urineCount: 3, stoolCount: 2, notes: '확인 메모');
-    final text = recordShareText(record);
+    final text = recordShareText(record, RecordShareStrings.korean());
     expect(text, contains('관찰 대상'));
     expect(text, contains('확인한 소변: 3회'));
     expect(text, contains('확인 메모'));
@@ -57,6 +57,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: testTheme,
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
           home: GroupRecordsPage(repository: repository, groupId: 'family'),
         ),
       );
@@ -126,6 +129,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: testTheme,
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
           home: GroupRecordsPage(repository: repo, groupId: 'family'),
         ),
       );
@@ -158,7 +164,7 @@ void main() {
               .single;
       expect(saved.correctedUrineCount, 4);
       expect((saved.outcome as LitterOutcome).urineCount, 1);
-      await tester.pageBack();
+      await tapBackButton(tester);
       await tester.pumpAndSettle();
       expect(find.textContaining('소변 4회'), findsOneWidget);
     },

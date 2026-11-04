@@ -1,0 +1,20 @@
+[
+  {
+    "origin": [
+      "https://hareup-mobile.web.app",
+      "https://hareup-mobile.firebaseapp.com",
+      "http://localhost:8080"
+    ],
+    "method": ["GET", "PUT", "POST", "DELETE", "HEAD", "OPTIONS"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type",
+      "Authorization",
+      "Content-Length",
+      "X-Firebase-Storage-Version",
+      "X-Goog-Upload-Command",
+      "X-Goog-Upload-Header-Content-Length",
+      "X-Goog-Upload-Protocol"
+    ]
+  }
+]

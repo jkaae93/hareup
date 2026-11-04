@@ -111,14 +111,22 @@ class FirebaseMetaAnalysisService
               'top',
             ].every((key) => photos[key]?.isNotEmpty == true)) ||
         (!setup && (photo == null || photo.isEmpty))) {
-      return const Failure(RequestFailure('필요한 사진을 선택해 주세요.'));
+      return const Failure(
+        RequestFailure(
+          '필요한 사진을 선택해 주세요.',
+          FailureMessageKeys.analysisPhotoRequired,
+        ),
+      );
     }
     if (images.any(
       (image) =>
           image.lengthInBytes > _maxImageBytes || _imageType(image) == null,
     )) {
       return const Failure(
-        RequestFailure('각 사진은 3MB 이하의 JPEG, PNG 또는 WebP여야 합니다.'),
+        RequestFailure(
+          '각 사진은 3MB 이하의 JPEG, PNG 또는 WebP여야 합니다.',
+          FailureMessageKeys.analysisPhotoTooLarge,
+        ),
       );
     }
     try {
@@ -166,14 +174,24 @@ class FirebaseMetaAnalysisService
     final baseline = request.baseline.photo;
     final photo = request.photo;
     if (baseline.isEmpty || photo.isEmpty) {
-      return const Failure(RequestFailure('기준 사진과 비교할 사진을 확인해 주세요.'));
+      return const Failure(
+        RequestFailure(
+          '기준 사진과 비교할 사진을 확인해 주세요.',
+          FailureMessageKeys.analysisBaselineRequired,
+        ),
+      );
     }
     if (baseline.lengthInBytes > _maxImageBytes ||
         photo.lengthInBytes > _maxImageBytes ||
         request.registrationPhotos.values.any(
           (value) => value.lengthInBytes > _maxImageBytes,
         )) {
-      return const Failure(RequestFailure('분석할 사진은 각각 3MB 이하여야 합니다.'));
+      return const Failure(
+        RequestFailure(
+          '분석할 사진은 각각 3MB 이하여야 합니다.',
+          FailureMessageKeys.analysisEachPhotoTooLarge,
+        ),
+      );
     }
     final baselineType = _imageType(baseline);
     final photoType = _imageType(photo);
@@ -182,7 +200,12 @@ class FirebaseMetaAnalysisService
         request.registrationPhotos.values.any(
           (value) => _imageType(value) == null,
         )) {
-      return const Failure(RequestFailure('JPEG, PNG 또는 WebP 사진만 분석할 수 있습니다.'));
+      return const Failure(
+        RequestFailure(
+          'JPEG, PNG 또는 WebP 사진만 분석할 수 있습니다.',
+          FailureMessageKeys.analysisUnsupportedType,
+        ),
+      );
     }
 
     try {

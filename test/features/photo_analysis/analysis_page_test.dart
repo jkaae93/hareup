@@ -52,6 +52,9 @@ void main() {
       RepositoryProvider<RecordsRepository>.value(
         value: MemoryRecordsRepository(),
         child: MaterialApp(
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
           home: AnalysisPage(
             targetId: 'bowl',
             targetName: '물그릇',
@@ -84,7 +87,7 @@ void main() {
       find.text('{"status":"uncertain","reason":"수면이 보이지 않습니다."}'),
       findsOneWidget,
     );
-    await tester.pageBack();
+    await tapBackButton(tester);
     await tester.pumpAndSettle();
     expect(find.text('모델 응답'), findsNothing);
   });
@@ -97,6 +100,9 @@ void main() {
         value: records,
         child: MaterialApp(
           theme: testTheme,
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
           home: AnalysisPage(
             targetId: 'bowl',
             targetName: '물그릇',
@@ -142,6 +148,9 @@ void main() {
           value: records,
           child: MaterialApp(
             theme: testTheme,
+            localizationsDelegates: testLocalizationsDelegates,
+            locale: const Locale('ko'),
+            supportedLocales: appSupportedLocales,
             home: AnalysisPage(
               targetId: 'litter',
               targetName: '화장실',

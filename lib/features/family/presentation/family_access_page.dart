@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_design_system/design_system.dart';
 
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../domain/family.dart';
 import 'family_access_cubit.dart';
 
@@ -21,15 +23,17 @@ class FamilyAccessPage extends StatelessWidget {
   Widget build(BuildContext context) => BlocProvider(
     create: (_) => FamilyAccessCubit(repository)..load(),
     child: Scaffold(
-      appBar: AppBar(title: const Text('가족 선택')),
+      appBar: AppBar(title: Text(context.l10n.familySelectTitle)),
       body: HareupContent(
         child: BlocConsumer<FamilyAccessCubit, FamilyAccessState>(
           listener: (context, state) {
-            final message = state.failureMessage;
-            if (message != null) {
-              ScaffoldMessenger.of(
-                context,
-              ).showSnackBar(SnackBar(content: Text(message)));
+            final failure = state.failure;
+            if (failure != null) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(failureDisplayMessage(context, failure)),
+                ),
+              );
             }
           },
           builder: (context, state) {
@@ -40,15 +44,15 @@ class FamilyAccessPage extends StatelessWidget {
                 vertical: HareupSpacing.medium,
               ),
               children: [
-                const HareupStatusBadge(label: '우리 가족 보금자리'),
+                HareupStatusBadge(label: context.l10n.familyNestBadge),
                 const SizedBox(height: HareupSpacing.small),
                 Text(
-                  '어떤 가족과 함께 돌볼까요?',
+                  context.l10n.familySelectQuestion,
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
                 const SizedBox(height: HareupSpacing.small),
                 Text(
-                  '승인된 가족을 선택해 계속하세요.',
+                  context.l10n.familySelectHint,
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: HareupSpacing.medium),
@@ -64,18 +68,16 @@ class FamilyAccessPage extends StatelessWidget {
                     ),
                   ),
                 if (state.families.isEmpty && !state.isLoading)
-                  const EmptyNotice(
-                    message: '참여 중인 가족이 없습니다. 가족을 만들거나 초대 코드를 입력하세요.',
-                  ),
+                  EmptyNotice(message: context.l10n.familyEmptyMessage),
                 if (state.pendingGroupId case final pendingId?) ...[
                   const SizedBox(height: HareupSpacing.medium),
                   Card(
                     child: ListTile(
                       leading: const Icon(Icons.hourglass_top),
-                      title: const Text('관리자 승인 대기 중'),
-                      subtitle: const Text('승인 후 새로고침하면 가족을 선택할 수 있습니다.'),
+                      title: Text(context.l10n.familyPendingTitle),
+                      subtitle: Text(context.l10n.familyPendingMessage),
                       trailing: IconButton(
-                        tooltip: '승인 상태 새로고침',
+                        tooltip: context.l10n.familyRefreshStatus,
                         onPressed: state.isLoading
                             ? null
                             : () => cubit.refreshJoinStatus(pendingId),
@@ -90,9 +92,9 @@ class FamilyAccessPage extends StatelessWidget {
                     child: HareupLoading(),
                   ),
                 const SizedBox(height: HareupSpacing.large),
-                const HareupGuidance(
-                  title: '함께 돌보는 가족',
-                  message: '가족 구성원이 같은 반려동물의 기록을 함께 확인할 수 있어요.',
+                HareupGuidance(
+                  title: context.l10n.familyTogetherTitle,
+                  message: context.l10n.familyTogetherMessage,
                   icon: Icons.favorite_border,
                 ),
                 const SizedBox(height: HareupSpacing.large),
@@ -101,13 +103,13 @@ class FamilyAccessPage extends StatelessWidget {
                       ? null
                       : () => _createFamily(context),
                   icon: const Icon(Icons.add_home_outlined),
-                  label: const Text('가족 만들기'),
+                  label: Text(context.l10n.familyCreateAction),
                 ),
                 const SizedBox(height: HareupSpacing.small),
                 FilledButton.icon(
                   onPressed: state.isLoading ? null : () => _enterCode(context),
                   icon: const Icon(Icons.key_outlined),
-                  label: const Text('초대 코드 입력'),
+                  label: Text(context.l10n.familyEnterCodeAction),
                 ),
               ],
             );
@@ -121,11 +123,12 @@ class FamilyAccessPage extends StatelessWidget {
     final name = await Navigator.of(context).push<String>(
       MaterialPageRoute<String>(
         builder: (_) => HareupTextEntryPage(
-          title: '가족 만들기',
-          label: '가족 이름',
-          submitLabel: '만들기',
+          title: context.l10n.familyCreateAction,
+          label: context.l10n.familyNameLabel,
+          submitLabel: context.l10n.familyCreateSubmit,
           maxLength: 60,
-          validate: (value) => value.isEmpty ? '가족 이름을 입력해 주세요.' : null,
+          validate: (value) =>
+              value.isEmpty ? context.l10n.familyNameRequired : null,
         ),
       ),
     );
@@ -138,15 +141,15 @@ class FamilyAccessPage extends StatelessWidget {
     final code = await Navigator.of(context).push<String>(
       MaterialPageRoute<String>(
         builder: (_) => HareupTextEntryPage(
-          title: '초대 코드 입력',
-          label: '초대 코드',
-          submitLabel: '가입 요청',
+          title: context.l10n.familyEnterCodeAction,
+          label: context.l10n.familyInviteCodeLabel,
+          submitLabel: context.l10n.familyJoinRequestAction,
           maxLength: 12,
           capitalization: TextCapitalization.characters,
           normalize: (value) => value.toUpperCase(),
           validate: (value) => RegExp(r'^[A-Z0-9]{6,12}$').hasMatch(value)
               ? null
-              : '6~12자의 영문 또는 숫자를 입력해 주세요.',
+              : context.l10n.familyInviteCodeInvalid,
         ),
       ),
     );

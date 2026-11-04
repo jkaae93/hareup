@@ -17,6 +17,9 @@ void main() {
     const key = ValueKey('content');
     await tester.pumpWidget(
       const MaterialApp(
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: Scaffold(
           body: HareupContent(child: SizedBox.expand(key: key)),
         ),
@@ -119,7 +122,10 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await tester.pumpWidget(
-      const HareupApp(authRepository: TestSignedInAuth()),
+      const HareupApp(
+        authRepository: TestSignedInAuth(),
+        initialLocale: Locale('ko'),
+      ),
     );
     await tester.pumpAndSettle();
     expect(find.text('하릅'), findsOneWidget);
@@ -135,6 +141,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: Scaffold(
           body: HareupPhotoActions(
             onCamera: () => cameraCalls++,
@@ -164,6 +173,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: Scaffold(
           body: HareupCountField(
             controller: controller,
@@ -191,6 +203,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: const Scaffold(
           body: SingleChildScrollView(
             child: HareupPhotoComparison(before: null, after: null),
@@ -211,6 +226,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: Scaffold(
           body: HareupPhotoActions(onCamera: () {}, onGallery: () {}),
         ),
@@ -228,6 +246,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: Scaffold(
           body: Column(
             children: [
@@ -253,6 +274,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: Scaffold(
           body: Column(
             children: [
@@ -286,6 +310,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: const HareupTextEntryPage(
           title: '가족 만들기',
           label: '가족 이름',
@@ -306,6 +333,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: HareupTheme.light,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: MediaQuery(
           data: const MediaQueryData(
             size: Size(320, 700),

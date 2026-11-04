@@ -101,6 +101,9 @@ void main() {
           value: cubit,
           child: MaterialApp(
             theme: testTheme,
+            localizationsDelegates: testLocalizationsDelegates,
+            locale: const Locale('ko'),
+            supportedLocales: appSupportedLocales,
             home: LitterBoxPage(
               cats: const [CatOption(id: 'a', name: '나비')],
               photoSource: FakePhoto(),

@@ -1,0 +1,843 @@
+{
+  "@@locale": "en",
+  "appTitle": "Hareup",
+  "failureUnexpected": "Something went wrong.",
+  "failureNetwork": "Check your network connection.",
+  "failureSerialization": "Could not read the data.",
+  "failureTimeout": "The request timed out. Please try again.",
+  "failureCancelled": "The request was cancelled.",
+  "failureAuthorization": "Check your access permission.",
+  "failureNotFound": "The requested information was not found.",
+  "failureServer": "There was a server problem. Please try again.",
+  "failureRequest": "Check your request.",
+  "mainWebSetupMessage": "Web Firebase configuration is required. Register a Web app in the Firebase Console, then relaunch with FIREBASE_WEB_API_KEY and FIREBASE_WEB_APP_ID.",
+  "settingsLanguageTitle": "Language",
+  "settingsLanguageSystem": "Follow device language",
+  "authProviderUnavailable": "This sign-in provider is unavailable.",
+  "authCancelled": "Sign-in was cancelled.",
+  "authInvalidEmail": "The email address format is invalid.",
+  "authEmailInUse": "This email is already registered. Please sign in.",
+  "authWeakPassword": "Use a password of at least 6 characters.",
+  "authInvalidCredential": "Check your email or password.",
+  "authTooManyRequests": "Too many attempts. Please try again later.",
+  "authNotEnabled": "Enable this sign-in provider in the Firebase Console.",
+  "appAuthUnavailable": "Firebase authentication is unavailable.",
+  "recordsInvalidAnnotations": "Check your edits.",
+  "recordsChanged": "The record changed. Reload and try again.",
+  "recordsAlreadySaved": "This analysis is already saved.",
+  "waterAlreadyRegistered": "This water bowl is already registered.",
+  "waterHistoryUnavailable": "Could not load the water level history.",
+  "litterAlreadyRegistered": "This litter box is already registered.",
+  "settingsLoadFailed": "Could not load app info.",
+  "settingsOpenLinkFailed": "Could not open the link.",
+  "familyUnavailable": "Family sharing needs an account and a server connection.",
+  "familyLoadFailed": "Could not load family info. Please try again later.",
+  "familyServerError": "There is a server problem.",
+  "analysisPhotoRequired": "Select the required photos.",
+  "analysisPhotoTooLarge": "Each photo must be a JPEG, PNG, or WebP under 3 MB.",
+  "analysisBaselineRequired": "Check the baseline and comparison photos.",
+  "analysisEachPhotoTooLarge": "Each photo to analyze must be under 3 MB.",
+  "analysisUnsupportedType": "Only JPEG, PNG, or WebP photos can be analyzed.",
+  "analysisInvalidCounts": "Check your edited counts.",
+  "analysisUnreliableWater": "The water decrease rate is unreliable, so analysis is unavailable.",
+  "analysisConfidenceUnknown": "The analysis confidence is unknown.",
+  "analysisUnreliableLitter": "The waste traces are unreliable, so analysis is unavailable.",
+  "analysisUnknownOutcome": "The analysis result type is unknown.",
+  "analysisServiceUnavailable": "Photo analysis is not ready yet.",
+  "storagePhotoNotFound": "The saved photo was not found. Check the photo storage settings.",
+  "storageBucketMissing": "Photo storage is not set up. Create a Storage bucket in the Firebase Console.",
+  "commonDelete": "Delete",
+  "targetDeleteTitle": "Delete {name}",
+  "@targetDeleteTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "targetDeleteMessage": "Remove it from the list? Existing photos and observation records are kept. Only a family admin can delete.",
+  "recordsChartDescription": "Each bar is one observation. Oldest records first.",
+  "recordsChartMaximumText": "Max {text}",
+  "@recordsChartMaximumText": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsValueWithUnit": "{value} {unit}",
+  "@recordsValueWithUnit": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsCountUnit": "times",
+  "recordsChecking": "Checking records",
+  "recordsLoadFailed": "Could not load records",
+  "recordsEmpty": "No analysis records",
+  "recordsWaterSummary": "Water decrease {percent}% (estimated)",
+  "@recordsWaterSummary": {
+    "placeholders": {
+      "percent": {
+        "type": "double"
+      }
+    }
+  },
+  "recordsLitterSummary": "Urine {urine} times · Stool {stool} times (estimated)",
+  "@recordsLitterSummary": {
+    "placeholders": {
+      "urine": {
+        "type": "int"
+      },
+      "stool": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsUnavailableShort": "Unavailable",
+  "recordsRecentWith": "Latest record · {summary}",
+  "@recordsRecentWith": {
+    "placeholders": {
+      "summary": {
+        "type": "String"
+      }
+    }
+  },
+  "authSignUpSubtitle": "Create an account for your caregiving family.",
+  "authSignInSubtitle": "Pet health care with daily photo check-ins, together.",
+  "authContinueWithGoogle": "Continue with Google",
+  "authContinueWithApple": "Continue with Apple",
+  "authContinueWithKakao": "Continue with Kakao",
+  "authOrEmail": "Or continue with email",
+  "authNameLabel": "Name (optional)",
+  "authEmailLabel": "Email",
+  "authEmailInvalid": "Check your email address.",
+  "authPasswordLabel": "Password",
+  "authSignUpAction": "Sign up",
+  "authSignInAction": "Sign in",
+  "authHaveAccount": "Already have an account? Sign in",
+  "authNeedAccount": "No account yet? Sign up",
+  "authRecheckSession": "Recheck session",
+  "petManageTitle": "Manage pets",
+  "petAddAction": "Add pet",
+  "petEmptyMessage": "No pets registered.\nAdd your pet.",
+  "petSpeciesCat": "Cat",
+  "petSpeciesDog": "Dog",
+  "petAgeMonths": "{age} months",
+  "@petAgeMonths": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "petSexFemale": "Female",
+  "petSexMale": "Male",
+  "petSexUnknown": "Unknown sex",
+  "petDeleteMessage": "Delete this pet? The retention policy for linked records is not decided yet.",
+  "commonSave": "Save",
+  "petPhotoTooLarge": "Select a photo under 10 MB.",
+  "petPhotoPermissionDenied": "Check photo access permission. You can save without a photo.",
+  "petPhotoUnavailable": "Could not get the photo. Please try again.",
+  "petPhotoReadFailed": "Could not read the photo. Please select again.",
+  "petEditTitle": "Edit pet",
+  "petPhotoLabel": "Pet photo",
+  "petPhotoHint": "The selected photo appears on the pet profile.",
+  "petNameLabel": "Name",
+  "petNameRequired": "Enter a name.",
+  "petSpeciesLabel": "Species",
+  "petAgeLabel": "Age (months, optional)",
+  "petAgeInvalid": "Enter 0 months or more.",
+  "petSexLabel": "Sex (optional)",
+  "petSexUnspecified": "Not specified",
+  "petSexNotKnown": "Unknown",
+  "petWeightLabel": "Weight (kg, optional)",
+  "petWeightInvalid": "Enter a weight greater than 0.",
+  "waterHistoryTitle": "Water level history",
+  "waterHistoryEmpty": "No saved water level records.",
+  "waterTrendTitle": "Water level trend",
+  "waterTrendPending": "Level estimates appear after accuracy validation.",
+  "waterTrendNoData": "No level records to chart.",
+  "waterCurrentLevelEstimated": "Current level (estimated)",
+  "waterCurrentLevelValue": "Current level {current}% (estimated)",
+  "@waterCurrentLevelValue": {
+    "placeholders": {
+      "current": {
+        "type": "String"
+      }
+    }
+  },
+  "waterAnalysisDone": "Level analysis complete",
+  "waterChangeDecrease": "Decreased",
+  "waterChangeIncrease": "Increased",
+  "waterChangeNone": "No change",
+  "waterChangeWith": " · {change} {value}pp",
+  "@waterChangeWith": {
+    "placeholders": {
+      "change": {
+        "type": "String"
+      },
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "familySelectTitle": "Select family",
+  "familyNestBadge": "Our family nest",
+  "familySelectQuestion": "Which family will you care with?",
+  "familySelectHint": "Select an approved family to continue.",
+  "familyEmptyMessage": "No families yet. Create one or enter an invite code.",
+  "familyPendingTitle": "Waiting for admin approval",
+  "familyPendingMessage": "Refresh after approval to select the family.",
+  "familyRefreshStatus": "Refresh approval status",
+  "familyTogetherTitle": "Caring together",
+  "familyTogetherMessage": "Family members can check the same pet records together.",
+  "familyCreateAction": "Create family",
+  "familyEnterCodeAction": "Enter invite code",
+  "familyNameLabel": "Family name",
+  "familyCreateSubmit": "Create",
+  "familyNameRequired": "Enter a family name.",
+  "familyInviteCodeLabel": "Invite code",
+  "familyJoinRequestAction": "Request to join",
+  "familyInviteCodeInvalid": "Enter 6-12 letters or numbers.",
+  "settingsTitle": "Settings",
+  "settingsEmptyMessage": "No settings info.",
+  "settingsMyAccount": "My account",
+  "settingsPetSingle": "Registered pet: {name}",
+  "@settingsPetSingle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "settingsPetCount": "{count} registered pets",
+  "@settingsPetCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "settingsNotificationTitle": "Smart safety notifications",
+  "settingsWaterAlertTitle": "Water bowl analysis alerts",
+  "settingsWaterAlertMessage": "Water bowl alerts are coming soon.",
+  "settingsLitterAlertTitle": "Litter box anomaly alerts",
+  "settingsLitterAlertMessage": "Litter box alerts are coming soon.",
+  "settingsFamilySyncTitle": "Family care record sync",
+  "settingsFamilySyncMessage": "Check family records in the app.",
+  "settingsSupportTitle": "App info & support",
+  "settingsNoticeTitle": "Notices & updates",
+  "settingsFaqTitle": "FAQ & contact",
+  "settingsTermsTitle": "Terms of service",
+  "settingsComingSoon": "Coming soon",
+  "settingsPrivacyTitle": "Privacy policy",
+  "settingsVersionTitle": "App version",
+  "settingsSignOutAction": "Sign out",
+  "settingsSignOutConfirm": "Sign out on this device?",
+  "settingsWithdrawHint": "Delete Hareup account · Coming soon",
+  "waterPhotoTooLarge": "Photos must be under 3 MB.",
+  "photoFetchFailed": "Could not get the photo.",
+  "photoReadFailed": "Could not read the photo.",
+  "waterServiceUnavailable": "Photo analysis is unavailable.",
+  "waterSetupPhotosRequired": "Select the front, back, and top photos of the purifier.",
+  "waterReadingPhotoRequired": "Select a purifier photo.",
+  "waterLevelUnknownWith": "Could not check the level. {reason}",
+  "@waterLevelUnknownWith": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "waterSetupTitle": "Purifier setup",
+  "waterObserveTitle": "Level check",
+  "waterSetupGuideTitle": "Setup guide",
+  "waterObserveGuideTitle": "Level check guide",
+  "waterSetupGuideMessage": "Estimate the initial level from front, back, and top photos.",
+  "waterObserveGuideMessage": "Upload one purifier photo to compare with the previous level.",
+  "waterAngleFront": "Front",
+  "waterAngleBack": "Back",
+  "waterAngleTop": "Top",
+  "waterAnglePhoto": "{angle} photo",
+  "@waterAnglePhoto": {
+    "placeholders": {
+      "angle": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPurifierPhoto": "Purifier photo",
+  "waterSetupAnalyzeAction": "Analyze setup",
+  "waterAnalyzeAction": "Analyze level",
+  "commonNotice": "Notice",
+  "analysisResultTitle": "Analysis result",
+  "waterCurrentLevelReading": "Current level: {value}% (estimated)",
+  "@waterCurrentLevelReading": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPreviousLevelReading": "Previous level: {value}% (estimated)",
+  "@waterPreviousLevelReading": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterDecreasedSince": "Down {value}pp from before",
+  "@waterDecreasedSince": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterIncreasedSince": "Up {value}pp from before (possible refill)",
+  "@waterIncreasedSince": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "waterNoChange": "No change from before",
+  "waterSavedPending": "Analysis saved. Level estimates appear after accuracy validation.",
+  "waterEstimateDisclaimer": "Photo analysis is an estimate, not actual intake.",
+  "navHome": "Home",
+  "navWater": "Water",
+  "navLitter": "Litter",
+  "navCompare": "Compare",
+  "navRecords": "Records",
+  "homeTargetListError": "Check the target list and try again.",
+  "homePickRecordsTarget": "Select a record target",
+  "homePickCompareTarget": "Select a comparison target",
+  "homePickRecordsHint": "Select the target whose records to view.",
+  "homePickCompareHint": "Select the target to compare.",
+  "homeNoTargets": "Register a water bowl or litter box first.",
+  "homePetError": "Check the pet list and try again.",
+  "homeSwitchFamily": "Switch family",
+  "homeManageFamily": "Manage family",
+  "homeHeadline": "A day of caring together",
+  "homeSubheadline": "Check in on your pets today too.",
+  "homeLocalPreview": "Dev preview · Data disappears when the app closes.",
+  "homePetTitle": "Pets",
+  "homePetEmpty": "Register your pet.",
+  "homePetCount": "{count} pets",
+  "@homePetCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "homeWaterManage": "Manage water bowls",
+  "homeWaterEmpty": "Register a water bowl.",
+  "homeLitterManage": "Manage litter boxes",
+  "homeLitterEmpty": "Register a litter box.",
+  "homeEstimateNotice": "Photo analysis is estimated; only validated items are shown.",
+  "analysisPhotoAccessRetry": "Check photo access and try again.",
+  "analysisPhotoTooBig10": "Photos must be under 10 MB.",
+  "analysisPhotoCompareRequired": "Select a photo to compare.",
+  "analysisCompareTitle": "{name} photo comparison",
+  "@analysisCompareTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "analysisWaterObserve": "Water bowl observation",
+  "analysisLitterObserve": "Litter box observation",
+  "analysisBaselineVersion": "{photo} No. {version}",
+  "@analysisBaselineVersion": {
+    "placeholders": {
+      "photo": {
+        "type": "String"
+      },
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisPhotoGuideTitle": "Photo guide",
+  "analysisWaterGuide": "Photograph the whole purifier from the same position, distance, and angle with enough light.",
+  "analysisLitterGuide": "Photograph the whole target from the same position, distance, and angle with enough light.",
+  "analysisRunAction": "Analyze photo",
+  "analysisCannotTitle": "Cannot analyze",
+  "analysisModelResponseTitle": "Model response",
+  "analysisViewModelResponse": "View model response",
+  "analysisDisclaimerVet": "Photo analysis is estimated, not a diagnosis. Consult a vet if needed.",
+  "analysisDecreaseRate": "Decrease from baseline (estimated)",
+  "analysisDecreaseVolume": "Decrease volume (estimated)",
+  "analysisWaterCaveat": "Refills, evaporation, spills, or shared use may affect this.",
+  "analysisOriginalEstimate": "Original estimate",
+  "analysisLitterCounts": "Urine {urine} times · Stool {stool} times",
+  "@analysisLitterCounts": {
+    "placeholders": {
+      "urine": {
+        "type": "int"
+      },
+      "stool": {
+        "type": "int"
+      }
+    }
+  },
+  "analysisUncertainTraces": "Overlapping or hidden traces may be inaccurate.",
+  "analysisObservedQuantity": "Observed: {quantity} {unit} (estimated)",
+  "@analysisObservedQuantity": {
+    "placeholders": {
+      "quantity": {
+        "type": "double"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "analysisConfirmedUrine": "Confirmed urine traces",
+  "analysisConfirmedStool": "Confirmed stool traces",
+  "analysisSelectCat": "Select the cat",
+  "analysisCatUnknown": "Unknown",
+  "recordsMemoTitle": "Notes",
+  "recordsMemoField": "Notes (optional)",
+  "recordsMemoHint": "Write down what you observed.",
+  "recordsCountInvalid": "Enter counts of 0 or more.",
+  "recordsSaveAction": "Save record",
+  "recordsSavedBadge": "Record saved.",
+  "familyOverviewEmpty": "Family info not found.",
+  "familyManageMessage": "Check pet photos and records together with family members.",
+  "familyCurrentSelected": "Currently selected family",
+  "familyMemberCount": "{count} family members",
+  "@familyMemberCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyMembersHeader": "Family members ({count})",
+  "@familyMembersHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyNoMembers": "No members.",
+  "familyRemoveMemberTooltip": "Remove {name}",
+  "@familyRemoveMemberTooltip": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "familyPendingHeader": "Pending approvals ({count})",
+  "@familyPendingHeader": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "familyNoPendingRequests": "No pending join requests.",
+  "familyInvitePendingSubtitle": "Waiting for approval after entering an invite code.",
+  "familyApproveAction": "Approve",
+  "familyInviteTitle": "Invite family",
+  "familyCreateCodeAction": "Create invite code",
+  "familyCreateCodeMessage": "Issue a code to share with family.",
+  "familyEnterCodeMessage": "Request to join with a code from another family.",
+  "familyInviteCodeTitle": "Family invite code",
+  "familyDedicatedCodeTitle": "Invite-only family code",
+  "familyShareCodeMessage": "Share this code with your caregiving family.",
+  "familyCodeCopied": "Invite code copied.",
+  "familyCopyCodeAction": "Copy invite code",
+  "familyJoinGuideTitle": "How to join",
+  "familyJoinGuideMessage": "After signing in, family members can request to join with the invite code. They can join once an admin approves.",
+  "commonClose": "Close",
+  "familyJoinRequested": "Join request sent. Please wait for admin approval.",
+  "familyApproved": "Approved the join request.",
+  "familyRemoveConfirm": "This member will lose access to family info.",
+  "familyRemoveAction": "Remove",
+  "familyMemberRemoved": "Removed the member.",
+  "commonRegister": "Register",
+  "commonDeleteFailed": "Could not delete.",
+  "commonRename": "Rename",
+  "commonRenameFailed": "Could not rename.",
+  "commonPositiveNumber": "Enter a number greater than 0.",
+  "ordinalVersion": "No. {version}",
+  "@ordinalVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "litterAddAction": "Add litter box",
+  "litterEmptyMessage": "No litter boxes registered.",
+  "litterRegisterTitle": "Register litter box",
+  "litterHealthBadge": "Excretion health monitoring",
+  "litterRegisterHint": "Register a clean litter photo and box info.",
+  "litterPhotoGuide": "Capture the clean litter and the whole box.",
+  "litterAutomaticSection": "Automatic device?",
+  "litterAutomaticLabel": "Automatic litter box",
+  "litterAutomaticBlockedTitle": "Automatic registration blocked",
+  "litterAutomaticBlockedMessage": "Automatic litter boxes cannot be registered for analysis.",
+  "litterBaselineRegisterTitle": "Register baseline photo",
+  "litterBaselineRegisterHint": "Register the clean state right after cleaning as the baseline.",
+  "litterBaselineLabel": "Litter box baseline photo",
+  "litterProfileTitle": "Profile & dimensions",
+  "litterNameLabel": "Litter box name",
+  "litterSharedCats": "Cats sharing this box",
+  "litterRegisterCatsFirst": "Register your cats first.",
+  "litterDimensionsTitle": "Detailed dimensions (optional)",
+  "litterWidthLabel": "Inner width (cm, optional)",
+  "litterLengthLabel": "Inner length (cm, optional)",
+  "litterHeightLabel": "Litter height (cm, optional)",
+  "litterVolumeGuideTitle": "Observed quantity notice",
+  "litterVolumeGuideMessage": "Quantity estimates are unverified and unavailable even with dimensions.",
+  "litterCatsAndPhotoRequired": "Select cats and a baseline photo.",
+  "litterRenameTitle": "Rename litter box",
+  "litterBaselineChangeFailed": "Could not change the baseline photo.",
+  "litterDeleteAction": "Delete litter box",
+  "litterBaselineVersion": "Baseline photo No. {version}",
+  "@litterBaselineVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "litterNewBaselinePrefix": "new baseline",
+  "litterBaselineHistoryTitle": "Baseline history",
+  "litterBaselineGuideTitle": "Baseline photo guide",
+  "litterBaselineGuideMessage": "Register a new baseline after cleaning or changing litter. Previous baselines are kept.\nAnalysis results are only provided when validated.",
+  "litterViewRecords": "View records",
+  "recordsTargetTitle": "{name} records",
+  "@recordsTargetTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsEmptyMessage": "No saved analysis records.",
+  "recordsLitterTrendTitle": "Litter count trend",
+  "recordsUrineLabel": "Urine",
+  "recordsStoolLabel": "Stool",
+  "recordsTimelineTitle": "Health check timeline",
+  "recordsHistoryTitle": "Photo analysis records",
+  "recordsEstimateDisclaimer": "Photo analysis is estimated, not a diagnosis.",
+  "recordsFilterAll": "All",
+  "recordsEmptyFiltered": "No records of this kind.",
+  "recordsDateLabel": "{month}/{day}/{year}",
+  "@recordsDateLabel": {
+    "placeholders": {
+      "year": {
+        "type": "int"
+      },
+      "month": {
+        "type": "int"
+      },
+      "day": {
+        "type": "int"
+      }
+    }
+  },
+  "recordsPhotoLabel": "Record photo",
+  "recordsShareCopied": "Share text copied to the clipboard.",
+  "recordsShareFailed": "Could not open the share sheet.",
+  "recordsRegistrationPhoto": "Registration photo",
+  "recordsPhotoSelectedAt": "Photo selected: {timestamp}",
+  "@recordsPhotoSelectedAt": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsAnalyzedAt": "Analyzed: {timestamp}",
+  "@recordsAnalyzedAt": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsOutcomeDisclaimer": "Observations are estimated, not a diagnosis.",
+  "recordsUnavailableWith": "Unavailable: {text}",
+  "@recordsUnavailableWith": {
+    "placeholders": {
+      "text": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsWaterPercentLabel": "Water decrease (estimated)",
+  "recordsModelConfidence": "Model self-reported confidence {confidence}% (not real accuracy)",
+  "@recordsModelConfidence": {
+    "placeholders": {
+      "confidence": {
+        "type": "double"
+      }
+    }
+  },
+  "recordsWaterVolumeLabel": "Water decrease volume (estimated)",
+  "recordsWaterCaveat": "Change relative to the bowl, not individual intake.",
+  "recordsUserConfirmed": "Confirmed by you",
+  "recordsObservedQuantity": "Observed {quantity} {unit} (estimated)",
+  "@recordsObservedQuantity": {
+    "placeholders": {
+      "quantity": {
+        "type": "double"
+      },
+      "unit": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsCatWith": "Cat: {name}",
+  "@recordsCatWith": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "recordsCatUnverified": "Cannot verify",
+  "recordsShareAction": "Share record",
+  "recordsEditAction": "Edit record",
+  "recordsGuardianCheckTitle": "Guardian review",
+  "recordsGuardianCheckMessage": "The original result is kept; only confirmed values and notes change.",
+  "recordsConfirmedSection": "Confirmed observations",
+  "waterAddAction": "Add water bowl",
+  "waterEmptyMessage": "No water bowls registered.",
+  "photoPermissionCheck": "Check photo access permission.",
+  "waterRegisterTitle": "Register water bowl",
+  "waterIntakeBadge": "Smart intake monitoring",
+  "waterNewRegisterHeadline": "Register a new bowl",
+  "waterRegisterHint": "Enter purifier photos and basic info.",
+  "waterPhotoGuide": "Take 3 photos from different angles showing the whole purifier.",
+  "waterAnglePhotosHint": "Register photos taken from the front, back, and top.",
+  "waterPurifierAnglePhoto": "{angle} purifier photo",
+  "@waterPurifierAnglePhoto": {
+    "placeholders": {
+      "angle": {
+        "type": "String"
+      }
+    }
+  },
+  "waterAnglePhotoSelected": "{angle} photo selected",
+  "@waterAnglePhotoSelected": {
+    "placeholders": {
+      "angle": {
+        "type": "String"
+      }
+    }
+  },
+  "waterInfoTitle": "Bowl info",
+  "waterNameLabel": "Bowl name",
+  "waterSharedPets": "Pets sharing this bowl",
+  "waterRegisterPetsFirst": "Register your pets first.",
+  "waterSpecsTitle": "Optional physical specs",
+  "waterEmptyWeightLabel": "Empty bowl weight (g, optional)",
+  "waterFullVolumeLabel": "Full water volume (mL, optional)",
+  "waterFullVolumeHelper": "Water amount excluding bowl weight",
+  "waterPhotoNotesLabel": "Photo notes (optional)",
+  "waterPhotoNotesHint": "E.g., the purifier is 70% full",
+  "waterMeasureCautionTitle": "Measurement notice",
+  "waterMeasureCautionMessage": "Volume estimates are unverified and unavailable even with inputs.",
+  "waterPetsAndPhotosRequired": "Select pets and all front, back, and top photos.",
+  "waterSetupComplete": "Purifier setup complete.",
+  "waterSetupLevelUnknown": "The purifier is registered, but the initial level is unknown. Analyze again.",
+  "waterSetupFailedDetail": "The purifier is registered, but setup failed: {detail}",
+  "@waterSetupFailedDetail": {
+    "placeholders": {
+      "detail": {
+        "type": "String"
+      }
+    }
+  },
+  "waterRegisteredRetryAnalysis": "The purifier is registered. Retry the initial analysis.",
+  "waterRenameTitle": "Rename water bowl",
+  "waterBowlNameLabel": "Water bowl name",
+  "waterReregisterPhotos": "Re-register the front, back, and top photos for setup.",
+  "waterInitialLevelUnknown": "Could not check the initial level. {reason}",
+  "@waterInitialLevelUnknown": {
+    "placeholders": {
+      "reason": {
+        "type": "String"
+      }
+    }
+  },
+  "waterNewPhotoNotesTitle": "New purifier photo notes",
+  "waterNewPhotoNotesHint": "E.g., 70% full",
+  "waterSavePhotoAction": "Save purifier photo",
+  "waterPhotoChangeFailed": "Could not change the purifier photo.",
+  "waterDetailTitle": "Purifier details",
+  "waterSharedWithPets": "Water bowl · Shared with {count} pets",
+  "@waterSharedWithPets": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "waterDeleteAction": "Delete water bowl",
+  "waterPurifierPhotoVersion": "Purifier photo No. {version}",
+  "@waterPurifierPhotoVersion": {
+    "placeholders": {
+      "version": {
+        "type": "int"
+      }
+    }
+  },
+  "waterRecentlyRegistered": "Registered {timestamp}",
+  "@waterRecentlyRegistered": {
+    "placeholders": {
+      "timestamp": {
+        "type": "String"
+      }
+    }
+  },
+  "waterRefillHint": "Register a new photo after refilling or replacing water.",
+  "waterBowlPurifierPhoto": "{name} purifier photo",
+  "@waterBowlPurifierPhoto": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "waterPhotoNotesTitle": "Photo notes",
+  "waterFirstPhotosTitle": "First registered photos",
+  "waterDeviceTitle": "Device info",
+  "waterFullVolumeMetric": "Full water volume",
+  "waterEmptyDeviceWeight": "Empty device weight",
+  "waterPhotoHistoryTitle": "Purifier photo history",
+  "waterPhotoHistoryHint": "Older photos are kept with records.",
+  "waterCurrentBaseline": "Current baseline",
+  "waterOutcomeGuideTitle": "About observations",
+  "waterOutcomeGuideMessage": "Analysis estimates change from the baseline; it does not diagnose intake or health.",
+  "waterReanalyzeAction": "Reanalyze registration photos",
+  "waterViewHistoryAction": "View level history",
+  "waterViewPastRecords": "View past analysis records",
+  "waterTakeNewPhoto": "Take new photo",
+  "waterChooseNewPhoto": "Choose new photo",
+  "chatUnavailable": "Health chat is unavailable.",
+  "chatPhotoSelectFailed": "Cannot select a photo.",
+  "chatMentionPets": "Mention pets",
+  "chatNoPets": "No pets registered.",
+  "commonDone": "Done",
+  "chatTitle": "Pet health chat",
+  "chatDisclaimer": "AI answers are for reference, not diagnosis. Chats and photos are shared with family.",
+  "chatLoadFailed": "Could not load the conversation.",
+  "chatEmptyPrompt": "Ask about your pet's health.",
+  "chatGuardianLabel": "Guardian",
+  "chatAssistantLabel": "Health chat",
+  "chatPhotoLoading": "Loading photo",
+  "chatRemovePhoto": "Remove photo",
+  "chatAttachPhoto": "Attach photo",
+  "chatInputHint": "Ask about health",
+  "chatSendAction": "Send",
+  "petEditProfile": "Edit profile",
+  "petHealthLoadFailed": "Could not load health records.",
+  "petAgeLine": "Age: {age} months",
+  "@petAgeLine": {
+    "placeholders": {
+      "age": {
+        "type": "int"
+      }
+    }
+  },
+  "petWeightLine": "Weight: {weight} kg",
+  "@petWeightLine": {
+    "placeholders": {
+      "weight": {
+        "type": "double"
+      }
+    }
+  },
+  "petWaterSection": "Water bowl observations",
+  "petWaterSectionHint": "Levels of shared bowls. Individual intake is unknown.",
+  "petNoBowls": "No linked water bowls.",
+  "petSharedBowl": "Shared by multiple pets",
+  "petLinkedBowl": "Linked water bowl",
+  "petLevelHistoryFailed": "Could not load level records.",
+  "petLevelRecord": "Level observation record",
+  "petTimeUnknown": "Time unknown",
+  "petLevelHistoryUnavailable": "Level records unavailable.",
+  "petLitterSection": "Litter box observations",
+  "petLitterSectionHint": "Only records saved with this pet selected are shown.",
+  "petNoBoxes": "No linked litter boxes.",
+  "petLinkedBoxes": "Linked litter boxes: {names}",
+  "@petLinkedBoxes": {
+    "placeholders": {
+      "names": {
+        "type": "String"
+      }
+    }
+  },
+  "petNoRecords": "No observations assigned to this pet.",
+  "petRecordCountsLine": " · Urine {urine} times · Stool {stool} times",
+  "@petRecordCountsLine": {
+    "placeholders": {
+      "urine": {
+        "type": "int"
+      },
+      "stool": {
+        "type": "int"
+      }
+    }
+  },
+  "shareHeader": "[Hareup observation record]",
+  "shareWaterPercent": "Water decrease: {percent}% (estimated)",
+  "@shareWaterPercent": {
+    "placeholders": {
+      "percent": {
+        "type": "double"
+      }
+    }
+  },
+  "shareWaterVolume": "Water decrease volume: {volume} mL (estimated)",
+  "@shareWaterVolume": {
+    "placeholders": {
+      "volume": {
+        "type": "double"
+      }
+    }
+  },
+  "shareConfirmedUrine": "Confirmed urine: {count} times",
+  "@shareConfirmedUrine": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareConfirmedStool": "Confirmed stool: {count} times",
+  "@shareConfirmedStool": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "shareMemo": "Notes: {notes}",
+  "@shareMemo": {
+    "placeholders": {
+      "notes": {
+        "type": "String"
+      }
+    }
+  }
+}

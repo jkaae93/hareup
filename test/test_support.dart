@@ -1,11 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:hareup_design_system/design_system.dart';
 import 'package:hareup/features/auth/domain/auth_repository.dart';
+import 'package:hareup/l10n/l10n.dart';
 import 'package:hareup_core/core.dart';
+
+export 'package:hareup/l10n/l10n.dart';
 
 /// Uses a non-shader splash so widget tests do not depend on engine shader
 /// compilation support in the host test renderer.
 final ThemeData testTheme = HareupTheme.light;
+
+/// Localization delegates for widget tests. Pair with
+/// `locale: const Locale('ko')` to keep the default Korean expectations.
+const testLocalizationsDelegates = [
+  ...AppLocalizations.localizationsDelegates,
+  DesignLocalizations.delegate,
+];
+
+/// Taps the Material back button.
+///
+/// [WidgetTester.pageBack] looks up the English 'Back' tooltip, so it cannot
+/// find the button under the Korean test locale.
+Future<void> tapBackButton(WidgetTester tester) =>
+    tester.tap(find.byType(BackButton));
 
 class TestSignedInAuth implements AuthRepository {
   const TestSignedInAuth();

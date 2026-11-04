@@ -6,6 +6,29 @@ import '../domain/litter_box.dart';
 class MemoryLitterBoxRepository implements LitterBoxRepository {
   final _items = <String, LitterBox>{};
   @override
+  Future<Result<void>> delete(String id) async => _items.remove(id) == null
+      ? const Failure(NotFoundFailure())
+      : const Success(null);
+  @override
+  Future<Result<void>> rename(String id, String name) async {
+    final box = _items[id];
+    if (box == null) return const Failure(NotFoundFailure());
+    if (name.trim().isEmpty || name.trim().length > 30) {
+      return const Failure(RequestFailure());
+    }
+    _items[id] = LitterBox(
+      id: box.id,
+      name: name.trim(),
+      catIds: box.catIds,
+      baselines: box.baselines,
+      widthCm: box.widthCm,
+      lengthCm: box.lengthCm,
+      litterHeightCm: box.litterHeightCm,
+    );
+    return const Success(null);
+  }
+
+  @override
   Future<Result<List<LitterBox>>> list() async =>
       Success(List.unmodifiable(_items.values));
   @override

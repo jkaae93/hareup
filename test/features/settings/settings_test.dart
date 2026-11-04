@@ -71,6 +71,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: testTheme,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: SettingsPage(repository: fake),
       ),
     );
@@ -88,6 +91,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: testTheme,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: SettingsPage(repository: fake),
       ),
     );

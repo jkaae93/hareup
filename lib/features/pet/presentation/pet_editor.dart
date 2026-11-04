@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_media/media.dart';
 import 'package:hareup_presentation_core/presentation_core.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../domain/pet.dart';
 import 'pet_cubit.dart';
 
@@ -60,7 +62,7 @@ class _PetEditorState extends State<PetEditor> {
       switch (selection) {
         case PhotoSelected(:final file):
           if (await file.length() > 10 * 1024 * 1024) {
-            if (mounted) _notice('사진은 10MB 이하로 선택해 주세요.');
+            if (mounted) _notice(context.l10n.petPhotoTooLarge);
             break;
           }
           final bytes = await file.readAsBytes();
@@ -68,14 +70,14 @@ class _PetEditorState extends State<PetEditor> {
         case PhotoSelectionFailed(:final reason):
           _notice(
             reason == PhotoFailureReason.permissionDenied
-                ? '사진 접근 권한을 확인해 주세요. 사진 없이도 저장할 수 있습니다.'
-                : '사진을 가져오지 못했습니다. 다시 시도해 주세요.',
+                ? context.l10n.petPhotoPermissionDenied
+                : context.l10n.petPhotoUnavailable,
           );
         case PhotoCancelled():
           break;
       }
     } catch (_) {
-      if (mounted) _notice('사진을 읽지 못했습니다. 다시 선택해 주세요.');
+      if (mounted) _notice(context.l10n.petPhotoReadFailed);
     } finally {
       if (mounted) setState(() => _picking = false);
     }
@@ -88,7 +90,11 @@ class _PetEditorState extends State<PetEditor> {
   Widget build(BuildContext context) {
     final cubit = context.read<PetCubit>();
     return HareupFormPage(
-      title: Text(widget.pet == null ? '반려동물 추가' : '반려동물 수정'),
+      title: Text(
+        widget.pet == null
+            ? context.l10n.petAddAction
+            : context.l10n.petEditTitle,
+      ),
       content: SizedBox(
         width: 360,
         child: Form(
@@ -99,7 +105,7 @@ class _PetEditorState extends State<PetEditor> {
               children: [
                 HareupPhotoPreview(
                   bytes: _photo,
-                  label: '반려동물 사진',
+                  label: context.l10n.petPhotoLabel,
                   height: 120,
                   fit: BoxFit.cover,
                 ),
@@ -110,21 +116,31 @@ class _PetEditorState extends State<PetEditor> {
                       ? null
                       : () => setState(() => _photo = null),
                 ),
-                const Text('선택한 사진은 반려동물 프로필에 표시됩니다.'),
+                Text(context.l10n.petPhotoHint),
                 TextFormField(
                   controller: _name,
                   maxLength: 30,
-                  decoration: const InputDecoration(labelText: '이름'),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.petNameLabel,
+                  ),
                   validator: (value) => value == null || value.trim().isEmpty
-                      ? '이름을 입력해 주세요.'
+                      ? context.l10n.petNameRequired
                       : null,
                 ),
                 DropdownButtonFormField<PetSpecies>(
                   initialValue: _species,
-                  decoration: const InputDecoration(labelText: '종류'),
-                  items: const [
-                    DropdownMenuItem(value: PetSpecies.cat, child: Text('고양이')),
-                    DropdownMenuItem(value: PetSpecies.dog, child: Text('강아지')),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.petSpeciesLabel,
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: PetSpecies.cat,
+                      child: Text(context.l10n.petSpeciesCat),
+                    ),
+                    DropdownMenuItem(
+                      value: PetSpecies.dog,
+                      child: Text(context.l10n.petSpeciesDog),
+                    ),
                   ],
                   onChanged: (value) {
                     if (value != null) setState(() => _species = value);
@@ -134,23 +150,39 @@ class _PetEditorState extends State<PetEditor> {
                   controller: _age,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(labelText: '나이 (개월, 선택)'),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.petAgeLabel,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) return null;
                     final age = int.tryParse(value);
                     return age == null || age < 0
-                        ? '0 이상의 개월 수를 입력해 주세요.'
+                        ? context.l10n.petAgeInvalid
                         : null;
                   },
                 ),
                 DropdownButtonFormField<PetSex?>(
                   initialValue: _sex,
-                  decoration: const InputDecoration(labelText: '성별 (선택)'),
-                  items: const [
-                    DropdownMenuItem(value: null, child: Text('미입력')),
-                    DropdownMenuItem(value: PetSex.female, child: Text('암컷')),
-                    DropdownMenuItem(value: PetSex.male, child: Text('수컷')),
-                    DropdownMenuItem(value: PetSex.unknown, child: Text('모름')),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.petSexLabel,
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: null,
+                      child: Text(context.l10n.petSexUnspecified),
+                    ),
+                    DropdownMenuItem(
+                      value: PetSex.female,
+                      child: Text(context.l10n.petSexFemale),
+                    ),
+                    DropdownMenuItem(
+                      value: PetSex.male,
+                      child: Text(context.l10n.petSexMale),
+                    ),
+                    DropdownMenuItem(
+                      value: PetSex.unknown,
+                      child: Text(context.l10n.petSexNotKnown),
+                    ),
                   ],
                   onChanged: (value) => setState(() => _sex = value),
                 ),
@@ -159,12 +191,14 @@ class _PetEditorState extends State<PetEditor> {
                   keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
-                  decoration: const InputDecoration(labelText: '체중 (kg, 선택)'),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.petWeightLabel,
+                  ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) return null;
                     final weight = double.tryParse(value);
                     return weight == null || !weight.isFinite || weight <= 0
-                        ? '0보다 큰 체중을 입력해 주세요.'
+                        ? context.l10n.petWeightInvalid
                         : null;
                   },
                 ),
@@ -176,7 +210,7 @@ class _PetEditorState extends State<PetEditor> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('취소'),
+          child: Text(context.dsL10n.cancelAction),
         ),
         BlocBuilder<Command1<void, Pet>, CommandState<void>>(
           bloc: cubit.saveCommand,
@@ -201,10 +235,10 @@ class _PetEditorState extends State<PetEditor> {
                       Navigator.pop(context);
                     } else if (cubit.saveCommand.state
                         case CommandFailure<void>(:final failure)) {
-                      _notice(failure.message);
+                      _notice(failureDisplayMessage(context, failure));
                     }
                   },
-            child: const Text('저장'),
+            child: Text(context.l10n.commonSave),
           ),
         ),
       ],

@@ -125,6 +125,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: testTheme,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: FamilyPage(
           repository: UnavailableFamilyRepository(),
           groupId: 'local-development',
@@ -142,6 +145,9 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         theme: testTheme,
+        localizationsDelegates: testLocalizationsDelegates,
+        locale: const Locale('ko'),
+        supportedLocales: appSupportedLocales,
         home: FamilyPage(repository: fake, groupId: 'group-a'),
       ),
     );
@@ -171,6 +177,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: testTheme,
+          localizationsDelegates: testLocalizationsDelegates,
+          locale: const Locale('ko'),
+          supportedLocales: appSupportedLocales,
           home: FamilyAccessPage(
             repository: fake,
             onFamilySelected: (id) => selected = id,

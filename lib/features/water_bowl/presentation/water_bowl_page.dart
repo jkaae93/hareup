@@ -4,11 +4,14 @@ import 'package:hareup_design_system/design_system.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hareup_media/media.dart';
 import 'package:hareup_core/core.dart';
+import '../../shared_data/target_widgets.dart';
 import '../../photo_analysis/domain/analysis.dart';
 import '../../records/domain/record.dart';
 import '../../records/presentation/records_page.dart';
 import 'package:hareup_presentation_core/load_view.dart';
 import 'package:hareup_presentation_core/presentation_core.dart';
+import '../../../app/failure_messages.dart';
+import '../../../l10n/l10n.dart';
 import '../domain/water_bowl.dart';
 import '../domain/water_level.dart';
 import 'water_level_page.dart';
@@ -51,7 +54,7 @@ class WaterBowlPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('물그릇 관리')),
+    appBar: AppBar(title: Text(context.l10n.homeWaterManage)),
     floatingActionButton: Builder(
       builder: (context) {
         final cubit = context.read<WaterBowlCubit>();
@@ -69,7 +72,7 @@ class WaterBowlPage extends StatelessWidget {
               ),
             ),
           ),
-          label: const Text('물그릇 추가'),
+          label: Text(context.l10n.waterAddAction),
           icon: const Icon(Icons.add),
         );
       },
@@ -78,9 +81,13 @@ class WaterBowlPage extends StatelessWidget {
       child: BlocBuilder<WaterBowlCubit, LoadState<List<WaterBowl>>>(
         builder: (context, state) => LoadView<List<WaterBowl>>(
           state: state,
-          emptyMessage: '등록된 물그릇이 없습니다.',
+          emptyMessage: context.l10n.waterEmptyMessage,
           onRetry: () => context.read<WaterBowlCubit>().load(),
-          builder: (context, bowls) => ListView.builder(
+          builder: (context, bowls) => GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 1.5,
+            ),
             padding: const EdgeInsets.fromLTRB(
               HareupSpacing.pageMargin,
               HareupSpacing.small,
@@ -90,14 +97,9 @@ class WaterBowlPage extends StatelessWidget {
             itemCount: bowls.length,
             itemBuilder: (context, index) {
               final bowl = bowls[index];
-              return HareupCard(
-                leading: const CircleAvatar(
-                  child: Icon(Icons.water_drop_outlined),
-                ),
-                title: bowl.name,
-                subtitle:
-                    ('반려동물 ${bowl.petIds.length}마리 · 정수기 사진 ${bowl.currentBaseline.version}번째'),
-                isThreeLine: true,
+              return TargetGridTile(
+                name: bowl.name,
+                icon: Icons.water_drop_outlined,
                 onTap: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => _WaterBowlDetailPage(
@@ -141,9 +143,15 @@ class _BowlFormState extends State<_BowlForm> {
   final _notes = TextEditingController();
   final _selected = <String>{};
   final _photos = <String, Uint8List>{};
-  static const _photoAngles = {'front': '앞', 'back': '뒤', 'top': '위'};
+  static const _photoAngleKeys = ['front', 'back', 'top'];
   bool _picking = false;
   bool _submitting = false;
+
+  String _angleLabel(BuildContext context, String angle) => switch (angle) {
+    'front' => context.l10n.waterAngleFront,
+    'back' => context.l10n.waterAngleBack,
+    _ => context.l10n.waterAngleTop,
+  };
 
   @override
   void dispose() {
@@ -165,7 +173,7 @@ class _BowlFormState extends State<_BowlForm> {
       switch (result) {
         case PhotoSelected(:final file):
           if (await file.length() > 3 * 1024 * 1024) {
-            if (mounted) _message('사진은 3MB 이하여야 합니다.');
+            if (mounted) _message(context.l10n.waterPhotoTooLarge);
             break;
           }
           final bytes = await file.readAsBytes();
@@ -173,14 +181,14 @@ class _BowlFormState extends State<_BowlForm> {
         case PhotoSelectionFailed(:final reason):
           _message(
             reason == PhotoFailureReason.permissionDenied
-                ? '사진 접근 권한을 확인해 주세요.'
-                : '사진을 가져오지 못했습니다.',
+                ? context.l10n.photoPermissionCheck
+                : context.l10n.photoFetchFailed,
           );
         case PhotoCancelled():
           break;
       }
     } catch (_) {
-      if (mounted) _message('사진을 읽지 못했습니다.');
+      if (mounted) _message(context.l10n.photoReadFailed);
     } finally {
       if (mounted) setState(() => _picking = false);
     }
@@ -193,7 +201,7 @@ class _BowlFormState extends State<_BowlForm> {
     if (input == null || input.trim().isEmpty) return null;
     final value = double.tryParse(input);
     return value == null || !value.isFinite || value <= 0
-        ? '0보다 큰 숫자를 입력해 주세요.'
+        ? context.l10n.commonPositiveNumber
         : null;
   }
 
@@ -203,7 +211,7 @@ class _BowlFormState extends State<_BowlForm> {
     return PopScope(
       canPop: !_submitting,
       child: HareupFormPage(
-        title: const Text('물그릇 등록'),
+        title: Text(context.l10n.waterRegisterTitle),
         content: SizedBox(
           width: 380,
           child: Form(
@@ -213,45 +221,53 @@ class _BowlFormState extends State<_BowlForm> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const HareupStatusBadge(label: '음수량 스마트 모니터링'),
+                  HareupStatusBadge(label: context.l10n.waterIntakeBadge),
                   const SizedBox(height: HareupSpacing.small),
                   Text(
-                    '새 물그릇 등록',
+                    context.l10n.waterNewRegisterHeadline,
                     style: Theme.of(context).textTheme.headlineSmall,
                   ),
                   const SizedBox(height: HareupSpacing.small),
-                  const Text('정수기 사진과 기본 정보를 입력해 주세요.'),
+                  Text(context.l10n.waterRegisterHint),
                   const SizedBox(height: HareupSpacing.large),
-                  const HareupGuidance(
-                    title: '사진 촬영 가이드',
-                    message: '정수기 전체가 잘 보이도록 서로 다른 각도에서 사진 3장을 촬영해 주세요.',
+                  HareupGuidance(
+                    title: context.l10n.analysisPhotoGuideTitle,
+                    message: context.l10n.waterPhotoGuide,
                     icon: Icons.camera_alt_outlined,
                   ),
                   const SizedBox(height: HareupSpacing.medium),
                   HareupFormSection(
-                    title: '정수기 사진',
-                    description: '정수기의 앞, 뒤, 위에서 촬영한 사진을 각각 등록해 주세요.',
+                    title: context.l10n.waterPurifierPhoto,
+                    description: context.l10n.waterAnglePhotosHint,
                     children: [
-                      for (final angle in _photoAngles.entries) ...[
+                      for (final angle in _photoAngleKeys) ...[
                         Text(
-                          '${angle.value} 사진',
+                          context.l10n.waterAnglePhoto(
+                            _angleLabel(context, angle),
+                          ),
                           style: Theme.of(context).textTheme.titleMedium,
                         ),
                         HareupPhotoPreview(
-                          bytes: _photos[angle.key],
-                          label: '정수기 ${angle.value} 사진',
+                          bytes: _photos[angle],
+                          label: context.l10n.waterPurifierAnglePhoto(
+                            _angleLabel(context, angle),
+                          ),
                           height: 160,
                         ),
-                        if (_photos.containsKey(angle.key))
-                          Text('${angle.value} 사진 선택됨'),
+                        if (_photos.containsKey(angle))
+                          Text(
+                            context.l10n.waterAnglePhotoSelected(
+                              _angleLabel(context, angle),
+                            ),
+                          ),
                         HareupPhotoActions(
-                          prefix: '${angle.value} 사진',
-                          onCamera: _picking
-                              ? null
-                              : () => _pick(angle.key, true),
+                          prefix: context.l10n.waterAnglePhoto(
+                            _angleLabel(context, angle),
+                          ),
+                          onCamera: _picking ? null : () => _pick(angle, true),
                           onGallery: _picking
                               ? null
-                              : () => _pick(angle.key, false),
+                              : () => _pick(angle, false),
                         ),
                         const SizedBox(height: HareupSpacing.medium),
                       ],
@@ -259,23 +275,26 @@ class _BowlFormState extends State<_BowlForm> {
                   ),
                   const SizedBox(height: HareupSpacing.medium),
                   HareupFormSection(
-                    title: '물그릇 정보',
+                    title: context.l10n.waterInfoTitle,
                     children: [
                       TextFormField(
                         controller: _name,
                         maxLength: 30,
-                        decoration: const InputDecoration(labelText: '그릇 이름'),
+                        decoration: InputDecoration(
+                          labelText: context.l10n.waterNameLabel,
+                        ),
                         validator: (value) =>
                             value == null || value.trim().isEmpty
-                            ? '이름을 입력해 주세요.'
+                            ? context.l10n.petNameRequired
                             : null,
                       ),
                       const SizedBox(height: HareupSpacing.medium),
                       Text(
-                        '함께 사용하는 반려동물',
+                        context.l10n.waterSharedPets,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
-                      if (widget.pets.isEmpty) const Text('먼저 반려동물을 등록해 주세요.'),
+                      if (widget.pets.isEmpty)
+                        Text(context.l10n.waterRegisterPetsFirst),
                       for (final pet in widget.pets)
                         CheckboxListTile(
                           contentPadding: const EdgeInsets.symmetric(
@@ -297,7 +316,7 @@ class _BowlFormState extends State<_BowlForm> {
                         ),
                       const SizedBox(height: HareupSpacing.medium),
                       Text(
-                        '선택 물리 사양',
+                        context.l10n.waterSpecsTitle,
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       const SizedBox(height: HareupSpacing.small),
@@ -306,8 +325,8 @@ class _BowlFormState extends State<_BowlForm> {
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        decoration: const InputDecoration(
-                          labelText: '빈 그릇 무게 (g, 선택)',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.waterEmptyWeightLabel,
                         ),
                         validator: _positive,
                       ),
@@ -317,9 +336,9 @@ class _BowlFormState extends State<_BowlForm> {
                         keyboardType: const TextInputType.numberWithOptions(
                           decimal: true,
                         ),
-                        decoration: const InputDecoration(
-                          labelText: '가득 찬 물의 양 (mL, 선택)',
-                          helperText: '그릇 무게를 제외한 물의 양',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.waterFullVolumeLabel,
+                          helperText: context.l10n.waterFullVolumeHelper,
                         ),
                         validator: _positive,
                       ),
@@ -329,17 +348,17 @@ class _BowlFormState extends State<_BowlForm> {
                         maxLength: 500,
                         minLines: 2,
                         maxLines: 4,
-                        decoration: const InputDecoration(
-                          labelText: '사진 특이사항 (선택)',
-                          hintText: '예: 정수기에 물이 70% 차 있는 상태예요',
+                        decoration: InputDecoration(
+                          labelText: context.l10n.waterPhotoNotesLabel,
+                          hintText: context.l10n.waterPhotoNotesHint,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: HareupSpacing.medium),
-                  const HareupGuidance(
-                    title: '측정 유의사항',
-                    message: '부피 추정 기능은 검증 전이며 입력값이 있어도 제공되지 않습니다.',
+                  HareupGuidance(
+                    title: context.l10n.waterMeasureCautionTitle,
+                    message: context.l10n.waterMeasureCautionMessage,
                     icon: Icons.warning_amber_outlined,
                   ),
                   const SizedBox(height: HareupSpacing.large),
@@ -351,7 +370,7 @@ class _BowlFormState extends State<_BowlForm> {
         actions: [
           TextButton(
             onPressed: _submitting ? null : () => Navigator.pop(context),
-            child: const Text('취소'),
+            child: Text(context.dsL10n.cancelAction),
           ),
           BlocBuilder<Command1<void, WaterBowl>, CommandState<void>>(
             bloc: cubit.createCommand,
@@ -362,10 +381,10 @@ class _BowlFormState extends State<_BowlForm> {
                   : () async {
                       if (!_form.currentState!.validate()) return;
                       if (_selected.isEmpty ||
-                          _photoAngles.keys.any(
+                          _photoAngleKeys.any(
                             (key) => _photos[key]?.isNotEmpty != true,
                           )) {
-                        _message('반려동물과 정수기의 앞·뒤·위 사진을 모두 선택해 주세요.');
+                        _message(context.l10n.waterPetsAndPhotosRequired);
                         return;
                       }
                       setState(() => _submitting = true);
@@ -392,17 +411,20 @@ class _BowlFormState extends State<_BowlForm> {
                                 setup: true,
                                 photos: _photos,
                               );
+                          if (!context.mounted) return;
                           message = switch (result) {
                             Success<WaterLevelResult>(:final value)
                                 when value.status == 'ok' =>
-                              '정수기 초기 설정을 완료했습니다.',
+                              context.l10n.waterSetupComplete,
                             Success<WaterLevelResult>() =>
-                              '정수기는 등록됐지만 초기 수위를 확인하지 못했습니다. 다시 분석해 주세요.',
+                              context.l10n.waterSetupLevelUnknown,
                             Failure<WaterLevelResult>(:final failure) =>
-                              '정수기는 등록됐지만 초기 설정에 실패했습니다: ${failure.message}',
+                              context.l10n.waterSetupFailedDetail(
+                                failureDisplayMessage(context, failure),
+                              ),
                           };
                         } else {
-                          message = '정수기는 등록됐습니다. 초기 분석을 다시 시도해 주세요.';
+                          message = context.l10n.waterRegisteredRetryAnalysis;
                         }
                         if (!context.mounted) return;
                         await cubit.load();
@@ -415,11 +437,11 @@ class _BowlFormState extends State<_BowlForm> {
                         if (cubit.createCommand.state case CommandFailure<void>(
                           :final failure,
                         )) {
-                          _message(failure.message);
+                          _message(failureDisplayMessage(context, failure));
                         }
                       }
                     },
-              child: const Text('등록'),
+              child: Text(context.l10n.commonRegister),
             ),
           ),
         ],
@@ -447,6 +469,66 @@ class _WaterBowlDetailPage extends StatefulWidget {
 
 class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
   bool _busy = false;
+  late String _name = widget.bowl.name;
+
+  Future<void> _delete() async {
+    final confirmed = await confirmTargetDeletion(context, _name);
+    if (!confirmed || !mounted) return;
+    setState(() => _busy = true);
+    final removed = await widget.cubit.remove(widget.bowl.id);
+    if (!mounted) return;
+    if (removed) {
+      Navigator.pop(context);
+    } else {
+      setState(() => _busy = false);
+      final message = switch (widget.cubit.deleteCommand.state) {
+        CommandFailure<void>(:final failure) => failureDisplayMessage(
+          context,
+          failure,
+        ),
+        _ => context.l10n.commonDeleteFailed,
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
+  Future<void> _rename() async {
+    final name = await Navigator.of(context).push<String>(
+      MaterialPageRoute(
+        builder: (_) => HareupTextEntryPage(
+          title: context.l10n.waterRenameTitle,
+          label: context.l10n.waterBowlNameLabel,
+          submitLabel: context.l10n.commonSave,
+          initialValue: _name,
+          maxLength: 30,
+          validate: (value) =>
+              value.isEmpty ? context.l10n.petNameRequired : null,
+        ),
+      ),
+    );
+    if (!mounted || name == null || name == _name) return;
+    setState(() => _busy = true);
+    final saved = await widget.cubit.rename(widget.bowl.id, name);
+    if (!mounted) return;
+    setState(() {
+      _busy = false;
+      if (saved) _name = name;
+    });
+    if (!saved) {
+      final message = switch (widget.cubit.renameCommand.state) {
+        CommandFailure<void>(:final failure) => failureDisplayMessage(
+          context,
+          failure,
+        ),
+        _ => context.l10n.commonRenameFailed,
+      };
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
 
   Future<void> _reanalyze() async {
     if (_busy) return;
@@ -458,7 +540,7 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
           'top',
         ].every((key) => widget.bowl.registrationPhotos.containsKey(key))) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('초기 설정을 위해 정수기 앞·뒤·위 사진을 다시 등록해 주세요.')),
+        SnackBar(content: Text(context.l10n.waterReregisterPhotos)),
       );
       return;
     }
@@ -474,10 +556,13 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
     setState(() => _busy = false);
     final message = switch (result) {
       Success<WaterLevelResult>(:final value) when value.status == 'ok' =>
-        '정수기 초기 설정을 완료했습니다.',
+        context.l10n.waterSetupComplete,
       Success<WaterLevelResult>(:final value) =>
-        '초기 수위를 확인하지 못했습니다. ${value.reason}',
-      Failure<WaterLevelResult>(:final failure) => failure.message,
+        context.l10n.waterInitialLevelUnknown(value.reason),
+      Failure<WaterLevelResult>(:final failure) => failureDisplayMessage(
+        context,
+        failure,
+      ),
     };
     await widget.cubit.load();
     if (!mounted) return;
@@ -496,16 +581,16 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
       if (!mounted) return;
       if (selected is PhotoSelectionFailed) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('사진 접근을 확인하고 다시 시도해 주세요.')),
+          SnackBar(content: Text(context.l10n.analysisPhotoAccessRetry)),
         );
         return;
       }
       if (selected is! PhotoSelected) return;
       if (await selected.file.length() > 10 * 1024 * 1024) {
         if (mounted) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(const SnackBar(content: Text('사진은 10MB 이하여야 합니다.')));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.analysisPhotoTooBig10)),
+          );
         }
         return;
       }
@@ -513,14 +598,14 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
       if (!mounted) return;
       final notes = await Navigator.of(context).push<String>(
         MaterialPageRoute<String>(
-          builder: (_) => const HareupTextEntryPage(
-            title: '새 정수기 사진 특이사항',
-            label: '사진 특이사항 (선택)',
-            hint: '예: 물이 70% 차 있는 상태예요',
+          builder: (_) => HareupTextEntryPage(
+            title: context.l10n.waterNewPhotoNotesTitle,
+            label: context.l10n.waterPhotoNotesLabel,
+            hint: context.l10n.waterNewPhotoNotesHint,
             maxLength: 500,
             minLines: 2,
             maxLines: 4,
-            submitLabel: '정수기 사진 저장',
+            submitLabel: context.l10n.waterSavePhotoAction,
           ),
         ),
       );
@@ -534,15 +619,15 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
       if (saved) {
         Navigator.pop(context);
       } else {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('정수기 사진을 변경하지 못했습니다.')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.waterPhotoChangeFailed)),
+        );
       }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text('사진을 읽지 못했습니다.')));
+        ).showSnackBar(SnackBar(content: Text(context.l10n.photoReadFailed)));
       }
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -551,10 +636,20 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bowl = widget.bowl;
+    final original = widget.bowl;
+    final bowl = WaterBowl(
+      id: original.id,
+      name: _name,
+      petIds: original.petIds,
+      baselines: original.baselines,
+      registrationPhotos: original.registrationPhotos,
+      emptyWeightGrams: original.emptyWeightGrams,
+      fullWaterMl: original.fullWaterMl,
+      levelProfile: original.levelProfile,
+    );
     final baseline = bowl.currentBaseline;
     return Scaffold(
-      appBar: AppBar(title: const Text('정수기 상세 정보')),
+      appBar: AppBar(title: Text(context.l10n.waterDetailTitle)),
       body: HareupContent(
         child: ListView(
           padding: const EdgeInsets.fromLTRB(
@@ -565,50 +660,70 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
           ),
           children: [
             HareupFormSection(
-              title: bowl.name,
-              description: '물그릇 · 반려동물 ${bowl.petIds.length}마리와 함께 사용',
+              title: _name,
+              description: context.l10n.waterSharedWithPets(bowl.petIds.length),
               children: [
-                HareupStatusBadge(label: '정수기 사진 ${baseline.version}번째'),
+                OutlinedButton.icon(
+                  onPressed: _busy ? null : _rename,
+                  icon: const Icon(Icons.edit_outlined),
+                  label: Text(context.l10n.commonRename),
+                ),
+                TextButton.icon(
+                  onPressed: _busy ? null : _delete,
+                  icon: const Icon(Icons.delete_outline),
+                  label: Text(context.l10n.waterDeleteAction),
+                ),
+                HareupStatusBadge(
+                  label: context.l10n.waterPurifierPhotoVersion(
+                    baseline.version,
+                  ),
+                ),
                 const SizedBox(height: HareupSpacing.small),
                 Text(
-                  '최근 등록 ${baseline.createdAt.toLocal().toString().substring(0, 16)}',
+                  context.l10n.waterRecentlyRegistered(
+                    baseline.createdAt.toLocal().toString().substring(0, 16),
+                  ),
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),
             const SizedBox(height: HareupSpacing.medium),
             HareupFormSection(
-              title: '정수기 사진',
-              description: '물을 보충하거나 교체했다면 새 사진을 등록하세요.',
+              title: context.l10n.waterPurifierPhoto,
+              description: context.l10n.waterRefillHint,
               children: [
                 HareupPhotoPreview(
                   bytes: baseline.photo,
-                  label: '${bowl.name} 정수기 사진',
+                  label: context.l10n.waterBowlPurifierPhoto(bowl.name),
                   height: 220,
                   fit: BoxFit.contain,
                 ),
                 if (baseline.notes.isNotEmpty) ...[
                   const SizedBox(height: HareupSpacing.small),
-                  HareupGuidance(title: '사진 특이사항', message: baseline.notes),
+                  HareupGuidance(
+                    title: context.l10n.waterPhotoNotesTitle,
+                    message: baseline.notes,
+                  ),
                 ],
               ],
             ),
             const SizedBox(height: HareupSpacing.medium),
             if (bowl.registrationPhotos.isNotEmpty) ...[
               HareupFormSection(
-                title: '처음 등록한 정수기 사진',
+                title: context.l10n.waterFirstPhotosTitle,
                 children: [
-                  for (final angle in const {
-                    'front': '앞',
-                    'back': '뒤',
-                    'top': '위',
-                  }.entries)
-                    if (bowl.registrationPhotos[angle.key]
-                        case final photo?) ...[
-                      Text('${angle.value} 사진'),
+                  for (final angle in const ['front', 'back', 'top'])
+                    if (bowl.registrationPhotos[angle] case final photo?) ...[
+                      Text(
+                        context.l10n.waterAnglePhoto(
+                          _registrationAngleLabel(context, angle),
+                        ),
+                      ),
                       HareupPhotoPreview(
                         bytes: photo,
-                        label: '정수기 ${angle.value} 사진',
+                        label: context.l10n.waterPurifierAnglePhoto(
+                          _registrationAngleLabel(context, angle),
+                        ),
                         height: 160,
                       ),
                       const SizedBox(height: HareupSpacing.small),
@@ -618,27 +733,27 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
               const SizedBox(height: HareupSpacing.medium),
             ],
             HareupFormSection(
-              title: '기기 정보',
+              title: context.l10n.waterDeviceTitle,
               children: [
                 HareupMetric(
-                  label: '가득 찬 물의 양',
+                  label: context.l10n.waterFullVolumeMetric,
                   value: bowl.fullWaterMl == null
-                      ? '미입력'
+                      ? context.l10n.petSexUnspecified
                       : '${_formatNumber(bowl.fullWaterMl!)} mL',
                 ),
                 const SizedBox(height: HareupSpacing.small),
                 HareupMetric(
-                  label: '빈 기기 무게',
+                  label: context.l10n.waterEmptyDeviceWeight,
                   value: bowl.emptyWeightGrams == null
-                      ? '미입력'
+                      ? context.l10n.petSexUnspecified
                       : '${_formatNumber(bowl.emptyWeightGrams!)} g',
                 ),
               ],
             ),
             const SizedBox(height: HareupSpacing.medium),
             HareupFormSection(
-              title: '정수기 사진 변경 이력',
-              description: '이전 정수기 사진은 기록과 함께 보관됩니다.',
+              title: context.l10n.waterPhotoHistoryTitle,
+              description: context.l10n.waterPhotoHistoryHint,
               children: [
                 for (final item in bowl.baselines.reversed)
                   ListTile(
@@ -647,28 +762,31 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
                       backgroundColor: HareupColors.primaryContainer,
                       child: Text('${item.version}'),
                     ),
-                    title: Text('정수기 사진 ${item.version}번째'),
+                    title: Text(
+                      context.l10n.waterPurifierPhotoVersion(item.version),
+                    ),
                     subtitle: Text(
                       item.createdAt.toLocal().toString().substring(0, 16),
                     ),
                     trailing: item.version == baseline.version
-                        ? const HareupStatusBadge(label: '현재 기준')
+                        ? HareupStatusBadge(
+                            label: context.l10n.waterCurrentBaseline,
+                          )
                         : null,
                   ),
               ],
             ),
             const SizedBox(height: HareupSpacing.medium),
-            const HareupGuidance(
-              title: '관찰 결과 안내',
-              message:
-                  '사진 분석은 기준 대비 변화를 추정하며, 실제 반려동물의 음수량이나 건강 상태를 진단하지 않습니다.',
+            HareupGuidance(
+              title: context.l10n.waterOutcomeGuideTitle,
+              message: context.l10n.waterOutcomeGuideMessage,
             ),
             const SizedBox(height: HareupSpacing.medium),
             if (bowl.levelProfile == null) ...[
               OutlinedButton.icon(
                 onPressed: _busy ? null : _reanalyze,
                 icon: const Icon(Icons.refresh),
-                label: const Text('등록 사진 다시 분석하기'),
+                label: Text(context.l10n.waterReanalyzeAction),
               ),
               const SizedBox(height: HareupSpacing.small),
             ],
@@ -689,7 +807,7 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
                       if (context.mounted) Navigator.pop(context);
                     },
               icon: const Icon(Icons.water_drop_outlined),
-              label: const Text('수위 관찰'),
+              label: Text(context.l10n.waterObserveTitle),
             ),
             const SizedBox(height: HareupSpacing.small),
             OutlinedButton.icon(
@@ -704,7 +822,7 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
                       ),
                     ),
               icon: const Icon(Icons.history),
-              label: const Text('수위 기록 보기'),
+              label: Text(context.l10n.waterViewHistoryAction),
             ),
             const SizedBox(height: HareupSpacing.small),
             TextButton(
@@ -723,7 +841,7 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
                             ),
                       ),
                     ),
-              child: const Text('이전 분석 기록 보기'),
+              child: Text(context.l10n.waterViewPastRecords),
             ),
             const SizedBox(height: HareupSpacing.large),
           ],
@@ -743,7 +861,7 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
                 child: OutlinedButton.icon(
                   onPressed: _busy ? null : () => _replace(true),
                   icon: const Icon(Icons.camera_alt_outlined),
-                  label: const Text('새 사진 촬영'),
+                  label: Text(context.l10n.waterTakeNewPhoto),
                 ),
               ),
               const SizedBox(width: HareupSpacing.small),
@@ -751,7 +869,7 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
                 child: FilledButton.icon(
                   onPressed: _busy ? null : () => _replace(false),
                   icon: const Icon(Icons.photo_library_outlined),
-                  label: const Text('새 사진 선택'),
+                  label: Text(context.l10n.waterChooseNewPhoto),
                 ),
               ),
             ],
@@ -763,4 +881,11 @@ class _WaterBowlDetailPageState extends State<_WaterBowlDetailPage> {
 
   String _formatNumber(double value) =>
       value == value.roundToDouble() ? value.toStringAsFixed(0) : '$value';
+
+  String _registrationAngleLabel(BuildContext context, String angle) =>
+      switch (angle) {
+        'front' => context.l10n.waterAngleFront,
+        'back' => context.l10n.waterAngleBack,
+        _ => context.l10n.waterAngleTop,
+      };
 }

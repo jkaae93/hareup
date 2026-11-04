@@ -5,6 +5,10 @@ import '../domain/water_bowl.dart';
 class WaterBowlCubit extends LoadCubit<List<WaterBowl>> {
   WaterBowlCubit(this.repository) {
     createCommand = Command1<void, WaterBowl>(repository.create);
+    deleteCommand = Command1<void, String>(repository.delete);
+    renameCommand = Command1<void, (String, String)>(
+      (input) => repository.rename(input.$1, input.$2),
+    );
     baselineCommand = Command1<void, (String, Uint8List, DateTime, String)>(
       (input) => repository.replaceBaseline(
         input.$1,
@@ -16,12 +20,35 @@ class WaterBowlCubit extends LoadCubit<List<WaterBowl>> {
   }
   final WaterBowlRepository repository;
   late final Command1<void, WaterBowl> createCommand;
+  late final Command1<void, String> deleteCommand;
+  late final Command1<void, (String, String)> renameCommand;
   late final Command1<void, (String, Uint8List, DateTime, String)>
   baselineCommand;
   int _sequence = 0;
   WaterBowl? lastCreated;
   Future<void> load() =>
       loadResult(repository.list, isEmpty: (items) => items.isEmpty);
+
+  Future<bool> remove(String id) async {
+    if (deleteCommand.state is CommandRunning<void>) return false;
+    await deleteCommand.execute(id);
+    if (isClosed || deleteCommand.state is! CommandSuccess<void>) return false;
+    await load();
+    return true;
+  }
+
+  Future<bool> rename(String id, String name) async {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty ||
+        trimmed.length > 30 ||
+        renameCommand.state is CommandRunning<void>) {
+      return false;
+    }
+    await renameCommand.execute((id, trimmed));
+    if (isClosed || renameCommand.state is! CommandSuccess<void>) return false;
+    await load();
+    return true;
+  }
 
   Future<bool> create({
     required String name,
@@ -90,7 +117,12 @@ class WaterBowlCubit extends LoadCubit<List<WaterBowl>> {
 
   @override
   Future<void> close() async {
-    await Future.wait([createCommand.close(), baselineCommand.close()]);
+    await Future.wait([
+      createCommand.close(),
+      baselineCommand.close(),
+      renameCommand.close(),
+      deleteCommand.close(),
+    ]);
     await super.close();
   }
 }

@@ -40,7 +40,7 @@ exports.observeWaterLevel = onCall({ region: 'us-central1', timeoutSeconds: 120,
   let parsed;
   for (let attempt = 0; attempt < 2; attempt++) {
     try {
-      const response = await fetch('https://api.meta.ai/v1/chat/completions', { method: 'POST', headers: { Authorization: `Bearer ${secret.value().trim()}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'muse-spark-1.3', response_format: { type: 'json_object' }, messages: [{ role: 'system', content: 'Analyze conservatively. Return valid JSON only. Do not invent measurements.' }, { role: 'user', content: [{ type: 'text', text: prompt }, ...pics.map((p) => ({ type: 'image_url', image_url: { url: p.url } }))] }] }), signal: AbortSignal.timeout(45000) });
+      const response = await fetch('https://api.meta.ai/v1/chat/completions', { method: 'POST', headers: { Authorization: `Bearer ${secret.value().trim()}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'spark-1.3', response_format: { type: 'json_object' }, messages: [{ role: 'system', content: 'Analyze conservatively. Return valid JSON only. Do not invent measurements.' }, { role: 'user', content: [{ type: 'text', text: prompt }, ...pics.map((p) => ({ type: 'image_url', image_url: { url: p.url } }))] }] }), signal: AbortSignal.timeout(45000) });
       if (!response.ok) throw new Error('Provider unavailable');
       const payload = await response.json();
       parsed = JSON.parse(payload.choices[0].message.content);

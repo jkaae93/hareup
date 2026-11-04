@@ -56,7 +56,10 @@ class AnalysisCubit extends BaseCubit<AnalysisState> {
       emit(
         const AnalysisState(
           stage: AnalysisStage.failed,
-          failure: RequestFailure('기준 사진과 비교할 사진을 확인해 주세요.'),
+          failure: RequestFailure(
+            '기준 사진과 비교할 사진을 확인해 주세요.',
+            FailureMessageKeys.analysisBaselineRequired,
+          ),
         ),
       );
       return;
@@ -128,7 +131,10 @@ class AnalysisCubit extends BaseCubit<AnalysisState> {
           request: previous.request,
           outcome: outcome,
           analyzedAt: previous.analyzedAt,
-          failure: const RequestFailure('수정한 횟수를 확인해 주세요.'),
+          failure: const RequestFailure(
+            '수정한 횟수를 확인해 주세요.',
+            FailureMessageKeys.analysisInvalidCounts,
+          ),
         ),
       );
       return;
