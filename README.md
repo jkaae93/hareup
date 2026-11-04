@@ -1,6 +1,23 @@
 # 하릅 (Hareup)
 
-Flutter 기반 Android / iOS / Web 반려동물 관찰 앱. 제품 요구사항은 [PRD](docs/PRD.md)를 참고하세요.
+[English](README.en.md)
+
+**함께 살피는 매일.** 하릅은 물그릇과 화장실의 작은 변화를 사진으로 기록하고, AI의 도움으로 반려동물의 매일을 더 세심하게 관찰하는 앱입니다. 곁에 늘 있을 수 없는 보호자를 대신해 기록이 변화를 놓치지 않도록 돕습니다.
+
+웹에서 바로 사용: [https://hareup-mobile.web.app](https://hareup-mobile.web.app) · 제품 요구사항은 [PRD](docs/PRD.md)를 참고하세요.
+
+## 하릅이 하는 일
+
+- **매일 기록**: 물그릇과 고양이 화장실을 사진으로 기록합니다.
+- **변화 관찰**: 음수와 화장실 이용의 작은 변화를 건강을 살피는 단서로 삼습니다.
+- **AI 도움**: 사진 분석과 건강 챗봇이 관찰을 돕습니다.
+- **가족 돌봄**: 가족을 만들고 초대해 함께 기록하고 살핍니다.
+
+## 먼저 알아두세요
+
+- 물그릇은 고양이와 강아지, 화장실은 일반 고양이 화장실을 대상으로 합니다.
+- 앱의 관찰 결과와 챗봇 정보는 참고용이며 진료를 대체하지 않습니다.
+- 하릅은 상시 자동 감시나 정확한 음수량 측정을 표방하지 않습니다.
 
 ## 현재 구현 상태
 
@@ -28,5 +45,7 @@ Firebase 프로젝트 `hareup-mobile`의 FlutterFire 설정과 Emulator 구성�
 Google·Apple·Kakao Firebase 로그인 어댑터와 로그인 버튼을 준비했습니다. Firebase·Google·Apple·Kakao Console과 Android/iOS native 설정은 [로그인 제공자 설정 안내](docs/auth-provider-setup.md)를 따라 운영자가 직접 완료해야 합니다. Kakao Native App Key와 Apple Services ID는 `--dart-define`으로 전달하며 코드에 커밋하지 않습니다.
 
 ## Web
+
+배포 주소: [https://hareup-mobile.web.app](https://hareup-mobile.web.app)
 
 Web 실행·빌드와 Firebase Web 앱 등록은 [Web 설정 안내](docs/web.md)를 참고하세요. Web에서는 이메일 및 Firebase Google 팝업 로그인을 지원하며 Apple/Kakao 네이티브 로그인은 모바일 전용입니다. Firebase Hosting 배포 설정은 `firebase.json`에 포함되어 있습니다.
